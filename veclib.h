@@ -19,7 +19,7 @@
 	#define INLINE inline
 #endif
 
-#include "vecliball_pp.h"
+#include "vecliball.h"
 
 #ifndef _mm_shuffle
 	#define _mm_shuffle(mask,v)	_mm_shuffle_<mask>(v)

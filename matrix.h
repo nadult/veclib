@@ -100,7 +100,7 @@ INLINE Matrix<vbase> Transpose(const Matrix<vbase> &m) {
 
 template <class vbase>
 INLINE Vec4<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec4<typename vbase::TScalar> &v) {
-	Vec4<base> out;
+	Vec4<vbase> out;
 	out.X() = m.X()|v;
 	out.Y() = m.Y()|v;
 	out.Z() = m.Z()|v;
