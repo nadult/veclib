@@ -28,6 +28,11 @@ public:
 	INLINE CLASS_NAME operator-() const {
 		return _mm_sub_ps(_mm_setzero_ps(),m);
 	}
+	INLINE operator float() const {
+		float out;
+		_mm_store_ss(&out,m);
+		return out;
+	}
 	ADDITIONAL_CLASS_CODE
 
 	__m128 m;

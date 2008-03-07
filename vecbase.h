@@ -4,11 +4,14 @@
 //#include <boost/static_assert.hpp>
 
 
-typedef unsigned int uint;
-typedef int i32;
-typedef unsigned int u32;
 typedef unsigned char u8;
 typedef char i8;
+typedef short i16;
+typedef unsigned short u16;
+typedef int i32;
+typedef unsigned int u32;
+typedef long long i64;
+typedef unsigned long long u64;
 	
 union UValue
 {
@@ -70,7 +73,7 @@ INLINE float FastRSqrt(const float &v) {
 	return Const<float,1>::Value() / Sqrt(v);
 }
 INLINE float Abs(const float &v) {
-	return v < Const<float,0>::Value() ? v : -v;
+	return v < Const<float,0>::Value() ? -v : v;
 }
 INLINE float Min(const float &a,const float &b) {
 	return a < b ? a : b;
@@ -112,6 +115,18 @@ INLINE int ForWhich(bool expr) {
 template <class T>
 T Clamp(const T &obj,const T &min,const T &max) {
 	return Min(Max(obj,min),max);
+}
+
+template <class Obj,class Scl>
+Obj Lerp(const Obj &a,const Obj &b,const Scl &x) {
+	return a+(a-b)*x;
+}
+
+template <class T>
+void Swap(T &a,T &b) {
+	T temp(a);
+	a=b;
+	b=temp;
 }
 
 #endif

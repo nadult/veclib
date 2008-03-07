@@ -42,6 +42,11 @@
 
 	float			floatd				floatq									floath
 	vec2			vec2d				vec2q									vec2h
+
+
+	i32				i32*2				i32*4
+
+										SSEInt
 */
 
 /*
