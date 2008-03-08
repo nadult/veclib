@@ -104,6 +104,6 @@ INLINE CLASS_NAME Condition(const SSEPMaskNeg &test,const CLASS_NAME &v1) {
 }
 
 INLINE CLASS_NAME Abs(const CLASS_NAME &v) {
-	return _mm_and_ps(Const<SSEPMask,0x7fffffff>::Value().m,v.m);
+	return _mm_and_ps(SSEMaskConst<0x7fffffff>::value,v.m);
 }
 

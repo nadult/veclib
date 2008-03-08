@@ -3,6 +3,15 @@
 
 #include "vecbase.h"
 
+template <int m,int n=1>
+struct SSEFloatConst { static const __m128 value; };
+template <u32 mask>
+struct SSEMaskConst { static const __m128 value; };
+
+template<int m,int n>
+const __m128 SSEFloatConst<m,n>::value=_mm_set1_ps(float(m)/float(n));
+template <u32 mask>
+const __m128 SSEMaskConst<mask>::value=_mm_set1_ps(UValue(mask).f);
 
 template <uint mask>
 __m128 _mm_shuffle_(const __m128 &v) {
@@ -10,25 +19,6 @@ __m128 _mm_shuffle_(const __m128 &v) {
 }
 
 #define _mm_shuffle(mask,v)	_mm_shuffle_<mask>(v)
-
-template <int m,int n>
-struct Const<__m128,m,n> {
-	template <class T,int a,int b> friend class Const;
-	static const __m128 value;
-public:
-	INLINE static __m128 Value() { return value; }
-	INLINE operator __m128() const { return Value(); }
-};
-
-template <int m,int n>
-const __m128 Const<__m128,m,n> :: value=_mm_set1_ps(float(m)/float(n));
-
-template <int n>
-struct Const<__m128,0,n> {
-	INLINE static __m128 Value() { return _mm_setzero_ps(); }
-	INLINE operator __m128() const { return Value(); }
-};
-
 
 INLINE __m128 _mm_load4a(const float arr[4]) {
 	__m128 out;
@@ -104,8 +94,8 @@ INLINE __m128 _mm_nrrcp_ps(const __m128 &v) {
 INLINE __m128 _mm_nrrsqrt_ps(const __m128 &v) {
 	__m128 out;
 	__m128 t=_mm_rsqrt_ps(v);
-	out=	_mm_mul_ps(	_mm_mul_ps(Const<__m128,1,2>::Value(),	t),
-						_mm_sub_ps(Const<__m128,3>::Value(),	_mm_mul_ps(_mm_mul_ps(v,t),t)) );
+	out=	_mm_mul_ps(	_mm_mul_ps(SSEFloatConst<1,2>::value,t),
+						_mm_sub_ps(SSEFloatConst<3>::value	,_mm_mul_ps(_mm_mul_ps(v,t),t)) );
 	return out;
 }
 

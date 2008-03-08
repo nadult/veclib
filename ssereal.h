@@ -56,7 +56,7 @@ struct ScalarInfo<SSEPReal> {
 	typedef SSEPMask TBool;
 
 	INLINE static SSEPMask ElementMask(int n) {
-		return Const<SSEPMask,0xffffffff>::Value();
+		return SSEPMask( SSEMaskConst<0xffffffff>::value );
 	}
 };
 

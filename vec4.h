@@ -18,9 +18,9 @@ public:
 	INLINE Vec4(const base &tx,const base &ty,const base &tz,const base &tw) :x(tx),y(ty),z(tz),w(tw) {
 	}
 
-	explicit INLINE Vec4(const Vec2<base> &v) :x(v.X()),y(v.Y()),z(Const<base,0>::Value()),w(Const<base,0>::Value()) {
+	explicit INLINE Vec4(const Vec2<base> &v) :x(v.X()),y(v.Y()),z(Const<base,0>()),w(Const<base,0>()) {
 	}
-	explicit INLINE Vec4(const Vec3<base> &v) :x(v.X()),y(v.Y()),z(v.Z()),w(Const<base,0>::Value()) {
+	explicit INLINE Vec4(const Vec3<base> &v) :x(v.X()),y(v.Y()),z(v.Z()),w(Const<base,0>()) {
 	}
 
 #define GEN_OP(sop) \
@@ -42,7 +42,7 @@ public:
 		return *this;
 	}
 	INLINE const Vec4 &operator/=(const base &s) {
-		base inv=Const<base,1>::Value()/s;
+		base inv=Inv(s);
 		x*=inv; y*=inv; z*=inv; w*=inv;
 		return *this;
 	}
@@ -151,7 +151,7 @@ INLINE Vec4<base> Condition(bool expr,const Vec4<base> &a,const Vec4<base> &b) {
 }
 template <class base>
 INLINE Vec4<base> Condition(bool expr,const Vec4<base> &v) {
-	return expr?v:Vec4<base>(Const<base,0>::Value());
+	return expr?v:Vec4<base>(Const<base,0>());
 }
 
 template<class base>

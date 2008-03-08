@@ -22,7 +22,7 @@
 	INLINE operator SSEMask() const { SSEMask out(m); return out; }
 
 #define SSEMASK_NEG_ADDITIONAL_CODE \
-	INLINE operator SSEMask() const { SSEMask out(_mm_andnot_ps(m,Const<SSEPMask,0xffffffff>::Value().m)); return out; } \
+	INLINE operator SSEMask() const { SSEMask out(_mm_andnot_ps(m,SSEMaskConst<0xffffffff>::value)); return out; } \
 	INLINE operator SSEMaskNeg() const { SSEMaskNeg out(m); return out; }
 
 #include "ssemask_gen.h"

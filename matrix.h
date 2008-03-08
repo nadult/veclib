@@ -13,6 +13,19 @@
 	w = 0 0 0 1
 */
 
+template <class vbase> class Matrix;
+
+// Convertible to any matrix type as identity matrix
+template <class T=void>
+struct Identity: public Matrix<T> {
+	Identity() :Matrix<T>(Identity<void>()) { }
+
+	operator Matrix<T>&() { return *(Matrix<T>*)this; }
+	operator const Matrix<T>&() const { return *(Matrix<T>*)this; }
+};
+
+template <> struct Identity<void> { };
+
 template <class vbase>
 class Matrix
 {
@@ -23,6 +36,13 @@ public:
 	INLINE Matrix() {
 	}
 	INLINE Matrix(const vbase &a,const vbase &b,const vbase &c,const vbase &d) :x(a),y(b),z(c),w(d) {
+	}
+	INLINE Matrix(Identity<void>) {
+		TScalar zero=Const<TScalar,0>(),one=Const<TScalar,1>();
+		x=vbase(one,zero,zero,zero);
+		y=vbase(zero,one,zero,zero);
+		z=vbase(zero,zero,one,zero);
+		w=vbase(zero,zero,zero,one);
 	}
 
 	INLINE const Matrix &operator*=(const Matrix &m) {
@@ -77,16 +97,6 @@ INLINE Matrix<vbase> operator*(const Matrix<vbase> &a,const Matrix<vbase> &b) {
 	return out;
 }
 
-template <class vbase>
-INLINE Matrix<vbase> Identity() {
-	Matrix<vbase> out;
-	typename vbase::TScalar zero=Const<typename vbase::TScalar,0>::Value(),one=Const<typename vbase::TScalar,1>::Value();
-	out.x=vbase(one,zero,zero,zero);
-	out.y=vbase(zero,one,zero,zero);
-	out.z=vbase(zero,zero,one,zero);
-	out.w=vbase(zero,zero,zero,one);
-	return out;
-}
 
 template <class vbase>
 INLINE Matrix<vbase> Transpose(const Matrix<vbase> &m) {

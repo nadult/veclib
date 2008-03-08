@@ -43,7 +43,7 @@ public:
 		return *this;
 	}
 	INLINE const Vec2 &operator/=(const base &s) {
-		base inv=Const<base,1>::Value()/s;
+		base inv=Inv(s);
 		x*=inv; y*=inv;
 		return *this;
 	}
@@ -152,7 +152,7 @@ INLINE Vec2<base> Condition(bool expr,const Vec2<base> &a,const Vec2<base> &b) {
 }
 template <class base>
 INLINE Vec2<base> Condition(bool expr,const Vec2<base> &v) {
-	return expr?v:Vec2<base>(Const<base,0>::Value());
+	return expr?v:Vec2<base>(Const<base,0>());
 }
 
 template<class base>

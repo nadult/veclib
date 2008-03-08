@@ -4,124 +4,93 @@
 //#include <boost/static_assert.hpp>
 
 
-typedef unsigned char u8;
-typedef char i8;
-typedef short i16;
-typedef unsigned short u16;
-typedef int i32;
-typedef unsigned int u32;
-typedef long long i64;
-typedef unsigned long long u64;
+typedef unsigned char		u8;
+typedef char				i8;
+typedef short				i16;
+typedef unsigned short		u16;
+typedef int					i32;
+typedef unsigned int		u32;
+typedef long long			i64;
+typedef unsigned long long	u64;
+
+typedef float				f32;
+typedef double				f64;
+
+typedef unsigned int		uint;
 	
 union UValue
 {
-	UValue(uint v) :u(v) { }
-	UValue(int v) :i(v) { }
-	UValue(float v) :f(v) { }
+	UValue(u32 v) :u(v) { }
+	UValue(i32 v) :i(v) { }
+	UValue(f32 v) :f(v) { }
 
-	float f;
-	int i;
-	uint u;
+	f32 f;
+	i32 i;
+	u32 u;
 };
 
-/*!
-	Const< Typ, m, n > :: Value()    = Typ(m) / Typ(n)
-*/
-template <class base,int m,int n=1>
-class Const {
-	static const base value;
-public:
-	INLINE static base Value() { return value; }
-	INLINE operator base() const { return Value(); }
-};
+template <class Base,int m,int n> struct CConst { static Base Value() { return Base(m)/Base(n); } };
+template <class Base,bool v> struct CBConst { static Base Value() { return Base(v); } };
+
+// Returns constant of value m/n of type Base
+// Works only for floating point types
+template <class Base,int m,int n>	Base Const() { return CConst<Base,m,n>::Value(); }
+
+// Returns constant of value m/n of type Base
+// Works for both floating point and integral types
+template <class Base,int m>			Base Const() { return CConst<Base,m,1>::Value(); }
+
+// Returns constant boolean value of type Base
+template <class Base,bool v>		Base BConst() { return CBConst<Base,v>::Value(); }
+
+template <class Base> Base ConstPI() { return Const<Base,		75948	,24175>(); };
+template <class Base> Base Const2PI() { return Const<Base,		2*75948	,24175>(); };
+template <class Base> Base ConstInvPI() { return Const<Base,	24175	,75948>(); };
+template <class Base> Base ConstInv2PI() { return Const<Base,	24175	,2*75948>(); };
+template <class Base> Base ConstEpsilon() { return Const<Base,	1		,10000>(); };
 
 /*!
 
 */
 template <class T>
 struct ScalarInfo {
-	enum { Multiplicity=1 };
+	enum { multiplicity=1, floatingPoint=1 };
 	typedef bool TBool;
 
-	// n must be < Multiplicity
+	// n must be < multiplicity
 	INLINE static bool ElementMask(int n) {
 		return 1;
 	}
 };
 
-template <class base,int m,int n>
-const base Const<base,m,n>::value=base(m)/base(n);
+INLINE float Sqrt(float v)							{ return sqrt(v); }
+INLINE float Inv(float v)							{ return 1.0f / v; }
+INLINE float RSqrt(float v)							{ return 1.0f / Sqrt(v); }
+INLINE float FastInv(float v)						{ return 1.0f / v; }
+INLINE float FastRSqrt(float v)						{ return 1.0f / Sqrt(v); }
+INLINE float Abs(float v)							{ return v < 0.0f ? -v : v; }
+INLINE float Min(float a,float b)					{ return a < b ? a : b; }
+INLINE float Max(float a,float b)					{ return a > b ? a : b; }
+INLINE float Condition(bool expr,float a,float b)	{ return expr?a:b; }
+INLINE float Condition(bool expr,float v)			{ return expr?v:0.0f; }
+INLINE int SignMask(float v)						{ return v<0.0f?1:0; }
+INLINE float Sin(float rad)							{ return sin(rad); }
+INLINE float Cos(float rad)							{ return cos(rad); }
 
-template <class base> struct ConstPI: public Const<base,75948,24175> { };
-template <class base> struct Const2PI: public Const<base,2*75948,24175> { };
-template <class base> struct ConstInvPI: public Const<base,24175,75948> { };
-template <class base> struct ConstInv2PI: public Const<base,24175,2*75948> { };
-template <class base> struct ConstEpsilon: public Const<base,1,100000> { };
 
-INLINE float Sqrt(const float &v) {
-	return sqrt(v);
-}
-INLINE float Inv(const float &v) {
-	return Const<float,1>::Value() / v;
-}
-INLINE float RSqrt(const float &v) {
-	return Const<float,1>::Value() / Sqrt(v);
-}
-INLINE float FastInv(const float &v) {
-	return Const<float,1>::Value() / v;
-}
-INLINE float FastRSqrt(const float &v) {
-	return Const<float,1>::Value() / Sqrt(v);
-}
-INLINE float Abs(const float &v) {
-	return v < Const<float,0>::Value() ? -v : v;
-}
-INLINE float Min(const float &a,const float &b) {
-	return a < b ? a : b;
-}
-INLINE float Max(const float &a,const float &b) {
-	return a > b ? a : b;
-}
-INLINE float Condition(bool expr,float a,float b) {
-	return expr?a:b;
-}
-INLINE float Condition(bool expr,float v) {
-	return expr?v:0.0f;
-}
-INLINE int SignMask(const float &v) {
-	return v<0?1:0;
-}
-INLINE float Sin(const float rad) {
-	return sin(rad);
-}
-INLINE float Cos(const float rad) {
-	return cos(rad);
-}
+INLINE float FRand() { return float(rand())/float(RAND_MAX); }
 
-INLINE float FRand() {
-	return float(rand())/float(RAND_MAX);
-}
+INLINE bool ForAny(bool expr) { return expr; }
+INLINE bool ForAll(bool expr) { return expr; }
 
-INLINE bool ForAny(bool expr) {
-	return expr;
-}
-INLINE bool ForAll(bool expr) {
-	return expr;
-}
 /// Returns bit mask, bit n is set if expression is true for element n
-INLINE int ForWhich(bool expr) {
-	return expr;
-}
+INLINE int ForWhich(bool expr) { return expr; }
 
 template <class T>
-T Clamp(const T &obj,const T &min,const T &max) {
-	return Min(Max(obj,min),max);
-}
+T Clamp(const T &obj,const T &min,const T &max) { return Min(Max(obj,min),max); }
 
 template <class Obj,class Scl>
-Obj Lerp(const Obj &a,const Obj &b,const Scl &x) {
-	return a+(b-a)*x;
-}
+Obj Lerp(const Obj &a,const Obj &b,const Scl &x) { return a+(b-a)*x; }
 
 template <class T>
 void Swap(T &a,T &b) {

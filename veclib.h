@@ -33,15 +33,15 @@
 	AMatrix
 	Matrix
 
-	SSEPReal							SSEReal
-	SSEPVec2							SSEVec2
+	SSEPReal							SSEReal				*** Will be added in future ***
+	SSEPVec2							SSEVec2				*** At least i hope so ***
 	SSEPVec3							SSEVec3
-	SSEPVec4							SSEVec4
-	SSEPMatrix
+	SSEPVec4							SSEVec4				*** Im sure it will, when new processors with
+	SSEPMatrix													x16 simd operations will show up :) ****
 	SSEPAMatrix
 
-	float			floatd				floatq									floath
-	vec2			vec2d				vec2q									vec2h
+	float			floatd				floatq
+	vec2			vec2d				vec2q
 
 
 	i32				i32*2				i32*4

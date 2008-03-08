@@ -5,12 +5,9 @@ class MASK_NAME;
 class CLASS_NAME
 {
 public:
-	INLINE CLASS_NAME() {
-	}
-	INLINE CLASS_NAME(const __m128 &v) :m(v) {
-	}
-	INLINE CLASS_NAME(float v) :m(_mm_set1_ps(v)) {
-	}
+	INLINE CLASS_NAME() { }
+	INLINE CLASS_NAME(const __m128 &v) :m(v) { }
+	INLINE CLASS_NAME(float v) :m(_mm_set1_ps(v)) { }
 
 #define GEN_SOP(sop,mmname) \
 	INLINE const CLASS_NAME &operator sop(const CLASS_NAME &v) { \
@@ -37,6 +34,9 @@ public:
 
 	__m128 m;
 };
+
+template <int m,int n>
+struct CConst<CLASS_NAME,m,n> { static CLASS_NAME Value() { return CLASS_NAME(SSEFloatConst<m,n>::value); } };
 
 #define GEN_CMP_OP(op,mmname) \
 	INLINE MASK_NAME operator op(const CLASS_NAME &a,const CLASS_NAME &b) { \
@@ -76,14 +76,8 @@ GEN_FUNC(FastRSqrt,_mm_rsqrt_ps)
 #undef GEN_FUNC
 
 
-template <int m,int n> class Const<CLASS_NAME,m,n> {
-public:
-	INLINE static CLASS_NAME Value() { return CLASS_NAME(Const<__m128,m,n>::Value()); }
-	INLINE operator CLASS_NAME() const { return Value(); }
-};
-
 INLINE CLASS_NAME Abs(const CLASS_NAME &v) {
-	return _mm_and_ps(Const<MASK_NAME,0x7fffffff>::Value().m,v.m);
+	return _mm_and_ps(SSEMaskConst<0x7fffffff>::value,v.m);
 }
 INLINE CLASS_NAME Min(const CLASS_NAME &a,const CLASS_NAME &b) {
 	return _mm_min_ps(a.m,b.m);
