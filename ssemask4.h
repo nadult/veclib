@@ -44,7 +44,8 @@ public:
 
 template <int mask> class Const<SSEMask4,mask,1> {
 public:
-	static SSEMask4 Value() { return SSEMask4(Const<SSEPMask,mask,1>::Value()); }
+	INLINE static SSEMask4 Value() { return SSEMask4(Const<SSEPMask,mask,1>::Value()); }
+	INLINE operator SSEMask4() const { return Value(); }
 };
 
 class SSEMaskNeg4

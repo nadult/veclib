@@ -32,6 +32,7 @@ class Const {
 	static const base value;
 public:
 	INLINE static base Value() { return value; }
+	INLINE operator base() const { return Value(); }
 };
 
 /*!
@@ -119,7 +120,7 @@ T Clamp(const T &obj,const T &min,const T &max) {
 
 template <class Obj,class Scl>
 Obj Lerp(const Obj &a,const Obj &b,const Scl &x) {
-	return a+(a-b)*x;
+	return a+(b-a)*x;
 }
 
 template <class T>

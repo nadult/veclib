@@ -79,6 +79,7 @@ GEN_FUNC(FastRSqrt,_mm_rsqrt_ps)
 template <int m,int n> class Const<CLASS_NAME,m,n> {
 public:
 	INLINE static CLASS_NAME Value() { return CLASS_NAME(Const<__m128,m,n>::Value()); }
+	INLINE operator CLASS_NAME() const { return Value(); }
 };
 
 INLINE CLASS_NAME Abs(const CLASS_NAME &v) {

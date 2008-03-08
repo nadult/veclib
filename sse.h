@@ -17,6 +17,7 @@ struct Const<__m128,m,n> {
 	static const __m128 value;
 public:
 	INLINE static __m128 Value() { return value; }
+	INLINE operator __m128() const { return Value(); }
 };
 
 template <int m,int n>
@@ -25,6 +26,7 @@ const __m128 Const<__m128,m,n> :: value=_mm_set1_ps(float(m)/float(n));
 template <int n>
 struct Const<__m128,0,n> {
 	INLINE static __m128 Value() { return _mm_setzero_ps(); }
+	INLINE operator __m128() const { return Value(); }
 };
 
 
