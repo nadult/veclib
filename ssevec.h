@@ -1,4 +1,4 @@
-#ifndef VECLIB_SSEVEC_H
+#if !defined(VECLIB_SSEVEC_H) && VECLIB_SSE_VER>=0x10
 #define VECLIB_SSEVEC_H
 
 #include "sse.h"

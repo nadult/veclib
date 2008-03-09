@@ -12,14 +12,10 @@ public:
 	typedef base TScalar;
 	typedef typename ScalarInfo<base>::TBool TBool;
 
-	INLINE Vec2() {
-	}
-	INLINE Vec2(const base &t) :x(t),y(t) {
-	}
-	INLINE Vec2(const base arr[2]) :x(arr[0]),y(arr[1]) {
-	}
-	INLINE Vec2(const base &tx,const base &ty) :x(tx),y(ty) {
-	}
+	INLINE Vec2() { }
+	INLINE Vec2(const base &t) :x(t),y(t) { }
+	INLINE Vec2(const base arr[2]) :x(arr[0]),y(arr[1]) { }
+	INLINE Vec2(const base &tx,const base &ty) :x(tx),y(ty) { }
 
 	explicit INLINE Vec2(const Vec3<base>&);
 	explicit INLINE Vec2(const Vec4<base>&);
@@ -67,11 +63,9 @@ public:
 #include "vec3.h"
 
 template <class base>
-Vec2<base>::Vec2(const Vec3<base> &v) :x(v.X()),y(v.Y()) {
-}
+Vec2<base>::Vec2(const Vec3<base> &v) :x(v.X()),y(v.Y()) { }
 template <class base>
-Vec2<base>::Vec2(const Vec4<base> &v) :x(v.X()),y(v.Y()) {
-}
+Vec2<base>::Vec2(const Vec4<base> &v) :x(v.X()),y(v.Y()) { }
 
 
 #define GEN_OP(op,sop) \

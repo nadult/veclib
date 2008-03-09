@@ -11,17 +11,12 @@ public:
 	typedef base TScalar;
 	typedef typename ScalarInfo<base>::TBool TBool;
 
-	INLINE Vec3() {
-	}
-	INLINE Vec3(const base &t) :x(t),y(t),z(t) {
-	}
-	INLINE Vec3(const base arr[3]) :x(arr[0]),y(arr[1]),z(arr[2]) {
-	}
-	INLINE Vec3(const base &tx,const base &ty,const base &tz) :x(tx),y(ty),z(tz) {
-	}
+	INLINE Vec3() { }
+	INLINE Vec3(const base &t) :x(t),y(t),z(t) { }
+	INLINE Vec3(const base arr[3]) :x(arr[0]),y(arr[1]),z(arr[2]) { }
+	INLINE Vec3(const base &tx,const base &ty,const base &tz) :x(tx),y(ty),z(tz) { }
 
-	explicit INLINE Vec3(const Vec2<base> &v) :x(v.X()),y(v.Y()),z(Const<base,0>()) {
-	}
+	explicit INLINE Vec3(const Vec2<base>&v) :x(v.X()),y(v.Y()),z(Const<base,0>()) { }
 	explicit INLINE Vec3(const Vec4<base>&);
 
 #define GEN_OP(op) \
@@ -70,8 +65,7 @@ public:
 #include "vec4.h"
 
 template <class base>
-Vec3<base>::Vec3(const Vec4<base> &v) :x(v.X()),y(v.Y()),z(v.Z()) {
-}
+Vec3<base>::Vec3(const Vec4<base> &v) :x(v.X()),y(v.Y()),z(v.Z()) { }
 
 #define GEN_OP(op,sop) \
 	template <class base,class GenericVec> \

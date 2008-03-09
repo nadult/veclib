@@ -1,4 +1,4 @@
-#ifndef VECLIB_SSE_H
+#if !defined(VECLIB_SSE_H) && VECLIB_SSE_VER>=0x10
 #define VECLIB_SSE_H
 
 #include "vecbase.h"
@@ -51,6 +51,17 @@ INLINE __m128 _mm_load3(const float arr[3]) {
 				0+(2<<2)+(0<<4)+(0<<6) ); 
 	return out;
 }
+/// float x,y,z	-> __m128(x,y,z,z)
+INLINE __m128 _mm_load3(float a,float b,float c) {
+	__m128 out;
+	out=	_mm_shuffle_ps(
+				_mm_shuffle_ps(
+					_mm_load_ss(&a),
+					_mm_load_ss(&b),0 ),
+				_mm_load_ss(&c),
+				0+(2<<2)+(0<<4)+(0<<6) ); 
+	return out;
+}
 /// __m128(x,y,z,b) -> float x,y,z
 INLINE void _mm_store3(__m128 v,float arr[3]) {
 	_mm_store_ss(arr+0,v);
@@ -62,6 +73,13 @@ INLINE void _mm_store3(__m128 v,float arr[3]) {
 INLINE __m128 _mm_load2(const float arr[2]) {
 	__m128 out;
 	out=_mm_shuffle_ps(_mm_load_ss(arr+0),_mm_load_ss(arr+1),0);
+	out=_mm_shuffle_ps(out,out,0+(3<<2)+(0<<4)+(3<<6)); 
+	return out;
+}
+/// float x,y	-> __m128(x,y,x,y)
+INLINE __m128 _mm_load2(float a,float b) {
+	__m128 out;
+	out=_mm_shuffle_ps(_mm_load_ss(&a),_mm_load_ss(&b),0);
 	out=_mm_shuffle_ps(out,out,0+(3<<2)+(0<<4)+(3<<6)); 
 	return out;
 }
@@ -97,6 +115,11 @@ INLINE __m128 _mm_nrrsqrt_ps(const __m128 &v) {
 	out=	_mm_mul_ps(	_mm_mul_ps(SSEFloatConst<1,2>::value,t),
 						_mm_sub_ps(SSEFloatConst<3>::value	,_mm_mul_ps(_mm_mul_ps(v,t),t)) );
 	return out;
+}
+
+INLINE __m128 _mm_bool2mask(bool v) {
+	static const __m128 tab[2]={SSEMaskConst<0>::value,SSEMaskConst<0xffffffff>::value};
+	return tab[v?1:0];
 }
 
 

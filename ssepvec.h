@@ -1,34 +1,27 @@
-#ifndef VECLIB_SSEPVEC_H
+#if !defined(VECLIB_SSEPVEC_H) && VECLIB_SSE_VER>=0x10
 #define VECLIB_SSEPVEC_H
 
 #include "ssevec.h"
 #include "ssereal.h"
-//#include "ssereal4.h"
 
 // Wektorek 'upakowany'; W przeciwienstwie do VecN<SSEReal> nie zawiera
 // N * 4 wartoci, ale jedynie N (pozostale skadowe rejestru SSE sa ignorowane)
 // Komponenty sa read-only; bo przy przypisaniu traciloby sie czesc informacji
 // Generalnie korzystanie z takich wektorow o N<4 to marnotrastwo mocy
 
-
 class SSEPVec2;
 class SSEPVec3;
 class SSEPVec4;
-
-//typedef Vec2<SSEReal4> SSEVec24;
-//typedef Vec3<SSEReal4> SSEVec34;
-//typedef Vec4<SSEReal4> SSEVec44;
 
 // -----------------------------------------------------------------------------------------------------------
 #define CLASS_NAME SSEPVec2
 #define ADDITIONAL_CLASS_CODE \
 	INLINE explicit SSEPVec2(const SSEPVec3 &v); \
 	INLINE explicit SSEPVec2(const SSEPVec4 &v); \
-	INLINE SSEPVec2(const SSEPReal &x,const SSEPReal &y) { m=_mm_shuffle(0+(3<<2)+(0<<4)+(3<<6),_mm_shuffle_ps(x.m,y.m,0)); } \
-	INLINE SSEPReal X() const { return _mm_shuffle(0,m); } \
-	INLINE SSEPReal Y() const { return _mm_shuffle(1+(1<<2)+(1<<4)+(1<<6),m); } \
-	INLINE operator SSEVec2() const { SSEVec2 out; out=SSEVec2(X(),Y()); return out; }// \
-	INLINE operator SSEVec24() const;
+	INLINE SSEPVec2(float x,float y) { m=_mm_load2(x,y); } \
+	INLINE float X() const { return ((float*)&m)[0]; } \
+	INLINE float Y() const { return ((float*)&m)[1]; } \
+	INLINE operator SSEVec2() const { SSEVec2 out; out=SSEVec2(SSEReal(X()),SSEReal(Y())); return out; }
 
 
 #include "ssepvec_gen.h"
@@ -40,14 +33,11 @@ class SSEPVec4;
 #define ADDITIONAL_CLASS_CODE \
 	INLINE explicit SSEPVec3(const SSEPVec2 &v); \
 	INLINE explicit SSEPVec3(const SSEPVec4 &v); \
-	INLINE SSEPVec3(const SSEPReal &x,const SSEPReal &y,const SSEPReal &z) { \
-		m=_mm_shuffle_ps(_mm_shuffle_ps(x.m,y.m,0),z.m,0+(2<<2)+(0<<4)+(0<<6)); \
-	} \
-	INLINE SSEPReal X() const { return _mm_shuffle(0,m); } \
-	INLINE SSEPReal Y() const { return _mm_shuffle(1+(1<<2)+(1<<4)+(1<<6),m); } \
-	INLINE SSEPReal Z() const { return _mm_shuffle(2+(2<<2)+(2<<4)+(2<<6),m); } \
-	INLINE operator SSEVec3() const { SSEVec3 out; out=SSEVec3(X(),Y(),Z()); return out; }// \
-	INLINE operator SSEVec34() const;
+	INLINE SSEPVec3(float x,float y,float z) { m=_mm_load3(x,y,z); } \
+	INLINE float X() const { return ((float*)&m)[0]; } \
+	INLINE float Y() const { return ((float*)&m)[1]; } \
+	INLINE float Z() const { return ((float*)&m)[2]; } \
+	INLINE operator SSEVec3() const { SSEVec3 out; out=SSEVec3(SSEReal(X()),SSEReal(Y()),SSEReal(Z())); return out; }
 
 #include "ssepvec_gen.h"
 
@@ -61,16 +51,12 @@ class SSEPVec4;
 		__m128 zzww=_mm_shuffle_ps(v.m,_mm_setzero_ps(),0); \
 		m=_mm_shuffle_ps(v.m,zzww,0+(1<<2)+(0<<4)+(2<<6)); \
 	} \
-	INLINE SSEPVec4(const SSEPReal &x,const SSEPReal &y,const SSEPReal &z,const SSEPReal &w) { \
-		__m128 xy=_mm_shuffle_ps(x.m,y.m,0),zw=_mm_shuffle_ps(z.m,w.m,0); \
-		m=_mm_shuffle_ps(xy,zw,0+(2<<2)+(0<<4)+(2<<6)); \
-	} \
-	INLINE SSEPReal X() const { return _mm_shuffle(0,m); } \
-	INLINE SSEPReal Y() const { return _mm_shuffle(1+(1<<2)+(1<<4)+(1<<6),m); } \
-	INLINE SSEPReal Z() const { return _mm_shuffle(2+(2<<2)+(2<<4)+(2<<6),m); } \
-	INLINE SSEPReal W() const { return _mm_shuffle(3+(3<<2)+(3<<4)+(3<<6),m); } \
-	INLINE operator SSEVec4() const { SSEVec4 out; out=SSEVec4(X(),Y(),Z(),W()); return out; }// \
-	INLINE operator SSEVec44() const;
+	INLINE SSEPVec4(float x,float y,float z,float w) { m=_mm_set_ps(w,z,y,x); } \
+	INLINE float X() const { return ((float*)&m)[0]; } \
+	INLINE float Y() const { return ((float*)&m)[1]; } \
+	INLINE float Z() const { return ((float*)&m)[2]; } \
+	INLINE float W() const { return ((float*)&m)[3]; } \
+	INLINE operator SSEVec4() const { SSEVec4 out; out=SSEVec4(SSEReal(X()),SSEReal(Y()),SSEReal(Z()),SSEReal(W())); return out; }
 
 #include "ssepvec_gen.h"
 
@@ -84,27 +70,28 @@ SSEPVec2::SSEPVec2(const SSEPVec3 &v) { m=v.m; }
 SSEPVec2::SSEPVec2(const SSEPVec4 &v) { m=v.m; }
 
 
-INLINE SSEPReal operator|(const SSEPVec2 &a,const SSEPVec2 &b) {
-	SSEPReal out;
-	__m128 t=_mm_mul_ps(a.m,b.m);
+INLINE float operator|(const SSEPVec2 &a,const SSEPVec2 &b) {
+	union { float out[4]; __m128 t; };
+
+	t=_mm_mul_ps(a.m,b.m);
 	t=_mm_add_ss(t,_mm_shuffle_ps(t,t,1));
-	out.m=_mm_shuffle(0,t);
-	return out;
+
+	return out[0];
 }
-INLINE SSEPReal operator|(const SSEPVec3 &a,const SSEPVec3 &b) {
-	SSEPReal out;
-	__m128 t=_mm_mul_ps(a.m,b.m);
+INLINE float operator|(const SSEPVec3 &a,const SSEPVec3 &b) {
+	union { float out[4]; __m128 t; };
+
+	t=_mm_mul_ps(a.m,b.m);
 	t=_mm_add_ss(/*Z*/_mm_movehl_ps(t,t),_mm_add_ss(/*X*/t,/*Y*/_mm_shuffle_ps(t,t,1)));
-	out.m=_mm_shuffle(0,t);
-	return out;
+
+	return out[0];
 }
-INLINE SSEPReal operator|(const SSEPVec4 &a,const SSEPVec4 &b) {
-	SSEPReal out;
-	__m128 t=_mm_mul_ps(a.m,b.m);
+INLINE float operator|(const SSEPVec4 &a,const SSEPVec4 &b) {
+	union { float out[4]; __m128 t; };
+	t=_mm_mul_ps(a.m,b.m);
 	t=_mm_add_ps(t,_mm_shuffle_ps(t,t,0x4E));
 	t=_mm_add_ps(t,_mm_shuffle_ps(t,t,0x11));
-	out.m=t; // alredy broadcasted
-	return out;
+	return out[0];
 }
 
 INLINE SSEPVec3 operator^(const SSEPVec3 &a,const SSEPVec3 &b)
@@ -174,3 +161,4 @@ INLINE void Convert(const SSEPVec4 in[4],SSEVec4 &out) {
 
 
 #endif
+

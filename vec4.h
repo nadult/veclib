@@ -9,19 +9,13 @@ public:
 	typedef base TScalar;
 	typedef typename ScalarInfo<base>::TBool TBool;
 
-	INLINE Vec4() {
-	}
-	INLINE Vec4(const base &t) :x(t),y(t),z(t),w(t) {
-	}
-	INLINE Vec4(const base arr[4]) :x(arr[0]),y(arr[1]),z(arr[2]),w(arr[3]) {
-	}
-	INLINE Vec4(const base &tx,const base &ty,const base &tz,const base &tw) :x(tx),y(ty),z(tz),w(tw) {
-	}
+	INLINE Vec4() { }
+	INLINE Vec4(const base &t) :x(t),y(t),z(t),w(t) { }
+	INLINE Vec4(const base arr[4]) :x(arr[0]),y(arr[1]),z(arr[2]),w(arr[3]) { }
+	INLINE Vec4(const base &tx,const base &ty,const base &tz,const base &tw) :x(tx),y(ty),z(tz),w(tw) { }
 
-	explicit INLINE Vec4(const Vec2<base> &v) :x(v.X()),y(v.Y()),z(Const<base,0>()),w(Const<base,0>()) {
-	}
-	explicit INLINE Vec4(const Vec3<base> &v) :x(v.X()),y(v.Y()),z(v.Z()),w(Const<base,0>()) {
-	}
+	explicit INLINE Vec4(const Vec2<base> &v) :x(v.X()),y(v.Y()),z(Const<base,0>()),w(Const<base,0>()) { }
+	explicit INLINE Vec4(const Vec3<base> &v) :x(v.X()),y(v.Y()),z(v.Z()),w(Const<base,0>()) { }
 
 #define GEN_OP(sop) \
 	template <class GenericVec> \

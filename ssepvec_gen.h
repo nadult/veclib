@@ -1,17 +1,17 @@
-// Generator wektorków upakowanych (od 2 do 4)
+// Generator wektorkow upakowanych (od 2 do 4)
 
 class CLASS_NAME {
 public:
-	typedef SSEPReal TScalar;
-	typedef SSEPMask TBool;
+	typedef float TScalar;
+	typedef bool TBool;
 
 	INLINE CLASS_NAME() {
 	}
 	INLINE CLASS_NAME(const __m128 &v) :m(v) {
 	}
-	INLINE CLASS_NAME(const SSEPReal &v) :m(v.m) {
+	INLINE explicit CLASS_NAME(float v) :m(_mm_set1_ps(v)) {
 	}
-	INLINE explicit CLASS_NAME(const SSEPMask &v) :m(v.m) {
+	INLINE explicit CLASS_NAME(bool v) :m(_mm_bool2mask(v)) {
 	}
 
 	INLINE CLASS_NAME operator-() const {
@@ -31,12 +31,12 @@ public:
 
 #undef GEN_OP
 
-	INLINE const CLASS_NAME &operator*=(const SSEPReal &s) {
-		m=_mm_mul_ps(m,s.m);
+	INLINE const CLASS_NAME &operator*=(float s) {
+		m=_mm_mul_ps(m,_mm_set1_ps(s));
 		return *this;
 	}
-	INLINE const CLASS_NAME &operator/=(const SSEPReal &s) {
-		m=_mm_div_ps(m,s.m);
+	INLINE const CLASS_NAME &operator/=(float s) {
+		m=_mm_div_ps(m,_mm_set1_ps(s));
 		return *this;
 	}
 
@@ -53,8 +53,7 @@ public:
 		return out; \
 	}
 #define GEN_SCL_OP(op,sop) \
-	template <class base> \
-	INLINE CLASS_NAME operator op(const CLASS_NAME &a,const SSEPReal &s) { \
+	INLINE CLASS_NAME operator op(const CLASS_NAME &a,float s) { \
 		CLASS_NAME out(a); \
 		out sop s; \
 		return out; \
@@ -90,17 +89,13 @@ GEN_SCL_OP(/,/=)
 #undef GEN_FUNC
 #undef GEN_BIN_FUNC
 
-INLINE CLASS_NAME Condition(const SSEPMask &test,const CLASS_NAME &v1,const CLASS_NAME &v2) {
-	return _mm_or_ps(_mm_and_ps(test.m,v1.m),_mm_andnot_ps(test.m,v2.m));
+INLINE CLASS_NAME Condition(bool test_,const CLASS_NAME &v1,const CLASS_NAME &v2) {
+	__m128 test=_mm_bool2mask(test_);
+	return _mm_or_ps(_mm_and_ps(test,v1.m),_mm_andnot_ps(test,v2.m));
 }
-INLINE CLASS_NAME Condition(const SSEPMaskNeg &test,const CLASS_NAME &v1,const CLASS_NAME &v2) {
-	return _mm_or_ps(_mm_andnot_ps(test.m,v1.m),_mm_and_ps(test.m,v2.m));
-}
-INLINE CLASS_NAME Condition(const SSEPMask &test,const CLASS_NAME &v1) {
-	return _mm_and_ps(test.m,v1.m);
-}
-INLINE CLASS_NAME Condition(const SSEPMaskNeg &test,const CLASS_NAME &v1) {
-	return _mm_andnot_ps(test.m,v1.m);
+INLINE CLASS_NAME Condition(bool test_,const CLASS_NAME &v1) {
+	__m128 test=_mm_bool2mask(test_);
+	return _mm_and_ps(test,v1.m);
 }
 
 INLINE CLASS_NAME Abs(const CLASS_NAME &v) {
