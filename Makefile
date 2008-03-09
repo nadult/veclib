@@ -34,5 +34,5 @@ vecliball_pp00.h: Makefile *.h
 	rm vecliball_pp.tmp1 vecliball_pp.tmp2
 
 clean:
-	rm vecliball_pp*.h
+	-rm vecliball_pp*.h
 

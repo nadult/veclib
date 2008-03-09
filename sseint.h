@@ -8,7 +8,7 @@ class SSEI32
 public:
 	INLINE SSEI32() { }
 	INLINE SSEI32(const __m128i &v) :m(v) { }
-	INLINE SSEI32(int i) :m(_mm_set1_epi32(i)) { }
+	INLINE explicit SSEI32(int i) :m(_mm_set1_epi32(i)) { }
 	INLINE SSEI32(int a,int b,int c,int d) :m(_mm_set_epi32(a,b,c,d)) { }
 
 	INLINE const SSEI32 &operator+=(const SSEI32 &v) { m=_mm_add_epi32(m,v.m); return *this; }
@@ -16,6 +16,51 @@ public:
 	INLINE const SSEI32 &operator&=(const SSEI32 &v) { m=_mm_and_si128(m,v.m); return *this; }
 	INLINE const SSEI32 &operator|=(const SSEI32 &v) { m=_mm_or_si128 (m,v.m); return *this; }
 	INLINE const SSEI32 &operator^=(const SSEI32 &v) { m=_mm_xor_si128(m,v.m); return *this; }
+	INLINE const SSEI32 &operator<<=(const SSEI32 &v) { m=_mm_sll_epi32(m,v.m); return *this; }
+	INLINE const SSEI32 &operator>>=(const SSEI32 &v) { m=_mm_sra_epi32(m,v.m); return *this; }
+	INLINE const SSEI32 &operator<<=(int i) { m=_mm_sra_epi32(m,SSEI32(-i).m); return *this; }
+	INLINE const SSEI32 &operator>>=(int i) { m=_mm_sra_epi32(m,SSEI32(i).m); return *this; }
+
+	INLINE const SSEI32 &operator*=(const SSEI32 &v) {
+//		int *a=(int*)&m,*b=(int*)&v.m;
+//		a[0]*=b[0]; a[1]*=b[1]; a[2]*=b[2]; a[3]*=b[3];
+
+		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
+		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
+		a0=_mm_mul_pd(a0,b0); a1=_mm_mul_pd(a1,b1);
+		m=_mm_castps_si128(		_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
+												_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64));
+		return *this;
+	}
+	INLINE const SSEI32 &operator/=(const SSEI32 &v) {
+//		int *a=(int*)&m,*b=(int*)&v.m;
+//		a[0]/=b[0]; a[1]/=b[1]; a[2]/=b[2]; a[3]/=b[3];
+
+		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
+		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
+		a0=_mm_div_pd(a0,b0); a1=_mm_div_pd(a1,b1);
+		m=_mm_castps_si128(		_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
+												_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64));
+
+		return *this;
+	}
+	INLINE const SSEI32 &operator%=(const SSEI32 &v) {
+//		int *a=(int*)&m,*b=(int*)&v.m;
+//		a[0]%=b[0]; a[1]%=b[1]; a[2]%=b[2]; a[3]%=b[3];
+
+		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
+		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
+		a0=_mm_div_pd(a0,b0); a1=_mm_div_pd(a1,b1);
+
+		a0=_mm_cvtepi32_pd(_mm_cvttpd_epi32(a0));
+		a1=_mm_cvtepi32_pd(_mm_cvttpd_epi32(a1));
+
+		a0=_mm_mul_pd(a0,b0); a1=_mm_mul_pd(a1,b1);
+
+		m=_mm_sub_epi32(m,	_mm_castps_si128(	_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
+																_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64)));
+
+	}
 
 #undef GEN_SOP
 
@@ -26,22 +71,41 @@ public:
 	__m128i m;
 };
 
-INLINE SSEI32 operator+(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out+=b; return a; }
-INLINE SSEI32 operator-(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out-=b; return a; }
-INLINE SSEI32 operator&(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out&=b; return a; }
-INLINE SSEI32 operator|(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out|=b; return a; }
-INLINE SSEI32 operator^(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out^=b; return a; }
+INLINE SSEI32 operator+(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out+=b; return out; }
+INLINE SSEI32 operator-(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out-=b; return out; }
+INLINE SSEI32 operator*(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out*=b; return out; }
+INLINE SSEI32 operator/(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out/=b; return out; }
+INLINE SSEI32 operator%(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out%=b; return out; }
+INLINE SSEI32 operator&(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out&=b; return out; }
+INLINE SSEI32 operator|(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out|=b; return out; }
+INLINE SSEI32 operator^(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out^=b; return out; }
+INLINE SSEI32 operator<<(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out<<=b; return out; }
+INLINE SSEI32 operator>>(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(a); out>>=b; return out; }
 
 template <int bits>
 INLINE SSEI32 Shl(const SSEI32 &in) { SSEI32 out(_mm_slli_epi32(in.m,bits)); return out; }
 template <int bits>
 INLINE SSEI32 Shr(const SSEI32 &in) { SSEI32 out(_mm_srli_epi32(in.m,bits)); return out; }
-INLINE SSEI32 Shl(const SSEI32 &in,const SSEI32 &bits) { SSEI32 out(_mm_sll_epi32(in.m,bits.m)); return out; }
-INLINE SSEI32 Shr(const SSEI32 &in,const SSEI32 &bits) { SSEI32 out(_mm_srl_epi32(in.m,bits.m)); return out; }
 
 INLINE SSEI32 operator||(const SSEI32 &a,const SSEI32 &b) { return a|b; }
 INLINE SSEI32 operator&&(const SSEI32 &a,const SSEI32 &b) { return a&b; }
+
 INLINE SSEI32 AndNot(const SSEI32 &a,const SSEI32 &b) { return _mm_andnot_si128(a.m,b.m); }
+
+// Correct up to 23 bits
+INLINE SSEI32 FastMul(const SSEI32 &ta,const SSEI32 &tb) {
+	SSEI32 out;
+	__m128 a=_mm_cvtepi32_ps(ta.m),b=_mm_cvtepi32_ps(tb.m);
+	out.m=_mm_cvttps_epi32(_mm_mul_ps(a,b));
+	return out;
+}
+// Correct up to 23 bits
+INLINE SSEI32 FastDiv(const SSEI32 &ta,const SSEI32 &tb) {
+	SSEI32 out;
+	__m128 a=_mm_cvtepi32_ps(ta.m),b=_mm_cvtepi32_ps(tb.m);
+	out.m=_mm_cvttps_epi32(_mm_div_ps(a,b));
+	return out;
+}
 
 INLINE SSEI32 operator!=(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(_mm_andnot_si128(_mm_cmpeq_epi32(a.m,b.m),_mm_set1_epi32(~0))); return out; }
 INLINE SSEI32 operator==(const SSEI32 &a,const SSEI32 &b) { SSEI32 out(_mm_cmpeq_epi32(a.m,b.m)); return out; }
@@ -57,12 +121,8 @@ INLINE SSEI32 Condition(const SSEI32 &test,const SSEI32 &v1) {
     return _mm_and_si128(test.m,v1.m);
 }
 
-INLINE bool ForAny(const SSEI32 &test) {
-	return _mm_movemask_epi8(test.m)?1:0;
-}
-INLINE bool ForAll(const SSEI32 &test) {
-	return _mm_movemask_epi8(test.m)==0xffff?1:0;
-}
+INLINE bool ForAny(const SSEI32 &test) { return _mm_movemask_epi8(test.m)?1:0; }
+INLINE bool ForAll(const SSEI32 &test) { return _mm_movemask_epi8(test.m)==0xffff?1:0; }
 INLINE int ForWhich(const SSEI32 &test) {
 	int mask=_mm_movemask_epi8(test.m);
 	return ((mask&0x000f)?1:0)|((mask&0x00f0)?2:0)|((mask&0x0f00)?4:0)|((mask&0xf000)?8:0);

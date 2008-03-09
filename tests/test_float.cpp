@@ -114,23 +114,5 @@ int main()
 
 	printf(out?"All OK\n":"Errors Encountered\n");
 
-	/*
-	Matrix<Vec4<float> > blah;
-	blah=Identity<Vec4<float> >()*RotateX(20)*RotateY(30);
-	printf("%f %f %f\n",blah.X().X(),blah.Y().Z(),blah.Z().X());
-
-	SSEPVec3 vec1(1,2,3),vec2(4,5,6);
-	printf("%f\n",vec1|vec2); */
-
-	/*
-	SSEI32 v1,v2;
-	int t[4]={-10,-2,300000,400000},v[4]={-1,1,20000,1000000};
-	Convert(t,v1); Convert(v,v2);
-
-	SSEI32 tv;
-	tv=v1>=v2; Convert(Condition(tv,v1,v2),t); printf("%d %d %d %d %04x\n",t[0],t[1],t[2],t[3],ForWhich(tv));
-	tv=v1<=v2; Convert(Condition(tv,v1,v2),t); printf("%d %d %d %d %04x\n",t[0],t[1],t[2],t[3],ForWhich(tv));
-	*/
-
 	return 0;
 }
