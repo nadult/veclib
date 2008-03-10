@@ -27,6 +27,7 @@ public:
 		return *this; \
 	}
 
+
 	GEN_OP(+=)
 	GEN_OP(-=)
 	GEN_OP(*=)
@@ -95,15 +96,9 @@ GEN_SCL_OP(/,/=)
 #undef GEN_SCL_OP
 
 template <class base,class GenericVec>
-INLINE base operator|(const Vec2<base> &a,const GenericVec &b) {
-	base out=a.X()*b.X()+a.Y()*b.Y();
-	return out;
-}
+INLINE base operator|(const Vec2<base> &a,const GenericVec &b) { return a.X()*b.X()+a.Y()*b.Y(); }
 template <class base>
-INLINE base Sum(const Vec2<base> &v) {
-	base out=v.X()+v.Y();
-	return out;
-}
+INLINE base Sum(const Vec2<base> &v) { return v.X()+v.Y(); }
 
 #define GEN_UNARY(name) \
 	template <class base> \
@@ -135,23 +130,14 @@ GEN_BINARY(Min)
 #undef GEN_UNARY
 #undef GEN_BINARY
 
-template <class base>
-base Length(const Vec2<base> &v) {
-	return Sqrt(v|v);
-}
+template <class base> base Length(const Vec2<base> &v) { return Sqrt(v|v); }
 
-template <class base>
-INLINE Vec2<base> Condition(bool expr,const Vec2<base> &a,const Vec2<base> &b) {
-	return expr?a:b;
-}
-template <class base>
-INLINE Vec2<base> Condition(bool expr,const Vec2<base> &v) {
-	return expr?v:Vec2<base>(Const<base,0>());
-}
+template <class base> INLINE Vec2<base> Condition(const typename Vec2<base>::TBool &expr,const Vec2<base> &a,const Vec2<base> &b)
+	{ return out( Condition(expr,a.X(),b.X()),Condition(expr,a.Y(),b.Y()) ); }
+template <class base> INLINE Vec2<base> Condition(const typename Vec2<base>::TBool &expr,const Vec2<base> &v)
+	{ return out( Condition(expr,v.X()),Condition(expr,v.Y()) ); }
 
-template<class base>
-INLINE void Convert(const Vec2<base> &in,Vec2<base> &out) {
-	out=in;
-}
+template <> INLINE Vec2<float> Condition(const bool &expr,const Vec2<float> &a,const Vec2<float> &b) { return expr?a:b; }
+template <> INLINE Vec2<float> Condition(const bool &expr,const Vec2<float> &a) { return expr?a:Vec2<float>(0.0f,0.0f); }
 
 #endif

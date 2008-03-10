@@ -3,60 +3,59 @@
 
 #include "sse.h"
 #include "ssereal.h"
-#include "ssemask.h"
 #include "vec4.h"
 
 typedef Vec2<SSEReal> SSEVec2;
 typedef Vec3<SSEReal> SSEVec3;
 typedef Vec4<SSEReal> SSEVec4;
 
-INLINE SSEVec2 Condition(const SSEMask &test,const SSEVec2 &v1,const SSEVec2 &v2) {
+INLINE SSEVec2 Condition(const SSERealMask &test,const SSEVec2 &v1,const SSEVec2 &v2) {
 	SSEVec2 out;
 	out.X() = Condition(test,v1.X(),v2.X());
 	out.Y() = Condition(test,v1.Y(),v2.Y());
 	return out;
 }
-INLINE SSEVec2 Condition(const SSEMaskNeg &test,const SSEVec2 &v1,const SSEVec2 &v2) {
+INLINE SSEVec2 Condition(const SSERealMaskNeg &test,const SSEVec2 &v1,const SSEVec2 &v2) {
 	SSEVec2 out;
 	out.X() = Condition(test,v1.X(),v2.X());
 	out.Y() = Condition(test,v1.Y(),v2.Y());
 	return out;
 }
-INLINE SSEVec2 Condition(const SSEMask &test,const SSEVec2 &v1) {
+INLINE SSEVec2 Condition(const SSERealMask &test,const SSEVec2 &v1) {
 	SSEVec2 out;
 	out.X() = Condition(test,v1.X());
 	out.Y() = Condition(test,v1.Y());
 	return out;
 }
-INLINE SSEVec2 Condition(const SSEMaskNeg &test,const SSEVec2 &v1) {
+INLINE SSEVec2 Condition(const SSERealMaskNeg &test,const SSEVec2 &v1) {
 	SSEVec2 out;
 	out.X() = Condition(test,v1.X());
 	out.Y() = Condition(test,v1.Y());
 	return out;
 }
 
-INLINE SSEVec3 Condition(const SSEMask &test,const SSEVec3 &v1,const SSEVec3 &v2) {
+INLINE SSEVec3 Condition(const SSERealMask &test,const SSEVec3 &v1,const SSEVec3 &v2) {
 	SSEVec3 out;
 	out.X() = Condition(test,v1.X(),v2.X());
 	out.Y() = Condition(test,v1.Y(),v2.Y());
 	out.Z() = Condition(test,v1.Z(),v2.Z());
 	return out;
 }
-INLINE SSEVec3 Condition(const SSEMaskNeg &test,const SSEVec3 &v1,const SSEVec3 &v2) {
+INLINE SSEVec3 Condition(const SSERealMaskNeg &test,const SSEVec3 &v1,const SSEVec3 &v2) {
 	SSEVec3 out;
 	out.X() = Condition(test,v1.X(),v2.X());
 	out.Y() = Condition(test,v1.Y(),v2.Y());
 	out.Z() = Condition(test,v1.Z(),v2.Z());
 	return out;
 }
-INLINE SSEVec3 Condition(const SSEMask &test,const SSEVec3 &v1) {
+INLINE SSEVec3 Condition(const SSERealMask &test,const SSEVec3 &v1) {
 	SSEVec3 out;
 	out.X() = Condition(test,v1.X());
 	out.Y() = Condition(test,v1.Y());
 	out.Z() = Condition(test,v1.Z());
 	return out;
 }
-INLINE SSEVec3 Condition(const SSEMaskNeg &test,const SSEVec3 &v1) {
+INLINE SSEVec3 Condition(const SSERealMaskNeg &test,const SSEVec3 &v1) {
 	SSEVec3 out;
 	out.X() = Condition(test,v1.X());
 	out.Y() = Condition(test,v1.Y());
@@ -64,7 +63,7 @@ INLINE SSEVec3 Condition(const SSEMaskNeg &test,const SSEVec3 &v1) {
 	return out;
 }
 
-INLINE SSEVec4 Condition(const SSEMask &test,const SSEVec4 &v1,const SSEVec4 &v2) {
+INLINE SSEVec4 Condition(const SSERealMask &test,const SSEVec4 &v1,const SSEVec4 &v2) {
 	SSEVec4 out;
 	out.X() = Condition(test,v1.X(),v2.X());
 	out.Y() = Condition(test,v1.Y(),v2.Y());
@@ -72,7 +71,7 @@ INLINE SSEVec4 Condition(const SSEMask &test,const SSEVec4 &v1,const SSEVec4 &v2
 	out.W() = Condition(test,v1.W(),v2.W());
 	return out;
 }
-INLINE SSEVec4 Condition(const SSEMaskNeg &test,const SSEVec4 &v1,const SSEVec4 &v2) {
+INLINE SSEVec4 Condition(const SSERealMaskNeg &test,const SSEVec4 &v1,const SSEVec4 &v2) {
 	SSEVec4 out;
 	out.X() = Condition(test,v1.X(),v2.X());
 	out.Y() = Condition(test,v1.Y(),v2.Y());
@@ -80,7 +79,7 @@ INLINE SSEVec4 Condition(const SSEMaskNeg &test,const SSEVec4 &v1,const SSEVec4 
 	out.W() = Condition(test,v1.W(),v2.W());
 	return out;
 }
-INLINE SSEVec4 Condition(const SSEMask &test,const SSEVec4 &v1) {
+INLINE SSEVec4 Condition(const SSERealMask &test,const SSEVec4 &v1) {
 	SSEVec4 out;
 	out.X() = Condition(test,v1.X());
 	out.Y() = Condition(test,v1.Y());
@@ -88,7 +87,7 @@ INLINE SSEVec4 Condition(const SSEMask &test,const SSEVec4 &v1) {
 	out.W() = Condition(test,v1.W());
 	return out;
 }
-INLINE SSEVec4 Condition(const SSEMaskNeg &test,const SSEVec4 &v1) {
+INLINE SSEVec4 Condition(const SSERealMaskNeg &test,const SSEVec4 &v1) {
 	SSEVec4 out;
 	out.X() = Condition(test,v1.X());
 	out.Y() = Condition(test,v1.Y());

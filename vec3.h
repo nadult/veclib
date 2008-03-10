@@ -144,23 +144,15 @@ GEN_BINARY(Min)
 #undef GEN_UNARY
 #undef GEN_BINARY
 
-template <class base>
-base Length(const Vec3<base> &v) {
-	return Sqrt(v|v);
-}
+template <class base> base Length(const Vec3<base> &v) { return Sqrt(v|v); }
 
-template <class base>
-INLINE Vec3<base> Condition(bool expr,const Vec3<base> &a,const Vec3<base> &b) {
-	return expr?a:b;
-}
-template <class base>
-INLINE Vec3<base> Condition(bool expr,const Vec3<base> &v) {
-	return expr?v:Vec3<base>(Const<base,0>());
-}
+template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &a,const Vec3<base> &b)
+	{ return out( Condition(expr,a.X(),b.X()),Condition(expr,a.Y(),b.Y()),Condition(expr,a.Z(),b.Z()) ); }
+template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &v)
+	{ return out( Condition(expr,v.X()),Condition(expr,v.Y(),Condition(expr,v.Z())) ); }
 
-template<class base>
-INLINE void Convert(const Vec3<base> &in,Vec3<base> &out) {
-	out=in;
-}
+template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a,const Vec3<float> &b) { return expr?a:b; }
+template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a) { return expr?a:Vec3<float>(0.0f,0.0f,0.0f); }
 
 #endif
+

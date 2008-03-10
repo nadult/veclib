@@ -2,6 +2,7 @@
 #define VECLIB_SSEINT_H
 
 #include "vecbase.h"
+#include "ssereal.h"
 
 class SSEI32
 {
@@ -22,9 +23,6 @@ public:
 	INLINE const SSEI32 &operator>>=(int i) { m=_mm_sra_epi32(m,SSEI32(i).m); return *this; }
 
 	INLINE const SSEI32 &operator*=(const SSEI32 &v) {
-//		int *a=(int*)&m,*b=(int*)&v.m;
-//		a[0]*=b[0]; a[1]*=b[1]; a[2]*=b[2]; a[3]*=b[3];
-
 		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
 		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
 		a0=_mm_mul_pd(a0,b0); a1=_mm_mul_pd(a1,b1);
@@ -33,9 +31,6 @@ public:
 		return *this;
 	}
 	INLINE const SSEI32 &operator/=(const SSEI32 &v) {
-//		int *a=(int*)&m,*b=(int*)&v.m;
-//		a[0]/=b[0]; a[1]/=b[1]; a[2]/=b[2]; a[3]/=b[3];
-
 		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
 		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
 		a0=_mm_div_pd(a0,b0); a1=_mm_div_pd(a1,b1);
@@ -45,9 +40,6 @@ public:
 		return *this;
 	}
 	INLINE const SSEI32 &operator%=(const SSEI32 &v) {
-//		int *a=(int*)&m,*b=(int*)&v.m;
-//		a[0]%=b[0]; a[1]%=b[1]; a[2]%=b[2]; a[3]%=b[3];
-
 		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
 		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
 		a0=_mm_div_pd(a0,b0); a1=_mm_div_pd(a1,b1);
@@ -61,8 +53,6 @@ public:
 																_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64)));
 
 	}
-
-#undef GEN_SOP
 
 	INLINE SSEI32 operator-() const { return _mm_sub_epi32(_mm_setzero_si128(),m); }
 	INLINE SSEI32 operator~() const { return _mm_andnot_si128(m,_mm_set1_epi32(~0)); }
@@ -174,6 +164,10 @@ INLINE void Convert(const SSEI32 &in,int &outX,int &outY,int &outZ,int &outW) {
 	outX=p[0]; outY=p[1]; outZ=p[2]; outW=p[3];
 }
 
+INLINE void Cast(const SSEI32 &src,SSEReal &dst) { dst.m=_mm_castsi128_ps(src.m); }
+INLINE void Cast(const SSEI32 &src,SSERealMask &dst) { dst.m=_mm_castsi128_ps(src.m); }
+INLINE void Cast(const SSEReal &src,SSEI32 &dst) { dst.m=_mm_castps_si128(src.m); }
+INLINE void Cast(const SSERealMask &src,SSEI32 &dst) { dst.m=_mm_castps_si128(src.m); }
 
 #endif
 

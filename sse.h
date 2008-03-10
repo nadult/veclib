@@ -6,12 +6,12 @@
 template <int m,int n=1>
 struct SSEFloatConst { static const __m128 value; };
 template <u32 mask>
-struct SSEMaskConst { static const __m128 value; };
+struct SSERealMaskConst { static const __m128 value; };
 
 template<int m,int n>
 const __m128 SSEFloatConst<m,n>::value=_mm_set1_ps(float(m)/float(n));
 template <u32 mask>
-const __m128 SSEMaskConst<mask>::value=_mm_set1_ps(UValue(mask).f);
+const __m128 SSERealMaskConst<mask>::value=_mm_set1_ps(UValue(mask).f);
 
 template <uint mask>
 __m128 _mm_shuffle_(const __m128 &v) {
@@ -118,7 +118,7 @@ INLINE __m128 _mm_nrrsqrt_ps(const __m128 &v) {
 }
 
 INLINE __m128 _mm_bool2mask(bool v) {
-	static const __m128 tab[2]={SSEMaskConst<0>::value,SSEMaskConst<0xffffffff>::value};
+	static const __m128 tab[2]={SSERealMaskConst<0>::value,SSERealMaskConst<0xffffffff>::value};
 	return tab[v?1:0];
 }
 

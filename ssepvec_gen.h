@@ -41,8 +41,6 @@ public:
 	}
 
 	ADDITIONAL_CLASS_CODE
-
-	__m128 m;
 };
 
 
@@ -99,6 +97,6 @@ INLINE CLASS_NAME Condition(bool test_,const CLASS_NAME &v1) {
 }
 
 INLINE CLASS_NAME Abs(const CLASS_NAME &v) {
-	return _mm_and_ps(SSEMaskConst<0x7fffffff>::value,v.m);
+	return _mm_and_ps(SSERealMaskConst<0x7fffffff>::value,v.m);
 }
 

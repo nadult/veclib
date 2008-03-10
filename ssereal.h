@@ -2,32 +2,25 @@
 #define VECLIB_SSEREAL_H
 
 #include "sse.h"
-#include "ssemask.h"
+
+
+class SSERealMask;
+class SSERealMaskNeg;
 
 class SSEReal
 {
 public:
 	INLINE SSEReal() { }
 	INLINE SSEReal(const __m128 &v) :m(v) { }
-    INLINE SSEReal(float a,float b,float c,float d) :m(_mm_set_ps(a,b,c,d)) { } \
+    INLINE SSEReal(float a,float b,float c,float d) :m(_mm_set_ps(a,b,c,d)) { }
 	INLINE SSEReal(float v) :m(_mm_set1_ps(v)) { }
 
-#define GEN_SOP(sop,mmname) \
-	INLINE const SSEReal &operator sop(const SSEReal &v) { \
-		m=mmname(m,v.m); \
-		return *this; \
-	}
+	INLINE const SSEReal &operator+=(const SSEReal &v) { m=_mm_add_ps(m,v.m); return *this; }
+	INLINE const SSEReal &operator-=(const SSEReal &v) { m=_mm_sub_ps(m,v.m); return *this; }
+	INLINE const SSEReal &operator*=(const SSEReal &v) { m=_mm_mul_ps(m,v.m); return *this; }
+	INLINE const SSEReal &operator/=(const SSEReal &v) { m=_mm_div_ps(m,v.m); return *this; }
 
-	GEN_SOP(+=,_mm_add_ps)
-	GEN_SOP(-=,_mm_sub_ps)
-	GEN_SOP(*=,_mm_mul_ps)
-	GEN_SOP(/=,_mm_div_ps)
-
-#undef GEN_SOP
-
-	INLINE SSEReal operator-() const {
-		return _mm_sub_ps(_mm_setzero_ps(),m);
-	}
+	INLINE SSEReal operator-() const { return _mm_sub_ps(_mm_setzero_ps(),m); }
 
 	__m128 m;
 };
@@ -35,12 +28,65 @@ public:
 template <int m,int n>
 struct CConst<SSEReal,m,n> { static SSEReal Value() { return SSEReal(SSEFloatConst<m,n>::value); } };
 
-INLINE SSEMask operator ==(const SSEReal &a,const SSEReal &b) { return _mm_cmpeq_ps(a.m,b.m); }
-INLINE SSEMask operator !=(const SSEReal &a,const SSEReal &b) { return _mm_cmpneq_ps(a.m,b.m); }
-INLINE SSEMask operator <=(const SSEReal &a,const SSEReal &b) { return _mm_cmple_ps(a.m,b.m); }
-INLINE SSEMask operator >=(const SSEReal &a,const SSEReal &b) { return _mm_cmpge_ps(a.m,b.m); }
-INLINE SSEMask operator < (const SSEReal &a,const SSEReal &b) { return _mm_cmplt_ps(a.m,b.m); }
-INLINE SSEMask operator > (const SSEReal &a,const SSEReal &b) { return _mm_cmpgt_ps(a.m,b.m); }
+class SSERealMask
+{
+public:
+	INLINE SSERealMask() { }
+	INLINE SSERealMask(const __m128 &v) :m(v) { }
+
+	INLINE SSERealMask operator^(const SSERealMask &v) const	{ return _mm_xor_ps(m,v.m); }
+	INLINE SSERealMask operator&&(const SSERealMask &v) const	{ return _mm_and_ps(m,v.m); }
+	INLINE SSERealMask operator||(const SSERealMask &v) const	{ return _mm_or_ps(m,v.m); }
+
+	__m128 m;
+};
+
+template <bool v>
+struct CBConst<SSERealMask,v> { static SSERealMask Value() { return SSERealMask(SSERealMaskConst<v?0xffffffff:0>::value); } };
+
+class SSERealMaskNeg
+{
+public:
+	INLINE SSERealMaskNeg operator^(const SSERealMask &v) const		{ return _mm_xor_ps(m,v.m); }
+	INLINE SSERealMask operator^(const SSERealMaskNeg &v) const		{ return _mm_xor_ps(m,v.m); }
+	INLINE SSERealMask operator!() const							{ return SSERealMask(m); }
+
+	INLINE SSERealMask operator&&(const SSERealMask &v) const		{ return _mm_andnot_ps(m,v.m); }
+	INLINE SSERealMaskNeg operator&&(const SSERealMaskNeg &v) const	{ return _mm_or_ps(m,v.m); }
+
+	INLINE SSERealMaskNeg operator||(const SSERealMaskNeg &v) const	{ return _mm_and_ps(m,v.m); }
+	INLINE SSERealMask operator||(const SSERealMask &v) const		{ return _mm_or_ps(_mm_andnot_ps(m,SSERealMaskConst<0xffffffff>::value),v.m); }
+	operator SSERealMask() const									{ return _mm_andnot_ps(m,SSERealMaskConst<0xffffffff>::value); }
+
+	const __m128 &NegM() const { return m; }
+private:
+	INLINE SSERealMaskNeg(const __m128 &v) :m(v) { }
+	friend SSERealMaskNeg operator!(const SSERealMask&);
+	friend SSERealMaskNeg operator^(const SSERealMask&,const SSERealMaskNeg&);
+
+	// To access it you have to
+	// convert to SSERealMask first
+	__m128 m;
+};
+
+INLINE SSERealMaskNeg operator!(const SSERealMask &v)							{ return SSERealMaskNeg(v.m); }
+INLINE SSERealMaskNeg operator^(const SSERealMask &a,const SSERealMaskNeg &b)	{ return SSERealMaskNeg(_mm_xor_ps(a.m,b.NegM())); }
+INLINE SSERealMask operator&&(const SSERealMask &a,const SSERealMaskNeg &b)		{ return _mm_andnot_ps(b.NegM(),a.m); }
+INLINE SSERealMask operator||(const SSERealMask &a,const SSERealMaskNeg &b)
+	{ return _mm_or_ps(a.m,_mm_andnot_ps(b.NegM(),SSERealMaskConst<0xffffffff>::value)); }
+
+INLINE bool ForAny(const SSERealMask &v) { return _mm_movemask_ps(v.m)?1:0; }
+INLINE bool ForAll(const SSERealMask &v) { return _mm_movemask_ps(v.m)==15; }
+INLINE int ForWhich(const SSERealMask &v) { return _mm_movemask_ps(v.m); }
+
+
+
+INLINE SSERealMask operator ==(const SSEReal &a,const SSEReal &b) { return _mm_cmpeq_ps(a.m,b.m); }
+INLINE SSERealMask operator !=(const SSEReal &a,const SSEReal &b) { return _mm_cmpneq_ps(a.m,b.m); }
+INLINE SSERealMask operator <=(const SSEReal &a,const SSEReal &b) { return _mm_cmple_ps(a.m,b.m); }
+INLINE SSERealMask operator >=(const SSEReal &a,const SSEReal &b) { return _mm_cmpge_ps(a.m,b.m); }
+INLINE SSERealMask operator < (const SSEReal &a,const SSEReal &b) { return _mm_cmplt_ps(a.m,b.m); }
+INLINE SSERealMask operator > (const SSEReal &a,const SSEReal &b) { return _mm_cmpgt_ps(a.m,b.m); }
 
 INLINE SSEReal operator+(const SSEReal &a,const SSEReal &b) { SSEReal out(a); out+=b; return out; }
 INLINE SSEReal operator-(const SSEReal &a,const SSEReal &b) { SSEReal out(a); out-=b; return out; }
@@ -54,35 +100,35 @@ INLINE SSEReal FastInv	(const SSEReal &v) { return _mm_rcp_ps(v.m); }
 INLINE SSEReal FastRSqrt(const SSEReal &v) { return _mm_rsqrt_ps(v.m); }
 
 
-INLINE SSEReal Abs(const SSEReal &v)					{ return _mm_and_ps(SSEMaskConst<0x7fffffff>::value,v.m); }
+INLINE SSEReal Abs(const SSEReal &v)					{ return _mm_and_ps(SSERealMaskConst<0x7fffffff>::value,v.m); }
 INLINE SSEReal Min(const SSEReal &a,const SSEReal &b)	{ return _mm_min_ps(a.m,b.m); }
 INLINE SSEReal Max(const SSEReal &a,const SSEReal &b)	{ return _mm_max_ps(a.m,b.m); }
 INLINE int SignMask(const SSEReal &v)					{ return _mm_movemask_ps(v.m); }
 
-INLINE SSEReal Condition(const SSEMask &test,const SSEReal &v1,const SSEReal &v2) {
+INLINE SSEReal Condition(const SSERealMask &test,const SSEReal &v1,const SSEReal &v2) {
 	return _mm_or_ps(_mm_and_ps(test.m,v1.m),_mm_andnot_ps(test.m,v2.m));
 }
-INLINE SSEReal Condition(const SSEMaskNeg &test,const SSEReal &v1,const SSEReal &v2) {
+INLINE SSEReal Condition(const SSERealMaskNeg &test,const SSEReal &v1,const SSEReal &v2) {
 	return _mm_or_ps(_mm_andnot_ps(test.NegM(),v1.m),_mm_and_ps(test.NegM(),v2.m));
 }
-INLINE SSEReal Condition(const SSEMask &test,const SSEReal &v1) {
+INLINE SSEReal Condition(const SSERealMask &test,const SSEReal &v1) {
 	return _mm_and_ps(test.m,v1.m);
 }
-INLINE SSEReal Condition(const SSEMaskNeg &test,const SSEReal &v1) {
+INLINE SSEReal Condition(const SSERealMaskNeg &test,const SSEReal &v1) {
 	return _mm_andnot_ps(test.NegM(),v1.m);
 }
 
 template <>
 struct ScalarInfo<SSEReal> {
 	enum { multiplicity=4, floatingPoint=1 };
-	typedef SSEMask TBool;
+	typedef SSERealMask TBool;
 
-	INLINE static SSEMask ElementMask(int n) {
-		static SSEMask elems[4]={
-			SSEMask(_mm_set_ps(UValue(0).f,UValue(0).f,UValue(0).f,UValue(0xffffffff).f)),
-			SSEMask(_mm_set_ps(UValue(0).f,UValue(0).f,UValue(0xffffffff).f,UValue(0).f)),
-			SSEMask(_mm_set_ps(UValue(0).f,UValue(0xffffffff).f,UValue(0).f,UValue(0).f)),
-			SSEMask(_mm_set_ps(UValue(0xffffffff).f,UValue(0).f,UValue(0).f,UValue(0).f)),
+	INLINE static SSERealMask ElementMask(int n) {
+		static SSERealMask elems[4]={
+			SSERealMask(_mm_set_ps(UValue(0).f,UValue(0).f,UValue(0).f,UValue(0xffffffff).f)),
+			SSERealMask(_mm_set_ps(UValue(0).f,UValue(0).f,UValue(0xffffffff).f,UValue(0).f)),
+			SSERealMask(_mm_set_ps(UValue(0).f,UValue(0xffffffff).f,UValue(0).f,UValue(0).f)),
+			SSERealMask(_mm_set_ps(UValue(0xffffffff).f,UValue(0).f,UValue(0).f,UValue(0).f)),
 		};
 
 		return elems[n];

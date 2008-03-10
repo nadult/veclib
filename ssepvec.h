@@ -21,7 +21,8 @@ class SSEPVec4;
 	INLINE SSEPVec2(float x,float y) { m=_mm_load2(x,y); } \
 	INLINE float X() const { return ((float*)&m)[0]; } \
 	INLINE float Y() const { return ((float*)&m)[1]; } \
-	INLINE operator SSEVec2() const { SSEVec2 out; out=SSEVec2(SSEReal(X()),SSEReal(Y())); return out; }
+	INLINE operator SSEVec2() const { SSEVec2 out; out=SSEVec2(SSEReal(X()),SSEReal(Y())); return out; } \
+	union { __m128 m; struct { float x,y; }; };
 
 
 #include "ssepvec_gen.h"
@@ -37,7 +38,8 @@ class SSEPVec4;
 	INLINE float X() const { return ((float*)&m)[0]; } \
 	INLINE float Y() const { return ((float*)&m)[1]; } \
 	INLINE float Z() const { return ((float*)&m)[2]; } \
-	INLINE operator SSEVec3() const { SSEVec3 out; out=SSEVec3(SSEReal(X()),SSEReal(Y()),SSEReal(Z())); return out; }
+	INLINE operator SSEVec3() const { SSEVec3 out; out=SSEVec3(SSEReal(X()),SSEReal(Y()),SSEReal(Z())); return out; } \
+	union { __m128 m; struct { float x,y,z; }; };
 
 #include "ssepvec_gen.h"
 
@@ -56,7 +58,8 @@ class SSEPVec4;
 	INLINE float Y() const { return ((float*)&m)[1]; } \
 	INLINE float Z() const { return ((float*)&m)[2]; } \
 	INLINE float W() const { return ((float*)&m)[3]; } \
-	INLINE operator SSEVec4() const { SSEVec4 out; out=SSEVec4(SSEReal(X()),SSEReal(Y()),SSEReal(Z()),SSEReal(W())); return out; }
+	INLINE operator SSEVec4() const { SSEVec4 out; out=SSEVec4(SSEReal(X()),SSEReal(Y()),SSEReal(Z()),SSEReal(W())); return out; } \
+	union { __m128 m; struct { float x,y,z,w; }; };
 
 #include "ssepvec_gen.h"
 
