@@ -16,13 +16,13 @@ public:
 	INLINE Vec3(const base arr[3]) :x(arr[0]),y(arr[1]),z(arr[2]) { }
 	INLINE Vec3(const base &tx,const base &ty,const base &tz) :x(tx),y(ty),z(tz) { }
 
-	explicit INLINE Vec3(const Vec2<base>&v) :x(v.X()),y(v.Y()),z(Const<base,0>()) { }
+	explicit INLINE Vec3(const Vec2<base>&v) :x(v.x),y(v.y),z(Const<base,0>()) { }
 	explicit INLINE Vec3(const Vec4<base>&);
 
 #define GEN_OP(op) \
 	template <class GenericVec3> \
 	INLINE const Vec3 &operator op(const GenericVec3 &v) { \
-		x op v.X(); y op v.Y(); z op v.Z(); \
+		x op v.x; y op v.y; z op v.z; \
 		return *this; \
 	}
 
@@ -49,23 +49,14 @@ public:
 		out.z=-z;
 		return out;
 	}
-
-	INLINE base& X() { return x; }
-	INLINE base& Y() { return y; }
-	INLINE base& Z() { return z; }
-	INLINE const base& X() const { return x; }
-	INLINE const base& Y() const { return y; }
-	INLINE const base& Z() const { return z; }
-
-
-//private:
+	
 	base x,y,z;
 };
 
 #include "vec4.h"
 
 template <class base>
-Vec3<base>::Vec3(const Vec4<base> &v) :x(v.X()),y(v.Y()),z(v.Z()) { }
+Vec3<base>::Vec3(const Vec4<base> &v) :x(v.x),y(v.y),z(v.z) { }
 
 #define GEN_OP(op,sop) \
 	template <class base,class GenericVec> \
@@ -95,20 +86,20 @@ GEN_SCL_OP(/,/=)
 
 template <class base,class GenericVec>
 INLINE base operator|(const Vec3<base> &a,const GenericVec &b) {
-	base out=a.X()*b.X()+a.Y()*b.Y()+a.Z()*b.Z();
+	base out=a.x*b.x+a.y*b.y+a.z*b.z;
 	return out;
 }
 template <class base>
 INLINE base Sum(const Vec3<base> &v) {
-	base out=v.X()+v.Y()+v.Z();
+	base out=v.x+v.y+v.z;
 	return out;
 }
 template <class base,class GenericVec>
 INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
 	Vec3<base> out;
-	out.X() = b.Y()*c.Z()-b.Z()*c.Y();
-	out.Y() = b.Z()*c.X()-b.X()*c.Z();
-	out.Z() = b.X()*c.Y()-b.Y()*c.X();
+	out.x = b.y*c.z-b.z*c.y;
+	out.y = b.z*c.x-b.x*c.z;
+	out.z = b.x*c.y-b.y*c.x;
 	return out;
 }
 
@@ -116,43 +107,50 @@ INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
 	template <class base> \
 	INLINE Vec3<base> name(const Vec3<base> &v) { \
 		Vec3<base> out; \
-		out.X() = name(v.X()); \
-		out.Y() = name(v.Y()); \
-		out.Z() = name(v.Z()); \
+		out.x = name(v.x); \
+		out.y = name(v.y); \
+		out.z = name(v.z); \
 		return out; \
 	}
 #define GEN_BINARY(name) \
 	template <class base> \
 	INLINE Vec3<base> name(const Vec3<base> &a,const Vec3<base> &b) { \
 		Vec3<base> out; \
-		out.X() = name(a.X(),b.X()); \
-		out.Y() = name(a.Y(),b.Y()); \
-		out.Z() = name(a.Z(),b.Z()); \
+		out.x = name(a.x,b.x); \
+		out.y = name(a.y,b.y); \
+		out.z = name(a.z,b.z); \
 		return out; \
 	}
 
-GEN_UNARY(Inv)
-GEN_UNARY(Sqrt)
-GEN_UNARY(RSqrt)
-GEN_UNARY(Abs)
-GEN_UNARY(FastInv)
-GEN_UNARY(FastRSqrt)
+GEN_UNARY(VInv)
+GEN_UNARY(VSqrt)
+GEN_UNARY(VRSqrt)
+GEN_UNARY(VAbs)
+GEN_UNARY(VFastInv)
+GEN_UNARY(VFastRSqrt)
 
-GEN_BINARY(Max)
-GEN_BINARY(Min)
+GEN_BINARY(VMax)
+GEN_BINARY(VMin)
 
 #undef GEN_UNARY
 #undef GEN_BINARY
 
-template <class base> base Length(const Vec3<base> &v) { return Sqrt(v|v); }
+template <class base> INLINE base Length(const Vec3<base> &v) { return Sqrt(v|v); }
 
 template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &a,const Vec3<base> &b)
-	{ return out( Condition(expr,a.X(),b.X()),Condition(expr,a.Y(),b.Y()),Condition(expr,a.Z(),b.Z()) ); }
+	{ return Vec3<base>( Condition(expr,a.x,b.x),Condition(expr,a.y,b.y),Condition(expr,a.z,b.z) ); }
 template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &v)
-	{ return out( Condition(expr,v.X()),Condition(expr,v.Y(),Condition(expr,v.Z())) ); }
+	{ return Vec3<base>( Condition(expr,v.x),Condition(expr,v.y,Condition(expr,v.z)) ); }
 
 template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a,const Vec3<float> &b) { return expr?a:b; }
 template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a) { return expr?a:Vec3<float>(0.0f,0.0f,0.0f); }
+
+template <class base1,class base2> INLINE void Convert(const Vec3<base1> &vec,base2 &outX,base2 &outY,base2 &outZ)
+	{ Convert(vec.x,outX); Convert(vec.y,outY); Convert(vec.z,outZ); }
+template <class base1,class base2> INLINE void Convert(const base1 &x,const base1 &y,const base1 &z,Vec3<base2> &out)
+	{ Convert(x,out.x); Convert(y,out.y); Convert(z,out.z); }
+
+
 
 #endif
 

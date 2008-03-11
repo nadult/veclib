@@ -23,7 +23,7 @@ public:
 #define GEN_OP(op) \
 	template <class GenericVec3> \
 	INLINE const Vec2 &operator op(const GenericVec3 &v) { \
-		x op v.X(); y op v.Y(); \
+		x op v.x; y op v.y; \
 		return *this; \
 	}
 
@@ -51,22 +51,15 @@ public:
 		return out;
 	}
 
-	INLINE base& X() { return x; }
-	INLINE base& Y() { return y; }
-	INLINE const base& X() const { return x; }
-	INLINE const base& Y() const { return y; }
-
-
-//private:
 	base x,y;
 };
 
 #include "vec3.h"
 
 template <class base>
-Vec2<base>::Vec2(const Vec3<base> &v) :x(v.X()),y(v.Y()) { }
+Vec2<base>::Vec2(const Vec3<base> &v) :x(v.x),y(v.y) { }
 template <class base>
-Vec2<base>::Vec2(const Vec4<base> &v) :x(v.X()),y(v.Y()) { }
+Vec2<base>::Vec2(const Vec4<base> &v) :x(v.x),y(v.y) { }
 
 
 #define GEN_OP(op,sop) \
@@ -96,48 +89,56 @@ GEN_SCL_OP(/,/=)
 #undef GEN_SCL_OP
 
 template <class base,class GenericVec>
-INLINE base operator|(const Vec2<base> &a,const GenericVec &b) { return a.X()*b.X()+a.Y()*b.Y(); }
+INLINE base operator|(const Vec2<base> &a,const GenericVec &b) { return a.x*b.x+a.y*b.y; }
 template <class base>
-INLINE base Sum(const Vec2<base> &v) { return v.X()+v.Y(); }
+INLINE base Sum(const Vec2<base> &v) { return v.x+v.y; }
 
 #define GEN_UNARY(name) \
 	template <class base> \
 	INLINE Vec2<base> name(const Vec2<base> &v) { \
 		Vec2<base> out; \
-		out.X() = name(v.X()); \
-		out.Y() = name(v.Y()); \
+		out.x = name(v.x); \
+		out.y = name(v.y); \
 		return out; \
 	}
 #define GEN_BINARY(name) \
 	template <class base> \
 	INLINE Vec2<base> name(const Vec2<base> &a,const Vec2<base> &b) { \
 		Vec2<base> out; \
-		out.X() = name(a.X(),b.X()); \
-		out.Y() = name(a.Y(),b.Y()); \
+		out.x = name(a.x,b.x); \
+		out.y = name(a.y,b.y); \
 		return out; \
 	}
 
-GEN_UNARY(Inv)
-GEN_UNARY(Sqrt)
-GEN_UNARY(RSqrt)
-GEN_UNARY(Abs)
-GEN_UNARY(FastInv)
-GEN_UNARY(FastRSqrt)
+GEN_UNARY(VInv)
+GEN_UNARY(VSqrt)
+GEN_UNARY(VRSqrt)
+GEN_UNARY(VAbs)
+GEN_UNARY(VFastInv)
+GEN_UNARY(VFastRSqrt)
 
-GEN_BINARY(Max)
-GEN_BINARY(Min)
+GEN_BINARY(VMax)
+GEN_BINARY(VMin)
 
 #undef GEN_UNARY
 #undef GEN_BINARY
 
-template <class base> base Length(const Vec2<base> &v) { return Sqrt(v|v); }
+template <class base> INLINE base Length(const Vec2<base> &v) { return Sqrt(v|v); }
 
 template <class base> INLINE Vec2<base> Condition(const typename Vec2<base>::TBool &expr,const Vec2<base> &a,const Vec2<base> &b)
-	{ return out( Condition(expr,a.X(),b.X()),Condition(expr,a.Y(),b.Y()) ); }
+	{ return Vec2<base>( Condition(expr,a.x,b.x),Condition(expr,a.y,b.y) ); }
 template <class base> INLINE Vec2<base> Condition(const typename Vec2<base>::TBool &expr,const Vec2<base> &v)
-	{ return out( Condition(expr,v.X()),Condition(expr,v.Y()) ); }
+	{ return Vec2<base>( Condition(expr,v.x),Condition(expr,v.y) ); }
 
 template <> INLINE Vec2<float> Condition(const bool &expr,const Vec2<float> &a,const Vec2<float> &b) { return expr?a:b; }
 template <> INLINE Vec2<float> Condition(const bool &expr,const Vec2<float> &a) { return expr?a:Vec2<float>(0.0f,0.0f); }
 
+template <class base1,class base2> INLINE void Convert(const Vec2<base1> &vec,base2 &outX,base2 &outY)
+	{ Convert(vec.x,outX); Convert(vec.y,outY); }
+template <class base1,class base2> INLINE void Convert(const base1 &x,const base1 &y,Vec2<base2> &out)
+	{ Convert(x,out.x); Convert(y,out.y); }
+
+
+
 #endif
+

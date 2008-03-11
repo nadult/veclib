@@ -76,16 +76,7 @@ public:
 		out.w=-w;
 		return out;
 	}
-
-	INLINE vbase& X() { return x; }
-	INLINE vbase& Y() { return y; }
-	INLINE vbase& Z() { return z; }
-	INLINE vbase& W() { return w; }
-	INLINE const vbase& X() const { return x; }
-	INLINE const vbase& Y() const { return y; }
-	INLINE const vbase& Z() const { return z; }
-	INLINE const vbase& W() const { return w; }
-
+	
 	vbase x,y,z,w;
 };
 
@@ -101,30 +92,30 @@ INLINE Matrix<vbase> operator*(const Matrix<vbase> &a,const Matrix<vbase> &b) {
 template <class vbase>
 INLINE Matrix<vbase> Transpose(const Matrix<vbase> &m) {
 	Matrix<vbase> out;
-	out.x=vbase(m.x.X(),m.y.X(),m.z.X(),m.w.X());
-	out.y=vbase(m.x.Y(),m.y.Y(),m.z.Y(),m.w.Y());
-	out.z=vbase(m.x.Z(),m.y.Z(),m.z.Z(),m.w.Z());
-	out.w=vbase(m.x.W(),m.y.W(),m.z.W(),m.w.W());
+	out.x=vbase(m.x.x,m.y.x,m.z.x,m.w.x);
+	out.y=vbase(m.x.y,m.y.y,m.z.y,m.w.y);
+	out.z=vbase(m.x.z,m.y.z,m.z.z,m.w.z);
+	out.w=vbase(m.x.w,m.y.w,m.z.w,m.w.w);
 	return out;
 }
 
 template <class vbase>
 INLINE Vec4<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec4<typename vbase::TScalar> &v) {
 	Vec4<vbase> out;
-	out.X() = m.X()|v;
-	out.Y() = m.Y()|v;
-	out.Z() = m.Z()|v;
-	out.W() = m.W()|v;
+	out.x = m.x|v;
+	out.y = m.y|v;
+	out.z = m.z|v;
+	out.w = m.w|v;
 	return out;
 }
 template <class vbase>
 INLINE Vec3<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec3<typename vbase::TScalar> &v) {
 	Vec3<typename vbase::TScalar> out;
 
-	out.X() = m.X().X()*v.X()+m.X().Y()*v.Y()+m.X().Z()*v.Z();
-	out.Y() = m.Y().X()*v.X()+m.Y().Y()*v.Y()+m.Y().Z()*v.Z();
-	out.Z() = m.Z().X()*v.X()+m.Z().Y()*v.Y()+m.Z().Z()*v.Z();
-	//out *= Inv( Sum(m.W()) );
+	out.x = m.x.x*v.x+m.x.y*v.y+m.x.z*v.z;
+	out.y = m.y.x*v.x+m.y.y*v.y+m.y.z*v.z;
+	out.z = m.z.x*v.x+m.z.y*v.y+m.z.z*v.z;
+	//out *= Inv( Sum(m.w) );
 
 	return out;
 }
@@ -132,9 +123,9 @@ template <class vbase>
 INLINE Vec2<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec2<typename vbase::TScalar> &v) {
 	Vec2<typename vbase::TScalar> out;
 
-	out.X() = m.X().X()*v.X()+m.X().Y()*v.Y();
-	out.Y() = m.Y().X()*v.X()+m.Y().Y()*v.Y();
-	out *= Inv( Sum(m.W()) );
+	out.x = m.x.x*v.x+m.x.y*v.y;
+	out.y = m.y.x*v.x+m.y.y*v.y;
+	out *= Inv( Sum(m.w) );
 
 	return out;
 }
@@ -143,8 +134,8 @@ INLINE Matrix<Vec4<float> > RotateX(float angle) {
 	float c=cos(angle),s=sin(angle);
 	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
 	
-	out.y.Y()=c; out.y.Z()=s;
-	out.z.Y()=-s; out.z.Z()=c;
+	out.y.y=c; out.y.z=s;
+	out.z.y=-s; out.z.z=c;
 	return out;
 }
 
@@ -152,8 +143,8 @@ INLINE Matrix<Vec4<float> > RotateY(float angle) {
 	float c=cos(angle),s=sin(angle);
 	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
 
-	out.x.X()=c; out.x.Z()=s;
-	out.z.X()=-s; out.z.Z()=c;
+	out.x.x=c; out.x.z=s;
+	out.z.x=-s; out.z.z=c;
 	return out;
 }
 
@@ -161,8 +152,8 @@ INLINE Matrix<Vec4<float> > RotateZ(float angle) {
 	float c=cos(angle),s=sin(angle);
 	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
 
-	out.x.X()=c; out.x.Y()=-s;
-	out.y.X()=s; out.y.Y()=c;
+	out.x.x=c; out.x.y=-s;
+	out.y.x=s; out.y.y=c;
 	return out;
 }
 
