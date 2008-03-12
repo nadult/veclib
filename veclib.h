@@ -76,53 +76,92 @@ INLINE u64 Ticks() {
 #endif
 
 /*
-	float			float*2				float*4				float*8				float*16
-	Vec2<float>		Vec2<float>*2		Vec2<float>*4		Vec2<float>*8		Vec2<float>*16
-	Vec3<float>		Vec3<float>*2		Vec3<float>*4		Vec3<float>*8		Vec3<float>*16
-	Vec4<float>		Vec4<float>*2		Vec4<float>*4		Vec4<float>*8		Vec4<float>*16
-	AMatrix
-	Matrix
-
-	float								SSEReal				*** Will be added in the future ***
-	SSEPVec2							SSEVec2				*** At least i hope so ***
-	SSEPVec3							SSEVec3
-	SSEPVec4							SSEVec4				*** Im sure it will, when new processors with
-	SSEPMatrix													x16 simd operations will show up :) ****
-	SSEPAMatrix
-
-	float			floatd				floatq
-	vec2			vec2d				vec2q
 
 
-	i32				i32*2				i32*4
+Basic types -----------------------------------------------------------------------------------
+f32		f64		i8		i16		i32		i64		u8		u16		u32		u64
+bool
 
-										SSEInt
-*/
+Packed types (SSE) ----------------------------------------------------------------------------
+f32x4	f64x2	i8x16	i16x8	i32x4	i64x2	u8x16	u16x8	u32x4	u64x2
 
-/*
+Vector templates ------------------------------------------------------------------------------
+vec2< >
+vec3< >
+vec4< >
 
-Avaliable function:					Equals to:
+Packed vector types (SSE) ---------------------------------------------------------------------
+pvec2f32	pvec2f64
+pvec3f32	pvec3f64
+pvec4f32	pvec4f64
+
+Matrices --------------------------------------------------------------------------------------
+
+Matrix< >
+
+ScalarInfo < Type > gives info about types:
+	::floatingPoint			- false for integer types
+	::multiplicity			- number of sub elements, for example:
+								ScalarInfo< f32x4 >::multiplicity == 4
+	::TBool					- use this type to store boolean information obtained
+								from comparing objects of given Type
+	::ElementMask( n )		- returns mask of type TBool true for selected element
+
+
+Templated functions -------------------------------------------------------------------------------
+
+Clamp ( a, min, max )				returns object a clamped to values min, max
+Lerp ( a, b, x )					linear interpolation of objects a and b; x==0 -> a;  x==1 -> b 
+Swap ( a& , b& )					classic swap
+
+Not vectorized functions:
+
+Sin ( v )
+Cos ( v )
+
+Floating point operations -------------------------------------------------------------------------
 
 + - * /
-Sqrt
-Inv ( v )							1 / v
-RSqrt ( v )							1 / Sqrt ( v )
-FastInv	( v )						~ Inv ( v )
-FastRSqrt ( v )						~ RSqrt ( v )
+Sqrt ( v )
+Inv ( v )					==		1 / v
+RSqrt ( v )					==		1 / Sqrt ( v )
+FastInv	( v )				~=		Inv ( v )
+FastRSqrt ( v )				~=		RSqrt ( v )
 
-Abs
-Min
-Max
+Abs ( v )
+Min ( a , b )
+Max ( a , b )
 
 Condition ( expr, a, b )			if expr then a else b
 Condition ( expr, a )				if expr then a else 0
 
 Convert ( in , out )				Conversion between different scalar / vector formats
 
-Vector operations:
+All of these operations work also on vectors, for example:
+	Vec (x1, y1, z1) * Vec(x2, y2, z2) == Vec(x1*x2, y1*y2, z1*z2)
+
+Additional vector operations ----------------------------------------------------------------------
 |									dot product
 ^									cross product
 Length ( v )						Sqrt ( v|v )
+
+
+Integer operations --------------------------------------------------------------------------------
++ - * / % | & ^ ~
+Abs ( v )
+Max ( a , b )
+Min ( a , b )
+
+
+Technical functions -------------------------------------------------------------------------------
+
+SignMask ( v )						Returns integer with #n bit set when #n element is < 0
+
+ForAny ( e )						| Returns true if expression if true for any / every element,
+ForAll ( e )						| example: if ( ForAll( val1*val2 < val3 ) ) { .. do something .. }
+ForWhich ( e )						similar to SignMask, #n bit is set when expression is true for #n element
+
+u64 Ticks ( )						rdtsc cpu instruction
 
 */
 

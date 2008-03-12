@@ -118,6 +118,19 @@ private:
 	static int TCmpLt(int a,int b) { return a< b?0xffffffff:0; }
 	static int TCmpGt(int a,int b) { return a> b?0xffffffff:0; }
 
+	static int TCond1(int a,int b) { return (a<b)||(b<a)?a:b; }
+	static int TCond2(int a,int b) { return a>=b&&b>=a?a:b; }
+	static int TCond3(int a,int b) { return !(a>b)||!(a<b)?a:b; }
+	static int TCond4(int a,int b) { return !(!(a<b)&&!(a>b))?a:b; }
+	static int TCond5(int a,int b) { return !(a==b)||(a==b)?a:b; }
+	static int TCond6(int a,int b) { bool t=!(a<b); return t?a:b; }
+
+	static int TCond7 (int a,int b) { return (a<=b)^(a>=b)?a:b; }
+	static int TCond8 (int a,int b) { return !(a<b)^(a<=b)?a:b; }
+	static int TCond9 (int a,int b) { return (a<=b)^!(a<b)?a:b; }
+	static int TCond10(int a,int b) { return (!(a<b))^(!(a>b))?a:b; }
+
+
 	static SSEI32 Add(const SSEI32 &a,const SSEI32 &b) { return a+b; }
 	static SSEI32 Sub(const SSEI32 &a,const SSEI32 &b) { return a-b; }
 	static SSEI32 Mul(const SSEI32 &a,const SSEI32 &b) { return a*b; }
@@ -128,12 +141,26 @@ private:
 	static SSEI32 Xor(const SSEI32 &a,const SSEI32 &b) { return a^b; }
 	static SSEI32 Shl(const SSEI32 &a,const SSEI32 &b) { return a<<b; }
 	static SSEI32 Shr(const SSEI32 &a,const SSEI32 &b) { return a>>b; }
-	static SSEI32 CmpEq(const SSEI32 &a,const SSEI32 &b) { return a==b; }
-	static SSEI32 CmpNe(const SSEI32 &a,const SSEI32 &b) { return a!=b; }
-	static SSEI32 CmpLe(const SSEI32 &a,const SSEI32 &b) { return a<=b; }
-	static SSEI32 CmpGe(const SSEI32 &a,const SSEI32 &b) { return a>=b; }
-	static SSEI32 CmpLt(const SSEI32 &a,const SSEI32 &b) { return a< b; }
-	static SSEI32 CmpGt(const SSEI32 &a,const SSEI32 &b) { return a> b; }
+	static SSEI32 CmpEq(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a==b); }
+	static SSEI32 CmpNe(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a!=b); }
+	static SSEI32 CmpLe(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a<=b); }
+	static SSEI32 CmpGe(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a>=b); }
+	static SSEI32 CmpLt(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a< b); }
+	static SSEI32 CmpGt(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a> b); }
+
+	static SSEI32 Cond1(const SSEI32 &a,const SSEI32 &b) { return Condition((a<b)||(a>b),a,b); }
+	static SSEI32 Cond2(const SSEI32 &a,const SSEI32 &b) { return Condition(a>=b&&b>=a,a,b); }
+	static SSEI32 Cond3(const SSEI32 &a,const SSEI32 &b) { return Condition(!(a>b)||!(a<b),a,b); }
+	static SSEI32 Cond4(const SSEI32 &a,const SSEI32 &b) { return Condition(!(!(a<b)&&!(a>b)),a,b); }
+	static SSEI32 Cond5(const SSEI32 &a,const SSEI32 &b) { return Condition(!(a==b)||(a==b),a,b); }
+	static SSEI32 Cond6(const SSEI32 &a,const SSEI32 &b) { SSEI32Mask t=!(a<b); return Condition(t,a,b); }
+
+	static SSEI32 Cond7 (const SSEI32 &a,const SSEI32 &b) { return Condition((a<=b)^(a>=b),a,b); }
+	static SSEI32 Cond8 (const SSEI32 &a,const SSEI32 &b) { return Condition(!(a<b)^(a<=b),a,b); }
+	static SSEI32 Cond9 (const SSEI32 &a,const SSEI32 &b) { return Condition((a<=b)^!(a<b),a,b); }
+	static SSEI32 Cond10(const SSEI32 &a,const SSEI32 &b) { return Condition((!(a<b))^(!(a>b)),a,b); }
+
+
 
 	static int TNeg(int v) { return -v; }
 	static int TNot(int v) { return ~v; }
@@ -173,6 +200,17 @@ public:
 		TEST(set,CmpGe)
 		TEST(set,CmpLt)
 		TEST(set,CmpGt)
+
+		TEST(set,Cond1)
+		TEST(set,Cond2)
+		TEST(set,Cond3)
+		TEST(set,Cond4)
+		TEST(set,Cond5)
+		TEST(set,Cond6)
+		TEST(set,Cond7)
+		TEST(set,Cond8)
+		TEST(set,Cond9)
+		TEST(set,Cond10)
 #undef TEST
 
 		return out;

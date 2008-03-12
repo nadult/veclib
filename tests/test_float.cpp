@@ -154,6 +154,12 @@ template <class Generator,class TestedFunc,class CorrectFunc>
 	static double CCond5(double a,double b) { return !(a==b)||(a==b)?a:b; }
 	static double CCond6(double a,double b) { bool t=!(a<b); return t?a:b; }
 
+	static double CCond7 (double a,double b) { return (a<=b)^(a>=b)?a:b; }
+	static double CCond8 (double a,double b) { return !(a<b)^(a<=b)?a:b; }
+	static double CCond9 (double a,double b) { return (a<=b)^!(a<b)?a:b; }
+	static double CCond10(double a,double b) { return (!(a<b))^(!(a>b))?a:b; }
+
+
 	static SSEReal TSqrt		(const SSEReal &in) { return Sqrt (in); }
 	static SSEReal TInv			(const SSEReal &in) { return Inv  (in); }
 	static SSEReal TRSqrt		(const SSEReal &in) { return RSqrt(in); }
@@ -176,10 +182,13 @@ template <class Generator,class TestedFunc,class CorrectFunc>
 	static SSEReal TCond3(const SSEReal &a,const SSEReal &b) { return Condition(!(a>b)||!(a<b),a,b); }
 	static SSEReal TCond4(const SSEReal &a,const SSEReal &b) { return Condition(!(!(a<b)&&!(a>b)),a,b); }
 	static SSEReal TCond5(const SSEReal &a,const SSEReal &b) { return Condition(!(a==b)||(a==b),a,b); }
-	static SSEReal TCond6(const SSEReal &a,const SSEReal &b) { SSERealMask t=!(a<b); return Condition(a<b,a,b); }
+	static SSEReal TCond6(const SSEReal &a,const SSEReal &b) { SSERealMask t=!(a<b); return Condition(t,a,b); }
 
-	// Dodac testy dla xorow
-		
+	static SSEReal TCond7 (const SSEReal &a,const SSEReal &b) { return Condition((a<=b)^(a>=b),a,b); }
+	static SSEReal TCond8 (const SSEReal &a,const SSEReal &b) { return Condition(!(a<b)^(a<=b),a,b); }
+	static SSEReal TCond9 (const SSEReal &a,const SSEReal &b) { return Condition((a<=b)^!(a<b),a,b); }
+	static SSEReal TCond10(const SSEReal &a,const SSEReal &b) { return Condition((!(a<b))^(!(a>b)),a,b); }
+
 public:
 	bool Test() {
 		bool out=1;
@@ -214,6 +223,10 @@ public:
 		TEST(setab,Cond4	,0.0f);
 		TEST(setab,Cond5	,0.0f);
 		TEST(setab,Cond6	,0.0f);
+		TEST(setab,Cond7	,0.0f);
+		TEST(setab,Cond8	,0.0f);
+		TEST(setab,Cond9	,0.0f);
+		TEST(setab,Cond10	,0.0f);
 
 #undef TEST
 

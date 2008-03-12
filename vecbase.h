@@ -23,16 +23,28 @@ namespace basetypes
 
 using namespace basetypes;
 	
-union UValue
+union UValue32
 {
-	UValue(u32 v) :u(v) { }
-	UValue(i32 v) :i(v) { }
-	UValue(f32 v) :f(v) { }
+	UValue32(u32 v) :u(v) { }
+	UValue32(i32 v) :i(v) { }
+	UValue32(f32 v) :f(v) { }
 
 	f32 f;
 	i32 i;
 	u32 u;
 };
+
+union UValue64 {
+	UValue64(u64 v) :u(v) { }
+	UValue64(i64 v) :i(v) { }
+	UValue64(f64 v) :f(v) { }
+
+	f64 f;
+	i64 i;
+	u64 u;
+};
+
+typedef UValue32 UValue;
 
 template <class Base,int m,int n> struct CConst { static Base Value() { return Base(m)/Base(n); } };
 template <class Base,bool v> struct CBConst { static Base Value() { return Base(v); } };
@@ -48,11 +60,13 @@ template <class Base,int m>			Base Const() { return CConst<Base,m,1>::Value(); }
 // Returns constant boolean value of type Base
 template <class Base,bool v>		Base BConst() { return CBConst<Base,v>::Value(); }
 
-template <class Base> Base ConstPI() { return Const<Base,		75948	,24175>(); };
-template <class Base> Base Const2PI() { return Const<Base,		2*75948	,24175>(); };
-template <class Base> Base ConstInvPI() { return Const<Base,	24175	,75948>(); };
-template <class Base> Base ConstInv2PI() { return Const<Base,	24175	,2*75948>(); };
-template <class Base> Base ConstEpsilon() { return Const<Base,	1		,10000>(); };
+
+// Full double precision
+template <class Base> Base ConstPI() { return Const<Base,		245850922	,78256779>(); };
+template <class Base> Base Const2PI() { return Const<Base,		2*245850922	,78256779>(); };
+template <class Base> Base ConstInvPI() { return Const<Base,	78256779	,245850922>(); };
+template <class Base> Base ConstInv2PI() { return Const<Base,	78256779	,2*245850922>(); };
+template <class Base> Base ConstEpsilon() { return Const<Base,	1			,10000>(); };
 
 /*!
 
@@ -68,63 +82,23 @@ struct ScalarInfo {
 	}
 };
 
-#if VECLIB_SSE_VER>=0x10
-
-INLINE float Sqrt(float v)
-{
-	__m128 t=_mm_sqrt_ss(_mm_load_ss(&v));
-	return ((float*)&t)[0];
-}
-INLINE float Inv(float v)
-{
-	__m128 tv=_mm_load_ss(&v);
-	__m128 t=_mm_rcp_ss(tv);
-	t=_mm_sub_ss(_mm_add_ss(t,t),_mm_mul_ss(_mm_mul_ss(tv,t),t));
-	return ((float*)&t)[0];
-}
-INLINE float RSqrt(float v)
-{
-	static const __m128 coeff=_mm_set_ps(0,0,3.0f,0.5f);
-
-	__m128 tv=_mm_load_ss(&v);
-	__m128 t=_mm_rsqrt_ps(tv);
-    t= _mm_mul_ss(	_mm_mul_ss(coeff,t),
-					_mm_sub_ss(_mm_shuffle_ps(coeff,coeff,1),_mm_mul_ss(_mm_mul_ps(tv,t),t)) );
-
-	return ((float*)&t)[0];
-}
-INLINE float FastInv(float v)						{ __m128 t=_mm_rcp_ss(_mm_load_ss(&v)); return ((float*)&t)[0]; }
-INLINE float FastRSqrt(float v)						{ __m128 t=_mm_rsqrt_ss(_mm_load_ss(&v)); return ((float*)&t)[0]; }
-INLINE float Abs(float v) {
-	static const __m128 coeff=_mm_set1_ps(UValue(0x7fffffff).f);
-	__m128 t=_mm_and_ps(_mm_load_ss(&v),coeff); return ((float*)&t)[0];
-}
-INLINE float Min(float a,float b)					{ __m128 t=_mm_min_ss(_mm_load_ss(&a),_mm_load_ss(&b)); return ((float*)&t)[0]; }
-INLINE float Max(float a,float b)					{ __m128 t=_mm_max_ss(_mm_load_ss(&a),_mm_load_ss(&b)); return ((float*)&t)[0]; }
-INLINE float Condition(bool expr,float a,float b)	{ return expr?a:b; }
-INLINE float Condition(bool expr,float v)			{ return expr?v:0.0f; }
-INLINE int SignMask(float v)						{ return _mm_movemask_ps(_mm_load_ss(&v))&1; }
-
-#else
-
 INLINE float Sqrt(float v)							{ return sqrtf(v); }
 INLINE float Inv(float v)							{ return 1.0f/v; }
 INLINE float RSqrt(float v)							{ return 1.0f/Sqrt(v); }
 INLINE float FastInv(float v)						{ return Inv(v); }
 INLINE float FastRSqrt(float v)						{ return RSqrt(v); }
-INLINE float Abs(float v)							{ return v < 0.0f ? -v : v; }
-INLINE float Min(float a,float b)					{ return a < b ? a : b; }
-INLINE float Max(float a,float b)					{ return a > b ? a : b; }
 INLINE float Condition(bool expr,float a,float b)	{ return expr?a:b; }
 INLINE float Condition(bool expr,float v)			{ return expr?v:0.0f; }
 INLINE int SignMask(float v)						{ return v<0.0f?1:0; }
-
-#endif
 
 INLINE float Sin(float rad)							{ return sin(rad); }
 INLINE float Cos(float rad)							{ return cos(rad); }
 
 INLINE float FRand() { return float(rand())/float(RAND_MAX); }
+
+template <class Base> INLINE Base Abs(Base v)			{ return v < Const<Base,0>() ? -v : v; }
+template <class Base> INLINE Base Min(Base a,Base b)	{ return a < b ? a : b; }
+template <class Base> INLINE Base Max(Base a,Base b)	{ return a > b ? a : b; }
 
 INLINE bool ForAny(bool expr) { return expr; }
 INLINE bool ForAll(bool expr) { return expr; }

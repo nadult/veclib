@@ -26,7 +26,7 @@ public:
 INLINE CLASS_NAME VSqrt(const CLASS_NAME &v)		{ return _mm_sqrt_ps(v.m); }
 INLINE CLASS_NAME VInv(const CLASS_NAME &v)			{ return _mm_nrrcp_ps(v.m); }
 INLINE CLASS_NAME VRSqrt(const CLASS_NAME &v)		{ return _mm_nrrsqrt_ps(v.m); }
-INLINE CLASS_NAME VAbs(const CLASS_NAME &v)			{ return _mm_and_ps(SSERealMaskConst<0x7fffffff>::value,v.m); }
+INLINE CLASS_NAME VAbs(const CLASS_NAME &v)			{ return _mm_and_ps(SSEF32MaskConst<0x7fffffff>::value,v.m); }
 INLINE CLASS_NAME VFastInv(const CLASS_NAME &v)		{ return _mm_rcp_ps(v.m); }
 INLINE CLASS_NAME VFastRSqrt(const CLASS_NAME &v)	{ return _mm_rsqrt_ps(v.m); }
 

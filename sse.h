@@ -3,15 +3,14 @@
 
 #include "vecbase.h"
 
-template <int m,int n=1>
-struct SSEFloatConst { static const __m128 value; };
-template <u32 mask>
-struct SSERealMaskConst { static const __m128 value; };
+template <i32 v>	struct SSEI32Const { static const __m128i value; };
+template<i32 v>		const __m128i SSEI32Const<v>::value=_mm_set1_epi32(v);
 
-template<int m,int n>
-const __m128 SSEFloatConst<m,n>::value=_mm_set1_ps(float(m)/float(n));
-template <u32 mask>
-const __m128 SSERealMaskConst<mask>::value=_mm_set1_ps(UValue(mask).f);
+template <int m,int n=1>	struct SSEF32Const { static const __m128 value; };
+template <u32 mask>			struct SSEF32MaskConst { static const __m128 value; };
+
+template<int m,int n>	const __m128 SSEF32Const<m,n>::value=_mm_set1_ps(float(m)/float(n));
+template <u32 mask>		const __m128 SSEF32MaskConst<mask>::value=_mm_set1_ps(UValue(mask).f);
 
 template <uint mask>
 __m128 _mm_shuffle_(const __m128 &v) {
@@ -112,13 +111,13 @@ INLINE __m128 _mm_nrrcp_ps(const __m128 &v) {
 INLINE __m128 _mm_nrrsqrt_ps(const __m128 &v) {
 	__m128 out;
 	__m128 t=_mm_rsqrt_ps(v);
-	out=	_mm_mul_ps(	_mm_mul_ps(SSEFloatConst<1,2>::value,t),
-						_mm_sub_ps(SSEFloatConst<3>::value	,_mm_mul_ps(_mm_mul_ps(v,t),t)) );
+	out=	_mm_mul_ps(	_mm_mul_ps(SSEF32Const<1,2>::value,t),
+						_mm_sub_ps(SSEF32Const<3>::value	,_mm_mul_ps(_mm_mul_ps(v,t),t)) );
 	return out;
 }
 
 INLINE __m128 _mm_bool2mask(bool v) {
-	static const __m128 tab[2]={SSERealMaskConst<0>::value,SSERealMaskConst<0xffffffff>::value};
+	static const __m128 tab[2]={SSEF32MaskConst<0>::value,SSEF32MaskConst<0xffffffff>::value};
 	return tab[v?1:0];
 }
 
