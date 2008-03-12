@@ -5,6 +5,7 @@
 #include "ssereal.h"
 
 class SSEI32Mask;
+class SSEI32MaskNeg;
 
 class SSEI32
 {
@@ -167,7 +168,7 @@ private:
 	__m128i m;
 };
 
-SSEI32::operator SSEI32MaskNeg() const { return SSEI32MaskNeg(__mm_cmpeq_epi32(m,_mm_setzero_si128())); }
+SSEI32::operator SSEI32MaskNeg() const { return SSEI32MaskNeg(_mm_cmpeq_epi32(m,_mm_setzero_si128())); }
 SSEI32Mask SSEI32::operator!() const { return SSEI32Mask(_mm_cmpeq_epi32(m,_mm_setzero_si128())); }
 
 INLINE SSEI32MaskNeg operator!(const SSEI32Mask &v)								{ return SSEI32MaskNeg(v.m); }

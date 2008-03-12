@@ -92,7 +92,7 @@ INLINE base Sum(const Vec4<base> &v) {
 
 #define GEN_UNARY(name) \
 	template <class base> \
-	INLINE Vec4<base> name(const Vec4<base> &v) { \
+	INLINE Vec4<base> V##name(const Vec4<base> &v) { \
 		Vec4<base> out; \
 		out.x = name(v.x); \
 		out.y = name(v.y); \
@@ -102,7 +102,7 @@ INLINE base Sum(const Vec4<base> &v) {
 	}
 #define GEN_BINARY(name) \
 	template <class base> \
-	INLINE Vec4<base> name(const Vec4<base> &a,const Vec4<base> &b) { \
+	INLINE Vec4<base> V##name(const Vec4<base> &a,const Vec4<base> &b) { \
 		Vec4<base> out; \
 		out.x = name(a.x,b.x); \
 		out.y = name(a.y,b.y); \
@@ -111,15 +111,15 @@ INLINE base Sum(const Vec4<base> &v) {
 		return out; \
 	}
 
-GEN_UNARY(VInv)
-GEN_UNARY(VSqrt)
-GEN_UNARY(VRSqrt)
-GEN_UNARY(VAbs)
-GEN_UNARY(VFastInv)
-GEN_UNARY(VFastRSqrt)
+GEN_UNARY(Inv)
+GEN_UNARY(Sqrt)
+GEN_UNARY(RSqrt)
+GEN_UNARY(Abs)
+GEN_UNARY(FastInv)
+GEN_UNARY(FastRSqrt)
 
-GEN_BINARY(VMax)
-GEN_BINARY(VMin)
+GEN_BINARY(Max)
+GEN_BINARY(Min)
 
 #undef GEN_UNARY
 #undef GEN_BINARY

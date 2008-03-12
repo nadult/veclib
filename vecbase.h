@@ -90,15 +90,15 @@ INLINE float FastRSqrt(float v)						{ return RSqrt(v); }
 INLINE float Condition(bool expr,float a,float b)	{ return expr?a:b; }
 INLINE float Condition(bool expr,float v)			{ return expr?v:0.0f; }
 INLINE int SignMask(float v)						{ return v<0.0f?1:0; }
+INLINE float Abs(float v)							{ return v < 0.0f ? -v : v; }
+INLINE float Min(float a,float b)					{ return a < b ? a : b; }
+INLINE float Max(float a,float b)					{ return a > b ? a : b; }
 
 INLINE float Sin(float rad)							{ return sin(rad); }
 INLINE float Cos(float rad)							{ return cos(rad); }
 
 INLINE float FRand() { return float(rand())/float(RAND_MAX); }
 
-template <class Base> INLINE Base Abs(Base v)			{ return v < Const<Base,0>() ? -v : v; }
-template <class Base> INLINE Base Min(Base a,Base b)	{ return a < b ? a : b; }
-template <class Base> INLINE Base Max(Base a,Base b)	{ return a > b ? a : b; }
 
 INLINE bool ForAny(bool expr) { return expr; }
 INLINE bool ForAll(bool expr) { return expr; }
@@ -107,7 +107,9 @@ INLINE bool ForAll(bool expr) { return expr; }
 INLINE int ForWhich(bool expr) { return expr?1:0; }
 
 template <class T> INLINE T Clamp(const T &obj,const T &min,const T &max) { return Min(Max(obj,min),max); }
+template <class T> INLINE T VClamp(const T &obj,const T &min,const T &max) { return VMin(VMax(obj,min),max); }
 template <class Obj,class Scl> INLINE Obj Lerp(const Obj &a,const Obj &b,const Scl &x) { return a+(b-a)*x; }
+template <class Obj,class Scl> INLINE Obj VLerp(const Obj &a,const Obj &b,const Scl &x) { return a+(b-a)*x; }
 
 template <class T> INLINE void Swap(T &a,T &b) { T temp(a); a=b; b=temp; }
 template <class T> INLINE void Convert(const T &in,T &out) { out=in; }

@@ -138,7 +138,9 @@ Condition ( expr, a )				if expr then a else 0
 Convert ( in , out )				Conversion between different scalar / vector formats
 
 All of these operations work also on vectors, for example:
-	Vec (x1, y1, z1) * Vec(x2, y2, z2) == Vec(x1*x2, y1*y2, z1*z2)
+	Vec3<>(x1, y1, z1) * Vec3<>(x2, y2, z2) == Vec3<>(x1*x2, y1*y2, z1*z2)
+Named functions have 'V' prefix, for example:
+	VInv( Vec2<>(x, y) ) == Vec2<>( Inv(x), Inv(y) )
 
 Additional vector operations ----------------------------------------------------------------------
 |									dot product

@@ -105,7 +105,7 @@ INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
 
 #define GEN_UNARY(name) \
 	template <class base> \
-	INLINE Vec3<base> name(const Vec3<base> &v) { \
+	INLINE Vec3<base> V##name(const Vec3<base> &v) { \
 		Vec3<base> out; \
 		out.x = name(v.x); \
 		out.y = name(v.y); \
@@ -114,7 +114,7 @@ INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
 	}
 #define GEN_BINARY(name) \
 	template <class base> \
-	INLINE Vec3<base> name(const Vec3<base> &a,const Vec3<base> &b) { \
+	INLINE Vec3<base> V##name(const Vec3<base> &a,const Vec3<base> &b) { \
 		Vec3<base> out; \
 		out.x = name(a.x,b.x); \
 		out.y = name(a.y,b.y); \
@@ -122,15 +122,15 @@ INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
 		return out; \
 	}
 
-GEN_UNARY(VInv)
-GEN_UNARY(VSqrt)
-GEN_UNARY(VRSqrt)
-GEN_UNARY(VAbs)
-GEN_UNARY(VFastInv)
-GEN_UNARY(VFastRSqrt)
+GEN_UNARY(Inv)
+GEN_UNARY(Sqrt)
+GEN_UNARY(RSqrt)
+GEN_UNARY(Abs)
+GEN_UNARY(FastInv)
+GEN_UNARY(FastRSqrt)
 
-GEN_BINARY(VMax)
-GEN_BINARY(VMin)
+GEN_BINARY(Max)
+GEN_BINARY(Min)
 
 #undef GEN_UNARY
 #undef GEN_BINARY
