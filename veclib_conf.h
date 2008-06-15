@@ -1,6 +1,10 @@
 #ifndef VECLIB_VECLIB_CONF_H
 #define VECLIB_VECLIB_CONF_H
 
+#ifdef INLINE
+	#undef INLINE
+#endif
+
 #ifdef _MSC_VER
 	#define VECLIB_MSVC_STYLE
 	#define INLINE __forceinline

@@ -30,6 +30,7 @@ INLINE CLASS_NAME VAbs(const CLASS_NAME &v)			{ return _mm_and_ps(SSEF32MaskCons
 INLINE CLASS_NAME VFastInv(const CLASS_NAME &v)		{ return _mm_rcp_ps(v.m); }
 INLINE CLASS_NAME VFastRSqrt(const CLASS_NAME &v)	{ return _mm_rsqrt_ps(v.m); }
 
+
 INLINE CLASS_NAME VMin(const CLASS_NAME &a,const CLASS_NAME &b) { return _mm_min_ps(a.m,b.m); }
 INLINE CLASS_NAME VMax(const CLASS_NAME &a,const CLASS_NAME &b) { return _mm_max_ps(a.m,b.m); }
 

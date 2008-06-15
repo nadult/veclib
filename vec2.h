@@ -17,6 +17,9 @@ public:
 	INLINE Vec2(const base arr[2]) :x(arr[0]),y(arr[1]) { }
 	INLINE Vec2(const base &tx,const base &ty) :x(tx),y(ty) { }
 
+	template <class VEC>
+	INLINE explicit Vec2(const VEC &v) :x(v.x),y(v.y) { }
+
 	explicit INLINE Vec2(const Vec3<base>&);
 	explicit INLINE Vec2(const Vec4<base>&);
 
@@ -124,6 +127,7 @@ GEN_BINARY(Min)
 #undef GEN_BINARY
 
 template <class base> INLINE base Length(const Vec2<base> &v) { return Sqrt(v|v); }
+template <class base> INLINE base LengthSq(const Vec2<base> &v) { return v|v; }
 
 template <class base> INLINE Vec2<base> Condition(const typename Vec2<base>::TBool &expr,const Vec2<base> &a,const Vec2<base> &b)
 	{ return Vec2<base>( Condition(expr,a.x,b.x),Condition(expr,a.y,b.y) ); }

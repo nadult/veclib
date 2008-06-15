@@ -16,6 +16,9 @@ public:
 
 	explicit INLINE Vec4(const Vec2<base> &v) :x(v.x),y(v.y),z(Const<base,0>()),w(Const<base,0>()) { }
 	explicit INLINE Vec4(const Vec3<base> &v) :x(v.x),y(v.y),z(v.z),w(Const<base,0>()) { }
+	
+	template <class VEC>
+	INLINE explicit Vec4(const VEC &v) :x(v.x),y(v.y),z(v.z),w(v.w) { }
 
 #define GEN_OP(sop) \
 	template <class GenericVec> \
@@ -125,6 +128,7 @@ GEN_BINARY(Min)
 #undef GEN_BINARY
 
 template <class base> INLINE base Length(const Vec4<base> &v) { return Sqrt(v|v); }
+template <class base> INLINE base LengthSq(const Vec4<base> &v) { return v|v; }
 
 template <class base> INLINE Vec4<base> Condition(const typename Vec4<base>::TBool &expr,const Vec4<base> &a,const Vec4<base> &b)
 	{ return Vec4<base>( Condition(expr,a.x,b.x),Condition(expr,a.y,b.y),Condition(expr,a.z,b.z),Condition(expr,a.w,b.w) ); }

@@ -1,0 +1,4 @@
+- Wywalic statyczne zmienne z funkcji w ScalarInfo, przerzucic je do ssebase.h a z tamtad kod procedurek
+  przerzucic do pliku .cpp.
+- Poprawic AlignedMalloc, ALignedFree
+

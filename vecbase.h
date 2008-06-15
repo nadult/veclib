@@ -4,25 +4,6 @@
 #include "veclib_conf.h"
 //#include <boost/static_assert.hpp>
 
-namespace basetypes
-{
-	typedef unsigned char		u8;
-	typedef char				i8;
-	typedef short				i16;
-	typedef unsigned short		u16;
-	typedef int					i32;
-	typedef unsigned int		u32;
-	typedef long long			i64;
-	typedef unsigned long long	u64;
-	
-	typedef float				f32;
-	typedef double				f64;
-	
-	typedef unsigned int		uint;
-}
-
-using namespace basetypes;
-	
 union UValue32
 {
 	UValue32(u32 v) :u(v) { }
@@ -93,6 +74,8 @@ INLINE int SignMask(float v)						{ return v<0.0f?1:0; }
 INLINE float Abs(float v)							{ return v < 0.0f ? -v : v; }
 INLINE float Min(float a,float b)					{ return a < b ? a : b; }
 INLINE float Max(float a,float b)					{ return a > b ? a : b; }
+INLINE int Round(float f)							{ return int(f+0.5f); }
+INLINE int Trunc(float f)							{ return int(f); }
 
 INLINE float Sin(float rad)							{ return sin(rad); }
 INLINE float Cos(float rad)							{ return cos(rad); }

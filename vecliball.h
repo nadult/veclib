@@ -4,11 +4,17 @@
 namespace veclib
 {
 
-	#include "ssepvec.h"
-	#include "ssereal.h"
-	#include "matrix.h"
+	#include "vecbase.h"
+	#include "vec2.h"
+	#include "vec3.h"
+	#include "vec4.h"
 
-	#include"sseint.h"
+	#include "ssef32.h"
+	#include "ssei32.h"
+	#include "ssepvecf32.h"
+	#include "ssevecf32.h"
+
+	#include "matrix.h"
 
 }
 

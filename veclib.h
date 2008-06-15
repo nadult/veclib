@@ -17,8 +17,36 @@
     #include <xmmintrin.h>
 #endif
 
+namespace veclib
+{
 
-#if 0
+#ifndef BASELIB_H
+	namespace basetypes
+	{
+		typedef unsigned char		u8;
+		typedef char				i8;
+		typedef short				i16;
+		typedef unsigned short		u16;
+		typedef int					i32;
+		typedef unsigned int		u32;
+		typedef long long			i64;
+		typedef unsigned long long	u64;
+		
+		typedef float				f32;
+		typedef double				f64;
+#ifdef _WIN32
+		typedef unsigned int 		uint;
+#endif
+	}
+	using namespace basetypes;
+#else
+	namespace basetypes = baselib::basetypes;
+	using namespace baselib::basetypes;
+#endif
+}
+
+
+#if 1
 	#if VECLIB_SSE_VER>=0x31
 		#include "vecliball_pp31.h"
 	#elif VECLIB_SSE_VER>=0x30
@@ -34,8 +62,32 @@
 	#include "vecliball.h"
 #endif
 
+#ifdef BASELIB_H
+namespace baselib
+{
+
+	template<> struct SerializeAsPOD< veclib::Vec2<f32> > { enum { value=sizeof(veclib::Vec2<f32>)==sizeof(f32)*2 }; };
+	template<> struct SerializeAsPOD< veclib::Vec3<f32> > { enum { value=sizeof(veclib::Vec3<f32>)==sizeof(f32)*3 }; };
+	template<> struct SerializeAsPOD< veclib::Vec4<f32> > { enum { value=sizeof(veclib::Vec4<f32>)==sizeof(f32)*4 }; };
+
+	template<> struct SerializeAsPOD< veclib::Vec2<f64> > { enum { value=sizeof(veclib::Vec2<f64>)==sizeof(f64)*2 }; };
+	template<> struct SerializeAsPOD< veclib::Vec3<f64> > { enum { value=sizeof(veclib::Vec3<f64>)==sizeof(f64)*3 }; };
+	template<> struct SerializeAsPOD< veclib::Vec4<f64> > { enum { value=sizeof(veclib::Vec4<f64>)==sizeof(f64)*4 }; };
+
+	template<> inline void Serialize< veclib::Vec2<f32> >(veclib::Vec2<f32> &v,Serializer &sr) { sr&v.x&v.y; }
+	template<> inline void Serialize< veclib::Vec3<f32> >(veclib::Vec3<f32> &v,Serializer &sr) { sr&v.x&v.y&v.z; }
+	template<> inline void Serialize< veclib::Vec4<f32> >(veclib::Vec4<f32> &v,Serializer &sr) { sr&v.x&v.y&v.z&v.w; }
+
+	template<> inline void Serialize< veclib::Vec2<f64> >(veclib::Vec2<f64> &v,Serializer &sr) { sr&v.x&v.y; }
+	template<> inline void Serialize< veclib::Vec3<f64> >(veclib::Vec3<f64> &v,Serializer &sr) { sr&v.x&v.y&v.z; }
+	template<> inline void Serialize< veclib::Vec4<f64> >(veclib::Vec4<f64> &v,Serializer &sr) { sr&v.x&v.y&v.z&v.w; }
+
+}
+#endif
+
 namespace veclib
 {
+
 
 #if defined(VECLIB_GCC_STYLE)
 	#if VECLIB_ARCH==0x32
@@ -69,6 +121,20 @@ INLINE u64 Ticks() {
 
 #endif
 
+/*
+INLINE void *AlignedMalloc(size_t size) {
+	char *ptr=new char[size+sizeof(void*)+16];
+
+	void *aligned=(void*)((u64(ptr)+15)&~15);
+	((void**)aligned)[-1]=ptr;
+	return aligned;
+}
+
+INLINE void *AlignedFree(void *aligned) {
+	void *ptr=((void**)aligned)[-1];
+	delete[]((char*)ptr);
+}*/
+
 }
 
 #ifndef _mm_shuffle
@@ -77,6 +143,7 @@ INLINE u64 Ticks() {
 
 /*
 
+For now, from packed types, only f32x4 and i32x4 are implemented.
 
 Basic types -----------------------------------------------------------------------------------
 f32		f64		i8		i16		i32		i64		u8		u16		u32		u64
@@ -86,14 +153,17 @@ Packed types (SSE) -------------------------------------------------------------
 f32x4	f64x2	i8x16	i16x8	i32x4	i64x2	u8x16	u16x8	u32x4	u64x2
 
 Vector templates ------------------------------------------------------------------------------
-vec2< >
-vec3< >
-vec4< >
+Vec2< >
+Vec3< >
+Vec4< >
 
 Packed vector types (SSE) ---------------------------------------------------------------------
 pvec2f32	pvec2f64
 pvec3f32	pvec3f64
 pvec4f32	pvec4f64
+vec2f32x4	vec2f64x2
+vec3f32x4	vec3f64x2
+vec4f32x4	vec4f64x4
 
 Matrices --------------------------------------------------------------------------------------
 
@@ -149,11 +219,10 @@ Length ( v )						Sqrt ( v|v )
 
 
 Integer operations --------------------------------------------------------------------------------
-+ - * / % | & ^ ~
++ - * / % | & ^ ~ ++ --
 Abs ( v )
 Max ( a , b )
 Min ( a , b )
-
 
 Technical functions -------------------------------------------------------------------------------
 
@@ -164,6 +233,8 @@ ForAll ( e )						| example: if ( ForAll( val1*val2 < val3 ) ) { .. do something
 ForWhich ( e )						similar to SignMask, #n bit is set when expression is true for #n element
 
 u64 Ticks ( )						rdtsc cpu instruction
+AlignedAlloc ( )					| aligned (to 16 bytes) allocation procedures
+AlignedFree ( )						| ..
 
 */
 

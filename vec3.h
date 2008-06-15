@@ -19,6 +19,9 @@ public:
 	explicit INLINE Vec3(const Vec2<base>&v) :x(v.x),y(v.y),z(Const<base,0>()) { }
 	explicit INLINE Vec3(const Vec4<base>&);
 
+	template <class VEC>
+	explicit INLINE Vec3(const VEC &v) :x(v.x),y(v.y),z(v.z) { }
+
 #define GEN_OP(op) \
 	template <class GenericVec3> \
 	INLINE const Vec3 &operator op(const GenericVec3 &v) { \
@@ -136,11 +139,12 @@ GEN_BINARY(Min)
 #undef GEN_BINARY
 
 template <class base> INLINE base Length(const Vec3<base> &v) { return Sqrt(v|v); }
+template <class base> INLINE base LengthSq(const Vec3<base> &v) { return v|v; }
 
 template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &a,const Vec3<base> &b)
 	{ return Vec3<base>( Condition(expr,a.x,b.x),Condition(expr,a.y,b.y),Condition(expr,a.z,b.z) ); }
 template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &v)
-	{ return Vec3<base>( Condition(expr,v.x),Condition(expr,v.y,Condition(expr,v.z)) ); }
+	{ return Vec3<base>( Condition(expr,v.x),Condition(expr,v.y),Condition(expr,v.z) ); }
 
 template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a,const Vec3<float> &b) { return expr?a:b; }
 template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a) { return expr?a:Vec3<float>(0.0f,0.0f,0.0f); }

@@ -30,15 +30,15 @@ public:
 class IntTest
 {
 private:
-	void EvalX4(int v1[4],int v2[4],int a[4],SSEI32 (*func)(const SSEI32&,const SSEI32&)) {
-		SSEI32 t1,t2,t;
+	void EvalX4(int v1[4],int v2[4],int a[4],i32x4 (*func)(const i32x4&,const i32x4&)) {
+		i32x4 t1,t2,t;
 		Convert(v1,t1);
 		Convert(v2,t2);
 		t=func(t1,t2);
 		Convert(t,a);
 	}
-	void EvalX4(int v[4],int a[4],SSEI32 (*func)(const SSEI32&)) {
-		SSEI32 t1,t2;
+	void EvalX4(int v[4],int a[4],i32x4 (*func)(const i32x4&)) {
+		i32x4 t1,t2;
 		Convert(v,t1);
 		t2=func(t1);
 		Convert(t2,a);
@@ -46,7 +46,7 @@ private:
 
 	template <class Generator>
 	bool DoTest(const Generator &gen,const char *name,
-			SSEI32 (*testedFunc)(const SSEI32&),int(*correctFunc)(int)) {	
+			i32x4 (*testedFunc)(const i32x4&),int(*correctFunc)(int)) {	
 
 		for(int n=0;n<gen.Num();n++) {
 			int v[4],a[4],b[4];
@@ -71,7 +71,7 @@ private:
 	}
 	template <class Generator>
 	bool DoTest(const Generator &gen,const char *name,
-			SSEI32 (*testedFunc)(const SSEI32&,const SSEI32&),int(*correctFunc)(int,int)) {	
+			i32x4 (*testedFunc)(const i32x4&,const i32x4&),int(*correctFunc)(int,int)) {	
 
 		for(int x=0;x<gen.Num();x++) for(int y=0;y<gen.Num();y++) {
 			int v1[4],v2[4],a[4],b[4];
@@ -131,34 +131,34 @@ private:
 	static int TCond10(int a,int b) { return (!(a<b))^(!(a>b))?a:b; }
 
 
-	static SSEI32 Add(const SSEI32 &a,const SSEI32 &b) { return a+b; }
-	static SSEI32 Sub(const SSEI32 &a,const SSEI32 &b) { return a-b; }
-	static SSEI32 Mul(const SSEI32 &a,const SSEI32 &b) { return a*b; }
-	static SSEI32 Div(const SSEI32 &a,const SSEI32 &b) { return a/b; }
-	static SSEI32 Mod(const SSEI32 &a,const SSEI32 &b) { return a%b; }
-	static SSEI32 And(const SSEI32 &a,const SSEI32 &b) { return a&b; }
-	static SSEI32 Or (const SSEI32 &a,const SSEI32 &b) { return a|b; }
-	static SSEI32 Xor(const SSEI32 &a,const SSEI32 &b) { return a^b; }
-	static SSEI32 Shl(const SSEI32 &a,const SSEI32 &b) { return a<<b; }
-	static SSEI32 Shr(const SSEI32 &a,const SSEI32 &b) { return a>>b; }
-	static SSEI32 CmpEq(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a==b); }
-	static SSEI32 CmpNe(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a!=b); }
-	static SSEI32 CmpLe(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a<=b); }
-	static SSEI32 CmpGe(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a>=b); }
-	static SSEI32 CmpLt(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a< b); }
-	static SSEI32 CmpGt(const SSEI32 &a,const SSEI32 &b) { return SSEI32(a> b); }
+	static i32x4 Add(const i32x4 &a,const i32x4 &b) { return a+b; }
+	static i32x4 Sub(const i32x4 &a,const i32x4 &b) { return a-b; }
+	static i32x4 Mul(const i32x4 &a,const i32x4 &b) { return a*b; }
+	static i32x4 Div(const i32x4 &a,const i32x4 &b) { return a/b; }
+	static i32x4 Mod(const i32x4 &a,const i32x4 &b) { return a%b; }
+	static i32x4 And(const i32x4 &a,const i32x4 &b) { return a&b; }
+	static i32x4 Or (const i32x4 &a,const i32x4 &b) { return a|b; }
+	static i32x4 Xor(const i32x4 &a,const i32x4 &b) { return a^b; }
+	static i32x4 Shl(const i32x4 &a,const i32x4 &b) { return a<<b; }
+	static i32x4 Shr(const i32x4 &a,const i32x4 &b) { return a>>b; }
+	static i32x4 CmpEq(const i32x4 &a,const i32x4 &b) { return i32x4(a==b); }
+	static i32x4 CmpNe(const i32x4 &a,const i32x4 &b) { return i32x4(a!=b); }
+	static i32x4 CmpLe(const i32x4 &a,const i32x4 &b) { return i32x4(a<=b); }
+	static i32x4 CmpGe(const i32x4 &a,const i32x4 &b) { return i32x4(a>=b); }
+	static i32x4 CmpLt(const i32x4 &a,const i32x4 &b) { return i32x4(a< b); }
+	static i32x4 CmpGt(const i32x4 &a,const i32x4 &b) { return i32x4(a> b); }
 
-	static SSEI32 Cond1(const SSEI32 &a,const SSEI32 &b) { return Condition((a<b)||(a>b),a,b); }
-	static SSEI32 Cond2(const SSEI32 &a,const SSEI32 &b) { return Condition(a>=b&&b>=a,a,b); }
-	static SSEI32 Cond3(const SSEI32 &a,const SSEI32 &b) { return Condition(!(a>b)||!(a<b),a,b); }
-	static SSEI32 Cond4(const SSEI32 &a,const SSEI32 &b) { return Condition(!(!(a<b)&&!(a>b)),a,b); }
-	static SSEI32 Cond5(const SSEI32 &a,const SSEI32 &b) { return Condition(!(a==b)||(a==b),a,b); }
-	static SSEI32 Cond6(const SSEI32 &a,const SSEI32 &b) { SSEI32Mask t=!(a<b); return Condition(t,a,b); }
+	static i32x4 Cond1(const i32x4 &a,const i32x4 &b) { return Condition((a<b)||(a>b),a,b); }
+	static i32x4 Cond2(const i32x4 &a,const i32x4 &b) { return Condition(a>=b&&b>=a,a,b); }
+	static i32x4 Cond3(const i32x4 &a,const i32x4 &b) { return Condition(!(a>b)||!(a<b),a,b); }
+	static i32x4 Cond4(const i32x4 &a,const i32x4 &b) { return Condition(!(!(a<b)&&!(a>b)),a,b); }
+	static i32x4 Cond5(const i32x4 &a,const i32x4 &b) { return Condition(!(a==b)||(a==b),a,b); }
+	static i32x4 Cond6(const i32x4 &a,const i32x4 &b) { i32x4b t=!(a<b); return Condition(t,a,b); }
 
-	static SSEI32 Cond7 (const SSEI32 &a,const SSEI32 &b) { return Condition((a<=b)^(a>=b),a,b); }
-	static SSEI32 Cond8 (const SSEI32 &a,const SSEI32 &b) { return Condition(!(a<b)^(a<=b),a,b); }
-	static SSEI32 Cond9 (const SSEI32 &a,const SSEI32 &b) { return Condition((a<=b)^!(a<b),a,b); }
-	static SSEI32 Cond10(const SSEI32 &a,const SSEI32 &b) { return Condition((!(a<b))^(!(a>b)),a,b); }
+	static i32x4 Cond7 (const i32x4 &a,const i32x4 &b) { return Condition((a<=b)^(a>=b),a,b); }
+	static i32x4 Cond8 (const i32x4 &a,const i32x4 &b) { return Condition(!(a<b)^(a<=b),a,b); }
+	static i32x4 Cond9 (const i32x4 &a,const i32x4 &b) { return Condition((a<=b)^!(a<b),a,b); }
+	static i32x4 Cond10(const i32x4 &a,const i32x4 &b) { return Condition((!(a<b))^(!(a>b)),a,b); }
 
 
 
@@ -166,8 +166,8 @@ private:
 	static int TNot(int v) { return ~v; }
 	static int TAbs(int v) { return v<0?-v:v; }
 
-	static SSEI32 Neg(const SSEI32 &v) { return -v; }
-	static SSEI32 Not(const SSEI32 &v) { return ~v; }
+	static i32x4 Neg(const i32x4 &v) { return -v; }
+	static i32x4 Not(const i32x4 &v) { return ~v; }
 
 public:
 	bool Test() {
