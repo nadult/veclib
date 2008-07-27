@@ -125,7 +125,7 @@ INLINE Vec2<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec2
 
 	out.x = m.x.x*v.x+m.x.y*v.y;
 	out.y = m.y.x*v.x+m.y.y*v.y;
-	out *= Inv( Sum(m.w) );
+//	out *= Inv( Sum(m.w) );
 
 	return out;
 }

@@ -56,7 +56,7 @@ namespace veclib
 	#elif VECLIB_SSE_VER>=0x10
 		#include "vecliball_pp10.h"
 	#else
-		#include "vecliball_pp.h"
+		#include "vecliball_pp00.h"
 	#endif
 #else
 	#include "vecliball.h"

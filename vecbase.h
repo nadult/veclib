@@ -72,8 +72,6 @@ INLINE float Condition(bool expr,float a,float b)	{ return expr?a:b; }
 INLINE float Condition(bool expr,float v)			{ return expr?v:0.0f; }
 INLINE int SignMask(float v)						{ return v<0.0f?1:0; }
 INLINE float Abs(float v)							{ return v < 0.0f ? -v : v; }
-INLINE float Min(float a,float b)					{ return a < b ? a : b; }
-INLINE float Max(float a,float b)					{ return a > b ? a : b; }
 INLINE int Round(float f)							{ return int(f+0.5f); }
 INLINE int Trunc(float f)							{ return int(f); }
 
@@ -89,6 +87,8 @@ INLINE bool ForAll(bool expr) { return expr; }
 /// Returns bit mask, bit n is set if expression is true for element n
 INLINE int ForWhich(bool expr) { return expr?1:0; }
 
+template <class T,class T1> INLINE T Max(const T &a,const T1 &b) { return a>b?a:b; }
+template <class T,class T1> INLINE T Min(const T &a,const T1 &b) { return a<b?a:b; }
 template <class T> INLINE T Clamp(const T &obj,const T &min,const T &max) { return Min(Max(obj,min),max); }
 template <class T> INLINE T VClamp(const T &obj,const T &min,const T &max) { return VMin(VMax(obj,min),max); }
 template <class Obj,class Scl> INLINE Obj Lerp(const Obj &a,const Obj &b,const Scl &x) { return a+(b-a)*x; }

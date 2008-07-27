@@ -19,6 +19,8 @@ class pvec4f32;
 	INLINE explicit pvec2f32(const pvec3f32 &v); \
 	INLINE explicit pvec2f32(const pvec4f32 &v); \
 	INLINE pvec2f32(float x,float y) { m=_mm_load2(x,y); } \
+	INLINE pvec2f32(const Vec2<float> &v) { m=_mm_load2(v.x,v.y); } \
+	INLINE operator Vec2<float>() const { return Vec2<float>(x,y); } \
 	/*INLINE operator vec2f32x4() const { vec2f32x4 out; out=vec2f32x4(f32x4(x),f32x4(y)); return out; }*/ \
 	union { __m128 m; struct { float x,y; }; };
 
@@ -33,6 +35,8 @@ class pvec4f32;
 	INLINE explicit pvec3f32(const pvec2f32 &v); \
 	INLINE explicit pvec3f32(const pvec4f32 &v); \
 	INLINE pvec3f32(float x,float y,float z) { m=_mm_load3(x,y,z); } \
+	INLINE pvec3f32(const Vec3<float> &v) { m=_mm_load3(v.x,v.y,v.z); } \
+	INLINE operator Vec3<float>() const { return Vec3<float>(x,y,z); } \
 	/*INLINE operator vec3f32x4() const { vec3f32x4 out; out=vec3f32x4(f32x4(x),f32x4(y),f32x4(z)); return out; }*/ \
 	union { __m128 m; struct { float x,y,z; }; };
 
@@ -49,6 +53,8 @@ class pvec4f32;
 		m=_mm_shuffle_ps(v.m,zzww,0+(1<<2)+(0<<4)+(2<<6)); \
 	} \
 	INLINE pvec4f32(float x,float y,float z,float w) { m=_mm_set_ps(w,z,y,x); } \
+	INLINE pvec4f32(const Vec4<float> &v) { m=_mm_set_ps(v.x,v.y,v.z,v.w); } \
+	INLINE operator Vec4<float>() const { return Vec4<float>(x,y,z,w); } \
 	/*INLINE operator vec4f32x4() const { vec4f32x4 out; out=vec4f32x4(f32x4(x),f32x4(y),f32x4(z),f32x4(w)); return out; }*/ \
 	union { __m128 m; struct { float x,y,z,w; }; };
 
