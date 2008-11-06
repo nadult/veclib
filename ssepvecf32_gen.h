@@ -7,8 +7,10 @@ public:
 
 	INLINE CLASS_NAME() { }
 	INLINE CLASS_NAME(const __m128 &v) :m(v) { }
+	INLINE CLASS_NAME(const CLASS_NAME &rhs) :m(rhs.m) { }
 	INLINE explicit CLASS_NAME(float v) :m(_mm_set1_ps(v)) { }
 
+	INLINE const CLASS_NAME &operator=(const CLASS_NAME &rhs) { m=rhs.m; return *this; }
 	INLINE CLASS_NAME operator-() const { return _mm_sub_ps(_mm_setzero_ps(),m); }
 
 	INLINE const CLASS_NAME &operator+=(const CLASS_NAME &v) { m=_mm_add_ps(m,v.m); return *this; }

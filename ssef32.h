@@ -7,13 +7,15 @@
 class f32x4b;
 class f32x4bn;
 
-class f32x4
+class f32x4 
 {
 public:
 	INLINE f32x4() { }
 	INLINE f32x4(const __m128 &v) :m(v) { }
+	INLINE f32x4(const f32x4 &rhs) :m(rhs.m) { }
     INLINE f32x4(float a,float b,float c,float d) :m(_mm_set_ps(a,b,c,d)) { }
 	INLINE f32x4(float v) :m(_mm_set1_ps(v)) { }
+	INLINE const f32x4 &operator=(const f32x4 &rhs) { m=rhs.m; return *this; }
 
 	INLINE const f32x4 &operator+=(const f32x4 &v) { m=_mm_add_ps(m,v.m); return *this; }
 	INLINE const f32x4 &operator-=(const f32x4 &v) { m=_mm_sub_ps(m,v.m); return *this; }
@@ -21,10 +23,13 @@ public:
 	INLINE const f32x4 &operator/=(const f32x4 &v) { m=_mm_div_ps(m,v.m); return *this; }
 
 	INLINE f32x4 operator-() const { return _mm_sub_ps(_mm_setzero_ps(),m); }
-	operator f32*() { return (f32*)&m; }
-	operator const f32*() const { return (f32*)&m; }
+	operator f32*() { return f; }
+	operator const f32*() const { return f; }
 
-	__m128 m;
+	union {
+		__m128 m;
+		float f[4];
+	};
 };
 
 template <int m,int n>

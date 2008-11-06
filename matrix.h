@@ -44,14 +44,16 @@ public:
 		z=vbase(zero,zero,one,zero);
 		w=vbase(zero,zero,zero,one);
 	}
+	template <class tbase>
+	INLINE Matrix(const Matrix<tbase> &other) :x(other.x),y(other.y),z(other.z),w(other.w) { }
 
 	INLINE const Matrix &operator*=(const Matrix &m) {
 		Matrix t=Transpose(m);
 		vbase x_=x,y_=y,z_=z;
-		x=x_|t.x,x_|t.y,x_|t.z,x_|t.w;
-		y=y_|t.x,y_|t.y,y_|t.z,y_|t.w;
-		z=z_|t.x,z_|t.y,z_|t.z,z_|t.w;
-		w=w|t.x,w|t.y,w|t.z,w|t.w;
+		x=vbase(x_|t.x,x_|t.y,x_|t.z,x_|t.w);
+		y=vbase(y_|t.x,y_|t.y,y_|t.z,y_|t.w);
+		z=vbase(z_|t.x,z_|t.y,z_|t.z,z_|t.w);
+		w=vbase(w |t.x,w |t.y,w |t.z,w |t.w);
 		return *this;
 	}
 	INLINE const Matrix &operator+=(const Matrix &m) {
@@ -99,33 +101,44 @@ INLINE Matrix<vbase> Transpose(const Matrix<vbase> &m) {
 	return out;
 }
 
-template <class vbase>
-INLINE Vec4<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec4<typename vbase::TScalar> &v) {
+template <class mbase,class vbase>
+INLINE Vec4<vbase> operator*(const Matrix<mbase> &m,const Vec4<vbase> &v) {
 	Vec4<vbase> out;
-	out.x = m.x|v;
-	out.y = m.y|v;
-	out.z = m.z|v;
-	out.w = m.w|v;
+	out.x = v|m.x;
+	out.y = v|m.y;
+	out.z = v|m.z;
+	out.w = v|m.w;
 	return out;
 }
-template <class vbase>
-INLINE Vec3<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec3<typename vbase::TScalar> &v) {
-	Vec3<typename vbase::TScalar> out;
 
-	out.x = m.x.x*v.x+m.x.y*v.y+m.x.z*v.z;
-	out.y = m.y.x*v.x+m.y.y*v.y+m.y.z*v.z;
-	out.z = m.z.x*v.x+m.z.y*v.y+m.z.z*v.z;
-	//out *= Inv( Sum(m.w) );
+template <class mbase,class vbase>
+INLINE Vec3<vbase> operator*(const Matrix<mbase> &m,const Vec3<vbase> &v) {
+	Vec3<vbase> out;
+
+	out.x = v.x*m.x.x+v.y*m.y.x+v.z*m.z.x+m.w.x;
+	out.y = v.x*m.x.y+v.y*m.y.y+v.z*m.z.y+m.w.y;
+	out.z = v.x*m.x.z+v.y*m.y.z+v.z*m.z.z+m.w.z;
 
 	return out;
 }
-template <class vbase>
-INLINE Vec2<typename vbase::TScalar> operator*(const Matrix<vbase> &m,const Vec2<typename vbase::TScalar> &v) {
-	Vec2<typename vbase::TScalar> out;
 
-	out.x = m.x.x*v.x+m.x.y*v.y;
-	out.y = m.y.x*v.x+m.y.y*v.y;
-//	out *= Inv( Sum(m.w) );
+template <class mbase,class vbase>
+INLINE Vec3<vbase> operator&(const Matrix<mbase> &m,const Vec3<vbase> &v) {
+	Vec3<vbase> out;
+
+	out.x = v.x*m.x.x+v.y*m.y.x+v.z*m.z.x;
+	out.y = v.x*m.x.y+v.y*m.y.y+v.z*m.z.y;
+	out.z = v.x*m.x.z+v.y*m.y.z+v.z*m.z.z;
+
+	return out;
+}
+
+template <class mbase,class vbase>
+INLINE Vec2<vbase> operator*(const Matrix<mbase> &m,const Vec2<vbase> &v) {
+	Vec2<vbase> out;
+
+	out.x = v.x*m.x.x+v.y*m.x.y+m.w.x;
+	out.y = v.x*m.y.x+v.y*m.y.y+m.w.y;
 
 	return out;
 }
@@ -159,6 +172,14 @@ INLINE Matrix<Vec4<float> > RotateZ(float angle) {
 
 INLINE Matrix<Vec4<float> > Rotate(float yaw,float pitch,float roll) {
 	return RotateZ(roll)*RotateX(pitch)*RotateY(pitch);
+}
+
+INLINE Matrix<Vec4<float> > Translate(const Vec3<float> &vec) {
+	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
+	out.w.x=vec.x;
+	out.w.y=vec.y;
+	out.w.z=vec.z;
+	return out;
 }
 
 /*

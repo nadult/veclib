@@ -22,7 +22,7 @@ class pvec4f32;
 	INLINE pvec2f32(const Vec2<float> &v) { m=_mm_load2(v.x,v.y); } \
 	INLINE operator Vec2<float>() const { return Vec2<float>(x,y); } \
 	/*INLINE operator vec2f32x4() const { vec2f32x4 out; out=vec2f32x4(f32x4(x),f32x4(y)); return out; }*/ \
-	union { __m128 m; struct { float x,y; }; };
+	union { __m128 m; struct { float x,y,t0,t1; }; };
 
 
 #include "ssepvecf32_gen.h"
@@ -38,7 +38,7 @@ class pvec4f32;
 	INLINE pvec3f32(const Vec3<float> &v) { m=_mm_load3(v.x,v.y,v.z); } \
 	INLINE operator Vec3<float>() const { return Vec3<float>(x,y,z); } \
 	/*INLINE operator vec3f32x4() const { vec3f32x4 out; out=vec3f32x4(f32x4(x),f32x4(y),f32x4(z)); return out; }*/ \
-	union { __m128 m; struct { float x,y,z; }; };
+	union { __m128 m; struct { float x,y,z,t0; }; };
 
 #include "ssepvecf32_gen.h"
 
@@ -64,10 +64,11 @@ class pvec4f32;
 #undef CLASS_NAME
 // -----------------------------------------------------------------------------------------------------------
 
-pvec3f32::pvec3f32(const pvec2f32 &v) { m=_mm_shuffle_ps(v.m,_mm_setzero_ps(),0+(1<<2)); }
-pvec3f32::pvec3f32(const pvec4f32 &v) { m=v.m; }
-pvec2f32::pvec2f32(const pvec3f32 &v) { m=v.m; }
-pvec2f32::pvec2f32(const pvec4f32 &v) { m=v.m; }
+pvec3f32::pvec3f32(const pvec2f32 &v) :m(_mm_shuffle_ps(v.m,_mm_setzero_ps(),0+(1<<2))) { }
+pvec3f32::pvec3f32(const pvec4f32 &v) :m(v.m) { }
+
+pvec2f32::pvec2f32(const pvec3f32 &v) :m(v.m) { }
+pvec2f32::pvec2f32(const pvec4f32 &v) :m(v.m) { }
 
 
 INLINE float operator|(const pvec2f32 &a,const pvec2f32 &b) {

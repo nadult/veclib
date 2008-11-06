@@ -12,10 +12,14 @@ class i32x4
 public:
 	INLINE i32x4() { }
 	INLINE i32x4(const __m128i &v) :m(v) { }
+	INLINE i32x4(const i32x4 &rhs) :m(rhs.m) { }
 	INLINE explicit i32x4(int i) :m(_mm_set1_epi32(i)) { }
 	INLINE i32x4(int a,int b,int c,int d) :m(_mm_set_epi32(a,b,c,d)) { }
 	INLINE explicit i32x4(const i32x4b&);
 
+	INLINE const i32x4 &operator=(const i32x4 &rhs) { m=rhs.m; return *this; }
+
+	INLINE explicit i32x4(const f32x4 &v) :m(_mm_cvtps_epi32(v.m)) { }
 	INLINE operator f32x4() const { return _mm_cvtepi32_ps(m); }
 
 	INLINE const i32x4 &operator+=(const i32x4 &v) { m=_mm_add_epi32(m,v.m); return *this; }
@@ -24,14 +28,12 @@ public:
 	INLINE const i32x4 &operator|=(const i32x4 &v) { m=_mm_or_si128 (m,v.m); return *this; }
 	INLINE const i32x4 &operator^=(const i32x4 &v) { m=_mm_xor_si128(m,v.m); return *this; }
 	INLINE const i32x4 &operator<<=(const i32x4 &v) {
-		i32 *a=(i32*)&m,*b=(i32*)&v.m;
-		a[0]<<=b[0]; a[1]<<=b[1]; a[2]<<=b[2]; a[3]<<=b[3];
+		i[0]<<=v.i[0]; i[1]<<=v.i[1]; i[2]<<=v.i[2]; i[3]<<=v.i[3];
 	//	m=_mm_sll_epi32(m,v.m);
 		return *this;
 	}
 	INLINE const i32x4 &operator>>=(const i32x4 &v) {
-		i32 *a=(i32*)&m,*b=(i32*)&v.m;
-		a[0]>>=b[0]; a[1]>>=b[1]; a[2]>>=b[2]; a[3]>>=b[3];
+		i[0]>>=v.i[0]; i[1]>>=v.i[1]; i[2]>>=v.i[2]; i[3]>>=v.i[3];
 	//	m=_mm_sra_epi32(m,v.m);
 		return *this;
 	}
@@ -39,8 +41,7 @@ public:
 	INLINE const i32x4 &operator>>=(int i) { m=_mm_srl_epi32(m,i32x4(i).m); return *this; }
 
 	INLINE const i32x4 &operator*=(const i32x4 &v) {
-		i32 *a=(i32*)&m,*b=(i32*)&v.m;
-		a[0]*=b[0]; a[1]*=b[1]; a[2]*=b[2]; a[3]*=b[3];
+		i[0]*=v.i[0]; i[1]*=v.i[1]; i[2]*=v.i[2]; i[3]*=v.i[3];
 	
 	// Not working too good for too big values
 	//	__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
@@ -60,7 +61,9 @@ public:
 		return *this;
 	}
 	INLINE const i32x4 &operator%=(const i32x4 &v) {
-		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
+		i[0]%=v.i[0]; i[1]%=v.i[1]; i[2]%=v.i[2]; i[3]%=v.i[3];
+	// TODO: repair this
+	/*	__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
 		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
 		a0=_mm_div_pd(a0,b0); a1=_mm_div_pd(a1,b1);
 
@@ -70,8 +73,7 @@ public:
 		a0=_mm_mul_pd(a0,b0); a1=_mm_mul_pd(a1,b1);
 
 		m=_mm_sub_epi32(m,	_mm_castps_si128(	_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
-																_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64)));
-
+																_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64))); */
 	}
 
 	INLINE const i32x4 &operator++() { m=_mm_add_epi32(m,SSEI32Const<1>::value); return *this; }
@@ -83,10 +85,14 @@ public:
 	INLINE i32x4b operator!() const;
 	INLINE operator i32x4bn() const;
 
-	INLINE operator i32*() { return (i32*)&m; }
-	INLINE operator const i32*() const { return (i32*)&m; }
-	
-	__m128i m;
+	INLINE operator i32*() { return i; }
+	INLINE operator const i32*() const { return i; }
+
+	union {
+		__m128i m;
+		i32 i[4];
+		u32 u[4];
+	};
 };
 
 INLINE i32x4 operator+(const i32x4 &a,const i32x4 &b)	{ i32x4 out(a); out+=b; return out; }
@@ -243,8 +249,7 @@ INLINE void Convert(int inX,int inY,int inZ,int inW,i32x4 &out) {
     out=_mm_set_epi32(inW,inZ,inY,inX);
 }
 INLINE void Convert(const i32x4 &in,int &outX,int &outY,int &outZ,int &outW) {
-	int *p=(int*)&in;
-	outX=p[0]; outY=p[1]; outZ=p[2]; outW=p[3];
+	outX=in[0]; outY=in[1]; outZ=in[2]; outW=in[3];
 }
 
 INLINE i32x4 Round(const f32x4 &flt) 				{ return _mm_cvtps_epi32(flt.m); }
