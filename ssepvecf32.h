@@ -116,7 +116,7 @@ INLINE pvec3f32 operator^(const pvec3f32 &a,const pvec3f32 &b)
 	__m128 a2=_mm_shuffle_ps(a.m,a.m,210);	// z,x,y,w
 	__m128 b2=_mm_shuffle_ps(b.m,b.m,201);	// y,z,x,w
 
-	out.m=_mm_sub_ps(_mm_mul_ps(a1,b1),_mm_mul_ps(a2,b2));;
+	out.m=_mm_sub_ps(_mm_mul_ps(a1,b1),_mm_mul_ps(a2,b2));
 	return out;
 }
 

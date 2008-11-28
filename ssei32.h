@@ -19,7 +19,7 @@ public:
 
 	INLINE const i32x4 &operator=(const i32x4 &rhs) { m=rhs.m; return *this; }
 
-	INLINE explicit i32x4(const f32x4 &v) :m(_mm_cvtps_epi32(v.m)) { }
+	INLINE explicit i32x4(const f32x4 &v) :m(_mm_cvttps_epi32(v.m)) { }
 	INLINE operator f32x4() const { return _mm_cvtepi32_ps(m); }
 
 	INLINE const i32x4 &operator+=(const i32x4 &v) { m=_mm_add_epi32(m,v.m); return *this; }
