@@ -1,0 +1,15 @@
+Optional libraries:
+baselib
+
+Required tools:
+uncrustify (http://uncrustify.sourceforge.net/)
+
+Compilation:
+make CC=g++
+
+Instalation:
+make TARGET=/usr/local install
+
+Removal:
+make TARGET=/usr/local uninstall
+

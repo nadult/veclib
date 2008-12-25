@@ -1,5 +1,6 @@
-CC=/usr/local/gcc-4.3.2/bin/g++
+CC=g++
 FLAGS=-O3
+TARGET=/usr/local
 
 all: vecliball_pp31.h vecliball_pp30.h vecliball_pp20.h vecliball_pp10.h vecliball_pp00.h
 
@@ -37,14 +38,14 @@ clean:
 	-rm vecliball_pp*.h
 
 install:
-	install -m 644 vecliball_pp*.h /usr/local/include/
-	install -m 644 veclib.h /usr/local/include/
-	install -m 644 veclib_conf.h /usr/local/include/
+	install -m 644 vecliball_pp*.h $(TARGET)/include/
+	install -m 644 veclib.h $(TARGET)/include/
+	install -m 644 veclib_conf.h $(TARGET)/include/
 
 uninstall:
-	rm /usr/local/include/vecliball_pp*.h
-	rm /usr/local/include/veclib.h
-	rm /usr/local/include/veclib_conf.h
+	rm $(TARGET)/include/vecliball_pp*.h
+	rm $(TARGET)/include/veclib.h
+	rm $(TARGET)/include/veclib_conf.h
 
 .PHONY: clean install uninstall
 

@@ -33,6 +33,9 @@ public:
 	GEN_OP(/=)
 
 #undef GEN_OP
+	
+	INLINE TBool operator==(const Vec4 &rhs) const { return x==rhs.x&&y==rhs.y&&z==rhs.z&&w==rhs.w; }
+	INLINE TBool operator!=(const Vec4 &rhs) const { return x!=rhs.x||y!=rhs.y||z==rhs.z||w==rhs.w; }
 
 	INLINE const Vec4 &operator*=(const base &s) {
 		x*=s; y*=s; z*=s; w*=s;

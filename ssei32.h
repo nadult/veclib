@@ -13,8 +13,9 @@ public:
 	INLINE i32x4() { }
 	INLINE i32x4(const __m128i &v) :m(v) { }
 	INLINE i32x4(const i32x4 &rhs) :m(rhs.m) { }
-	INLINE explicit i32x4(int i) :m(_mm_set1_epi32(i)) { }
-	INLINE i32x4(int a,int b,int c,int d) :m(_mm_set_epi32(a,b,c,d)) { }
+	INLINE i32x4(int i) :m(_mm_set1_epi32(i)) { }
+	INLINE i32x4(uint i) :m(_mm_set1_epi32(i)) { }
+	INLINE i32x4(int a,int b,int c,int d) :m(_mm_set_epi32(d,c,b,a)) { }
 	INLINE explicit i32x4(const i32x4b&);
 
 	INLINE const i32x4 &operator=(const i32x4 &rhs) { m=rhs.m; return *this; }
