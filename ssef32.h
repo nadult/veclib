@@ -33,7 +33,7 @@ public:
 };
 
 template <int m,int n>
-struct CConst<f32x4,m,n> { static f32x4 Value() { return f32x4(SSEF32Const<m,n>::value); } };
+struct CConst<f32x4,m,n> { static f32x4 Value() { const float v=((float)m)/((float)n); return f32x4(v); } };
 
 class f32x4b
 {
@@ -49,7 +49,7 @@ public:
 };
 
 template <bool v>
-struct CBConst<f32x4b,v> { static f32x4b Value() { return f32x4b(SSEF32MaskConst<v?0xffffffff:0>::value); } };
+struct CBConst<f32x4b,v> { static f32x4b Value() { return f32x4b(BitCast<float,u32>(v?0xffffffff:0)); } };
 
 class f32x4bn
 {
@@ -62,8 +62,8 @@ public:
 	INLINE f32x4bn operator&&(const f32x4bn &v) const	{ return _mm_or_ps(m,v.m); }
 
 	INLINE f32x4bn operator||(const f32x4bn &v) const	{ return _mm_and_ps(m,v.m); }
-	INLINE f32x4b operator||(const f32x4b &v) const		{ return _mm_or_ps(_mm_andnot_ps(m,SSEF32MaskConst<0xffffffff>::value),v.m); }
-	operator f32x4b() const								{ return _mm_andnot_ps(m,SSEF32MaskConst<0xffffffff>::value); }
+	INLINE f32x4b operator||(const f32x4b &v) const		{ return _mm_or_ps(_mm_andnot_ps(m,_mm_set1_ps(BitCast<float,u32>(~0))),v.m); }
+	operator f32x4b() const								{ return _mm_andnot_ps(m,_mm_set1_ps(BitCast<float,u32>(~0))); }
 
 	const __m128 &NegM() const { return m; }
 private:
@@ -80,7 +80,7 @@ INLINE f32x4bn operator!(const f32x4b &v)						{ return f32x4bn(v.m); }
 INLINE f32x4bn operator^(const f32x4b &a,const f32x4bn &b)		{ return f32x4bn(_mm_xor_ps(a.m,b.NegM())); }
 INLINE f32x4b operator&&(const f32x4b &a,const f32x4bn &b)		{ return _mm_andnot_ps(b.NegM(),a.m); }
 INLINE f32x4b operator||(const f32x4b &a,const f32x4bn &b)
-	{ return _mm_or_ps(a.m,_mm_andnot_ps(b.NegM(),SSEF32MaskConst<0xffffffff>::value)); }
+	{ return _mm_or_ps(a.m,_mm_andnot_ps(b.NegM(),_mm_set1_ps(BitCast<float,u32>(~0)))); }
 
 INLINE bool ForAny(const f32x4b &v) { return _mm_movemask_ps(v.m)?1:0; }
 INLINE bool ForAll(const f32x4b &v) { return _mm_movemask_ps(v.m)==15; }
@@ -107,7 +107,7 @@ INLINE f32x4 FastInv	(const f32x4 &v) { return _mm_rcp_ps(v.m); }
 INLINE f32x4 FastRSqrt	(const f32x4 &v) { return _mm_rsqrt_ps(v.m); }
 
 
-INLINE f32x4 Abs(const f32x4 &v)				{ return _mm_and_ps(SSEF32MaskConst<0x7fffffff>::value,v.m); }
+INLINE f32x4 Abs(const f32x4 &v)				{ return _mm_and_ps(_mm_set1_ps(BitCast<float,u32>(0x7fffffff)),v.m); }
 INLINE f32x4 Min(const f32x4 &a,const f32x4 &b)	{ return _mm_min_ps(a.m,b.m); }
 INLINE f32x4 Max(const f32x4 &a,const f32x4 &b)	{ return _mm_max_ps(a.m,b.m); }
 INLINE int SignMask(const f32x4 &v)				{ return _mm_movemask_ps(v.m); }

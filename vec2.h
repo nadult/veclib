@@ -16,6 +16,8 @@ public:
 	INLINE Vec2(const base &t) :x(t),y(t) { }
 	INLINE Vec2(const base arr[2]) :x(arr[0]),y(arr[1]) { }
 	INLINE Vec2(const base &tx,const base &ty) :x(tx),y(ty) { }
+	INLINE Vec2(const Vec2& rhs) :x(rhs.x),y(rhs.y) { }
+	INLINE const Vec2 &operator=(const Vec2 &rhs) { x=rhs.x; y=rhs.y; return *this; }
 
 	template <class VEC>
 	INLINE explicit Vec2(const VEC &v) :x(v.x),y(v.y) { }

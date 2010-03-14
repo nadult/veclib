@@ -75,10 +75,11 @@ public:
 
 		m=_mm_sub_epi32(m,	_mm_castps_si128(	_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
 																_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64))); */
+		return *this;
 	}
 
-	INLINE const i32x4 &operator++() { m=_mm_add_epi32(m,SSEI32Const<1>::value); return *this; }
-	INLINE const i32x4 &operator--() { m=_mm_add_epi32(m,SSEI32Const<1>::value); return *this; }
+	INLINE const i32x4 &operator++() { m=_mm_add_epi32(m,_mm_set1_epi32(1)); return *this; }
+	INLINE const i32x4 &operator--() { m=_mm_add_epi32(m,_mm_set1_epi32(1)); return *this; }
 
 	INLINE i32x4 operator-() const { return _mm_sub_epi32(_mm_setzero_si128(),m); }
 	INLINE i32x4 operator~() const { return _mm_andnot_si128(m,_mm_set1_epi32(~0)); }
@@ -156,7 +157,7 @@ public:
 i32x4::i32x4(const i32x4b &v) :m(v.m) { }
 
 template <bool v>
-struct CBConst<i32x4b,v> { static i32x4b Value() { return i32x4b(SSEI32Const<v?0xffffffff:0>::value); } };
+struct CBConst<i32x4b,v> { static i32x4b Value() { return i32x4b(_mm_set1_epi32(v?~0:0)); } };
 
 class i32x4bn
 {
@@ -169,8 +170,8 @@ public:
 	INLINE i32x4bn operator&&(const i32x4bn &v) const	{ return _mm_or_si128(m,v.m); }
 
 	INLINE i32x4bn operator||(const i32x4bn &v) const	{ return _mm_and_si128(m,v.m); }
-	INLINE i32x4b operator||(const i32x4b &v) const		{ return _mm_or_si128(_mm_andnot_si128(m,SSEI32Const<0xffffffff>::value),v.m); }
-	INLINE operator i32x4b() const						{ return _mm_andnot_si128(m,SSEI32Const<0xffffffff>::value); }
+	INLINE i32x4b operator||(const i32x4b &v) const		{ return _mm_or_si128(_mm_andnot_si128(m,_mm_set1_epi32(~0)),v.m); }
+	INLINE operator i32x4b() const						{ return _mm_andnot_si128(m,_mm_set1_epi32(~0)); }
 
 //	INLINE i32x4bn(const f32x4bn &v)					:m(_mm_castps_si128(v.NegM())) { }
 //	INLINE operator f32x4bn() const						{ return _mm_castsi128_ps(m); }
@@ -197,7 +198,7 @@ INLINE i32x4bn operator!(const i32x4b &v)						{ return i32x4bn(v.m); }
 INLINE i32x4bn operator^(const i32x4b &a,const i32x4bn &b)		{ return i32x4bn(_mm_xor_si128(a.m,b.NegM())); }
 INLINE i32x4b operator&&(const i32x4b &a,const i32x4bn &b)		{ return _mm_andnot_si128(b.NegM(),a.m); }
 INLINE i32x4b operator||(const i32x4b &a,const i32x4bn &b)
-	{ return _mm_or_si128(a.m,_mm_andnot_si128(b.NegM(),SSEI32Const<0xffffffff>::value)); }
+	{ return _mm_or_si128(a.m,_mm_andnot_si128(b.NegM(),_mm_set1_epi32(~0))); }
 
 INLINE bool ForAny(const i32x4b &test) { return _mm_movemask_epi8(test.m)?1:0; }
 INLINE bool ForAll(const i32x4b &test) { return _mm_movemask_epi8(test.m)==0xffff?1:0; }

@@ -27,6 +27,12 @@ union UValue64 {
 
 typedef UValue32 UValue;
 
+template <class Dst,class Src>
+Dst BitCast(const Src &src) {
+	union { Dst d; Src s; } u;
+	u.s=src;
+	return u.d;
+}
 template <class Base,int m,int n> struct CConst { static Base Value() { return Base(m)/Base(n); } };
 template <class Base,bool v> struct CBConst { static Base Value() { return Base(v); } };
 

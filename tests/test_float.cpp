@@ -160,34 +160,34 @@ template <class Generator,class TestedFunc,class CorrectFunc>
 	static double CCond10(double a,double b) { return (!(a<b))^(!(a>b))?a:b; }
 
 
-	static SSEReal TSqrt		(const SSEReal &in) { return Sqrt (in); }
-	static SSEReal TInv			(const SSEReal &in) { return Inv  (in); }
-	static SSEReal TRSqrt		(const SSEReal &in) { return RSqrt(in); }
-	static SSEReal TAbs			(const SSEReal &in) { return Abs  (in); }
-	static SSEReal TFastInv		(const SSEReal &in) { return FastInv  (in); }
-	static SSEReal TFastRSqrt	(const SSEReal &in) { return FastRSqrt(in); }
+	static f32x4 TSqrt		(const f32x4 &in) { return Sqrt (in); }
+	static f32x4 TInv			(const f32x4 &in) { return Inv  (in); }
+	static f32x4 TRSqrt		(const f32x4 &in) { return RSqrt(in); }
+	static f32x4 TAbs			(const f32x4 &in) { return Abs  (in); }
+	static f32x4 TFastInv		(const f32x4 &in) { return FastInv  (in); }
+	static f32x4 TFastRSqrt	(const f32x4 &in) { return FastRSqrt(in); }
 
-	static SSEReal TMax  (const SSEReal &a,const SSEReal &b) { return Max  (a,b); }
-	static SSEReal TMin  (const SSEReal &a,const SSEReal &b) { return Min  (a,b); }
+	static f32x4 TMax  (const f32x4 &a,const f32x4 &b) { return Max  (a,b); }
+	static f32x4 TMin  (const f32x4 &a,const f32x4 &b) { return Min  (a,b); }
 
-	static SSEReal TCmpEq(const SSEReal &a,const SSEReal &b) { return Condition(a==b,Const<SSEReal,1>(),Const<SSEReal,-1>()); }
-	static SSEReal TCmpNe(const SSEReal &a,const SSEReal &b) { return Condition(a!=b,Const<SSEReal,1>(),Const<SSEReal,-1>()); }
-	static SSEReal TCmpLe(const SSEReal &a,const SSEReal &b) { return Condition(a<=b,Const<SSEReal,1>(),Const<SSEReal,-1>()); }
-	static SSEReal TCmpGe(const SSEReal &a,const SSEReal &b) { return Condition(a>=b,Const<SSEReal,1>(),Const<SSEReal,-1>()); }
-	static SSEReal TCmpLt(const SSEReal &a,const SSEReal &b) { return Condition(a< b,Const<SSEReal,1>(),Const<SSEReal,-1>()); }
-	static SSEReal TCmpGt(const SSEReal &a,const SSEReal &b) { return Condition(a> b,Const<SSEReal,1>(),Const<SSEReal,-1>()); }
+	static f32x4 TCmpEq(const f32x4 &a,const f32x4 &b) { return Condition(a==b,Const<f32x4,1>(),Const<f32x4,-1>()); }
+	static f32x4 TCmpNe(const f32x4 &a,const f32x4 &b) { return Condition(a!=b,Const<f32x4,1>(),Const<f32x4,-1>()); }
+	static f32x4 TCmpLe(const f32x4 &a,const f32x4 &b) { return Condition(a<=b,Const<f32x4,1>(),Const<f32x4,-1>()); }
+	static f32x4 TCmpGe(const f32x4 &a,const f32x4 &b) { return Condition(a>=b,Const<f32x4,1>(),Const<f32x4,-1>()); }
+	static f32x4 TCmpLt(const f32x4 &a,const f32x4 &b) { return Condition(a< b,Const<f32x4,1>(),Const<f32x4,-1>()); }
+	static f32x4 TCmpGt(const f32x4 &a,const f32x4 &b) { return Condition(a> b,Const<f32x4,1>(),Const<f32x4,-1>()); }
 
-	static SSEReal TCond1(const SSEReal &a,const SSEReal &b) { return Condition((a<b)||(a>b),a,b); }
-	static SSEReal TCond2(const SSEReal &a,const SSEReal &b) { return Condition(a>=b&&b>=a,a,b); }
-	static SSEReal TCond3(const SSEReal &a,const SSEReal &b) { return Condition(!(a>b)||!(a<b),a,b); }
-	static SSEReal TCond4(const SSEReal &a,const SSEReal &b) { return Condition(!(!(a<b)&&!(a>b)),a,b); }
-	static SSEReal TCond5(const SSEReal &a,const SSEReal &b) { return Condition(!(a==b)||(a==b),a,b); }
-	static SSEReal TCond6(const SSEReal &a,const SSEReal &b) { SSERealMask t=!(a<b); return Condition(t,a,b); }
+	static f32x4 TCond1(const f32x4 &a,const f32x4 &b) { return Condition((a<b)||(a>b),a,b); }
+	static f32x4 TCond2(const f32x4 &a,const f32x4 &b) { return Condition(a>=b&&b>=a,a,b); }
+	static f32x4 TCond3(const f32x4 &a,const f32x4 &b) { return Condition(!(a>b)||!(a<b),a,b); }
+	static f32x4 TCond4(const f32x4 &a,const f32x4 &b) { return Condition(!(!(a<b)&&!(a>b)),a,b); }
+	static f32x4 TCond5(const f32x4 &a,const f32x4 &b) { return Condition(!(a==b)||(a==b),a,b); }
+	static f32x4 TCond6(const f32x4 &a,const f32x4 &b) { f32x4b t=!(a<b); return Condition(t,a,b); }
 
-	static SSEReal TCond7 (const SSEReal &a,const SSEReal &b) { return Condition((a<=b)^(a>=b),a,b); }
-	static SSEReal TCond8 (const SSEReal &a,const SSEReal &b) { return Condition(!(a<b)^(a<=b),a,b); }
-	static SSEReal TCond9 (const SSEReal &a,const SSEReal &b) { return Condition((a<=b)^!(a<b),a,b); }
-	static SSEReal TCond10(const SSEReal &a,const SSEReal &b) { return Condition((!(a<b))^(!(a>b)),a,b); }
+	static f32x4 TCond7 (const f32x4 &a,const f32x4 &b) { return Condition((a<=b)^(a>=b),a,b); }
+	static f32x4 TCond8 (const f32x4 &a,const f32x4 &b) { return Condition(!(a<b)^(a<=b),a,b); }
+	static f32x4 TCond9 (const f32x4 &a,const f32x4 &b) { return Condition((a<=b)^!(a<b),a,b); }
+	static f32x4 TCond10(const f32x4 &a,const f32x4 &b) { return Condition((!(a<b))^(!(a>b)),a,b); }
 
 public:
 	bool Test() {

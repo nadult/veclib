@@ -13,6 +13,8 @@ public:
 	INLINE Vec4(const base &t) :x(t),y(t),z(t),w(t) { }
 	INLINE Vec4(const base arr[4]) :x(arr[0]),y(arr[1]),z(arr[2]),w(arr[3]) { }
 	INLINE Vec4(const base &tx,const base &ty,const base &tz,const base &tw) :x(tx),y(ty),z(tz),w(tw) { }
+	INLINE Vec4(const Vec4 &rhs) :x(rhs.x),y(rhs.y),z(rhs.z),w(rhs.w) { }
+	INLINE const Vec4& operator=(const Vec4 &rhs) { x=rhs.x; y=rhs.y; z=rhs.z; w=rhs.w; return *this; }
 
 	explicit INLINE Vec4(const Vec2<base> &v) :x(v.x),y(v.y),z(Const<base,0>()),w(Const<base,0>()) { }
 	explicit INLINE Vec4(const Vec3<base> &v) :x(v.x),y(v.y),z(v.z),w(Const<base,0>()) { }

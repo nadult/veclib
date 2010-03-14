@@ -1,5 +1,5 @@
-CC=/usr/local/gcc-4.3-20080215/bin/g++
-#CC=g++
+#CC=/usr/local/gcc-4.3-20080215/bin/g++
+CC=g++
 FLAGS=-O3 -ffast-math -I ../ 
 
 all: test_int test_float

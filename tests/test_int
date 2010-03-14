@@ -1,8 +1,0 @@
-echo "Testing integer operations"
-echo "VECLIB_SSE_VER == 0x20    --------------------------"
-./test_int20
-echo "VECLIB_SSE_VER == 0x30    --------------------------"
-./test_int30
-echo "VECLIB_SSE_VER == 0x31    --------------------------"
-./test_int31
-

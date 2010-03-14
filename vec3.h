@@ -15,6 +15,8 @@ public:
 	INLINE Vec3(const base &t) :x(t),y(t),z(t) { }
 	INLINE Vec3(const base arr[3]) :x(arr[0]),y(arr[1]),z(arr[2]) { }
 	INLINE Vec3(const base &tx,const base &ty,const base &tz) :x(tx),y(ty),z(tz) { }
+	INLINE Vec3(const Vec3 &rhs) :x(rhs.x),y(rhs.y),z(rhs.z) { }
+	const Vec3& operator=(const Vec3 &rhs) { x=rhs.x; y=rhs.y; z=rhs.z; return *this; }
 
 	explicit INLINE Vec3(const Vec2<base>&v) :x(v.x),y(v.y),z(Const<base,0>()) { }
 	explicit INLINE Vec3(const Vec4<base>&);
@@ -55,7 +57,9 @@ public:
 		out.z=-z;
 		return out;
 	}
-	
+	INLINE base& operator[](int i) { return i==0?x:i==1?y:z; }
+	INLINE const base& operator[](int i) const { return i==0?x:i==1?y:z; }
+
 	base x,y,z;
 };
 
