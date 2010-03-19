@@ -10,19 +10,19 @@ class f32x4bn;
 class f32x4 
 {
 public:
-	INLINE f32x4() { }
-	INLINE f32x4(const __m128 &v) :m(v) { }
-	INLINE f32x4(const f32x4 &rhs) :m(rhs.m) { }
-    INLINE f32x4(float a,float b,float c,float d) :m(_mm_set_ps(d,c,b,a)) { }
-	INLINE f32x4(float v) :m(_mm_set1_ps(v)) { }
-	INLINE const f32x4 &operator=(const f32x4 &rhs) { m=rhs.m; return *this; }
+	f32x4() { }
+	f32x4(const __m128 &v) :m(v) { }
+	f32x4(const f32x4 &rhs) :m(rhs.m) { }
+    f32x4(float a,float b,float c,float d) :m(_mm_set_ps(d,c,b,a)) { }
+	f32x4(float v) :m(_mm_set1_ps(v)) { }
+	const f32x4 &operator=(const f32x4 &rhs) { m=rhs.m; return *this; }
 
-	INLINE const f32x4 &operator+=(const f32x4 &v) { m=_mm_add_ps(m,v.m); return *this; }
-	INLINE const f32x4 &operator-=(const f32x4 &v) { m=_mm_sub_ps(m,v.m); return *this; }
-	INLINE const f32x4 &operator*=(const f32x4 &v) { m=_mm_mul_ps(m,v.m); return *this; }
-	INLINE const f32x4 &operator/=(const f32x4 &v) { m=_mm_div_ps(m,v.m); return *this; }
+	const f32x4 &operator+=(const f32x4 &v) { m=_mm_add_ps(m,v.m); return *this; }
+	const f32x4 &operator-=(const f32x4 &v) { m=_mm_sub_ps(m,v.m); return *this; }
+	const f32x4 &operator*=(const f32x4 &v) { m=_mm_mul_ps(m,v.m); return *this; }
+	const f32x4 &operator/=(const f32x4 &v) { m=_mm_div_ps(m,v.m); return *this; }
 
-	INLINE f32x4 operator-() const { return _mm_sub_ps(_mm_setzero_ps(),m); }
+	f32x4 operator-() const { return _mm_sub_ps(_mm_setzero_ps(),m); }
 	operator f32*() { return f; }
 	operator const f32*() const { return f; }
 
@@ -38,12 +38,12 @@ struct CConst<f32x4,m,n> { static f32x4 Value() { const float v=((float)m)/((flo
 class f32x4b
 {
 public:
-	INLINE f32x4b() { }
-	INLINE f32x4b(const __m128 &v) :m(v) { }
+	f32x4b() { }
+	f32x4b(const __m128 &v) :m(v) { }
 
-	INLINE f32x4b operator^(const f32x4b &v) const	{ return _mm_xor_ps(m,v.m); }
-	INLINE f32x4b operator&&(const f32x4b &v) const	{ return _mm_and_ps(m,v.m); }
-	INLINE f32x4b operator||(const f32x4b &v) const	{ return _mm_or_ps(m,v.m); }
+	f32x4b operator^(const f32x4b &v) const	{ return _mm_xor_ps(m,v.m); }
+	f32x4b operator&&(const f32x4b &v) const	{ return _mm_and_ps(m,v.m); }
+	f32x4b operator||(const f32x4b &v) const	{ return _mm_or_ps(m,v.m); }
 
 	__m128 m;
 };
@@ -54,20 +54,20 @@ struct CBConst<f32x4b,v> { static f32x4b Value() { return f32x4b(BitCast<float,u
 class f32x4bn
 {
 public:
-	INLINE f32x4bn operator^(const f32x4b &v) const		{ return _mm_xor_ps(m,v.m); }
-	INLINE f32x4b operator^(const f32x4bn &v) const		{ return _mm_xor_ps(m,v.m); }
-	INLINE f32x4b operator!() const							{ return f32x4b(m); }
+	f32x4bn operator^(const f32x4b &v) const		{ return _mm_xor_ps(m,v.m); }
+	f32x4b operator^(const f32x4bn &v) const		{ return _mm_xor_ps(m,v.m); }
+	f32x4b operator!() const							{ return f32x4b(m); }
 
-	INLINE f32x4b operator&&(const f32x4b &v) const		{ return _mm_andnot_ps(m,v.m); }
-	INLINE f32x4bn operator&&(const f32x4bn &v) const	{ return _mm_or_ps(m,v.m); }
+	f32x4b operator&&(const f32x4b &v) const		{ return _mm_andnot_ps(m,v.m); }
+	f32x4bn operator&&(const f32x4bn &v) const	{ return _mm_or_ps(m,v.m); }
 
-	INLINE f32x4bn operator||(const f32x4bn &v) const	{ return _mm_and_ps(m,v.m); }
-	INLINE f32x4b operator||(const f32x4b &v) const		{ return _mm_or_ps(_mm_andnot_ps(m,_mm_set1_ps(BitCast<float,u32>(~0))),v.m); }
+	f32x4bn operator||(const f32x4bn &v) const	{ return _mm_and_ps(m,v.m); }
+	f32x4b operator||(const f32x4b &v) const		{ return _mm_or_ps(_mm_andnot_ps(m,_mm_set1_ps(BitCast<float,u32>(~0))),v.m); }
 	operator f32x4b() const								{ return _mm_andnot_ps(m,_mm_set1_ps(BitCast<float,u32>(~0))); }
 
 	const __m128 &NegM() const { return m; }
 private:
-	INLINE f32x4bn(const __m128 &v) :m(v) { }
+	f32x4bn(const __m128 &v) :m(v) { }
 	friend f32x4bn operator!(const f32x4b&);
 	friend f32x4bn operator^(const f32x4b&,const f32x4bn&);
 
@@ -76,57 +76,57 @@ private:
 	__m128 m;
 };
 
-INLINE f32x4bn operator!(const f32x4b &v)						{ return f32x4bn(v.m); }
-INLINE f32x4bn operator^(const f32x4b &a,const f32x4bn &b)		{ return f32x4bn(_mm_xor_ps(a.m,b.NegM())); }
-INLINE f32x4b operator&&(const f32x4b &a,const f32x4bn &b)		{ return _mm_andnot_ps(b.NegM(),a.m); }
-INLINE f32x4b operator||(const f32x4b &a,const f32x4bn &b)
+inline f32x4bn operator!(const f32x4b &v)						{ return f32x4bn(v.m); }
+inline f32x4bn operator^(const f32x4b &a,const f32x4bn &b)		{ return f32x4bn(_mm_xor_ps(a.m,b.NegM())); }
+inline f32x4b operator&&(const f32x4b &a,const f32x4bn &b)		{ return _mm_andnot_ps(b.NegM(),a.m); }
+inline f32x4b operator||(const f32x4b &a,const f32x4bn &b)
 	{ return _mm_or_ps(a.m,_mm_andnot_ps(b.NegM(),_mm_set1_ps(BitCast<float,u32>(~0)))); }
 
-INLINE bool ForAny(const f32x4b &v) { return _mm_movemask_ps(v.m)?1:0; }
-INLINE bool ForAll(const f32x4b &v) { return _mm_movemask_ps(v.m)==15; }
-INLINE int ForWhich(const f32x4b &v) { return _mm_movemask_ps(v.m); }
+inline bool ForAny(const f32x4b &v) { return _mm_movemask_ps(v.m)?1:0; }
+inline bool ForAll(const f32x4b &v) { return _mm_movemask_ps(v.m)==15; }
+inline int ForWhich(const f32x4b &v) { return _mm_movemask_ps(v.m); }
 
 
 
-INLINE f32x4b operator ==(const f32x4 &a,const f32x4 &b) { return _mm_cmpeq_ps(a.m,b.m); }
-INLINE f32x4b operator !=(const f32x4 &a,const f32x4 &b) { return _mm_cmpneq_ps(a.m,b.m); }
-INLINE f32x4b operator <=(const f32x4 &a,const f32x4 &b) { return _mm_cmple_ps(a.m,b.m); }
-INLINE f32x4b operator >=(const f32x4 &a,const f32x4 &b) { return _mm_cmpge_ps(a.m,b.m); }
-INLINE f32x4b operator < (const f32x4 &a,const f32x4 &b) { return _mm_cmplt_ps(a.m,b.m); }
-INLINE f32x4b operator > (const f32x4 &a,const f32x4 &b) { return _mm_cmpgt_ps(a.m,b.m); }
+inline f32x4b operator ==(const f32x4 &a,const f32x4 &b) { return _mm_cmpeq_ps(a.m,b.m); }
+inline f32x4b operator !=(const f32x4 &a,const f32x4 &b) { return _mm_cmpneq_ps(a.m,b.m); }
+inline f32x4b operator <=(const f32x4 &a,const f32x4 &b) { return _mm_cmple_ps(a.m,b.m); }
+inline f32x4b operator >=(const f32x4 &a,const f32x4 &b) { return _mm_cmpge_ps(a.m,b.m); }
+inline f32x4b operator < (const f32x4 &a,const f32x4 &b) { return _mm_cmplt_ps(a.m,b.m); }
+inline f32x4b operator > (const f32x4 &a,const f32x4 &b) { return _mm_cmpgt_ps(a.m,b.m); }
 
-INLINE f32x4 operator+(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out+=b; return out; }
-INLINE f32x4 operator-(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out-=b; return out; }
-INLINE f32x4 operator*(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out*=b; return out; }
-INLINE f32x4 operator/(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out/=b; return out; }
+inline f32x4 operator+(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out+=b; return out; }
+inline f32x4 operator-(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out-=b; return out; }
+inline f32x4 operator*(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out*=b; return out; }
+inline f32x4 operator/(const f32x4 &a,const f32x4 &b) { f32x4 out(a); out/=b; return out; }
 
-INLINE f32x4 Sqrt		(const f32x4 &v) { return _mm_sqrt_ps(v.m); }
-INLINE f32x4 Inv		(const f32x4 &v) { return _mm_nrrcp_ps(v.m); }
-INLINE f32x4 RSqrt		(const f32x4 &v) { return _mm_nrrsqrt_ps(v.m); }
-INLINE f32x4 FastInv	(const f32x4 &v) { return _mm_rcp_ps(v.m); }
-INLINE f32x4 FastRSqrt	(const f32x4 &v) { return _mm_rsqrt_ps(v.m); }
+inline f32x4 Sqrt		(const f32x4 &v) { return _mm_sqrt_ps(v.m); }
+inline f32x4 Inv		(const f32x4 &v) { return _mm_nrrcp_ps(v.m); }
+inline f32x4 RSqrt		(const f32x4 &v) { return _mm_nrrsqrt_ps(v.m); }
+inline f32x4 FastInv	(const f32x4 &v) { return _mm_rcp_ps(v.m); }
+inline f32x4 FastRSqrt	(const f32x4 &v) { return _mm_rsqrt_ps(v.m); }
 
 
-INLINE f32x4 Abs(const f32x4 &v)				{ return _mm_and_ps(_mm_set1_ps(BitCast<float,u32>(0x7fffffff)),v.m); }
-INLINE f32x4 Min(const f32x4 &a,const f32x4 &b)	{ return _mm_min_ps(a.m,b.m); }
-INLINE f32x4 Max(const f32x4 &a,const f32x4 &b)	{ return _mm_max_ps(a.m,b.m); }
-INLINE int SignMask(const f32x4 &v)				{ return _mm_movemask_ps(v.m); }
+inline f32x4 Abs(const f32x4 &v)				{ return _mm_and_ps(_mm_set1_ps(BitCast<float,u32>(0x7fffffff)),v.m); }
+inline f32x4 Min(const f32x4 &a,const f32x4 &b)	{ return _mm_min_ps(a.m,b.m); }
+inline f32x4 Max(const f32x4 &a,const f32x4 &b)	{ return _mm_max_ps(a.m,b.m); }
+inline int SignMask(const f32x4 &v)				{ return _mm_movemask_ps(v.m); }
 
-INLINE f32x4 Condition(const f32x4b &test,const f32x4 &v1,const f32x4 &v2) {
+inline f32x4 Condition(const f32x4b &test,const f32x4 &v1,const f32x4 &v2) {
 	return _mm_or_ps(_mm_and_ps(test.m,v1.m),_mm_andnot_ps(test.m,v2.m));
 }
-INLINE f32x4 Condition(const f32x4bn &test,const f32x4 &v1,const f32x4 &v2) {
+inline f32x4 Condition(const f32x4bn &test,const f32x4 &v1,const f32x4 &v2) {
 	return _mm_or_ps(_mm_andnot_ps(test.NegM(),v1.m),_mm_and_ps(test.NegM(),v2.m));
 }
-INLINE f32x4 Condition(const f32x4b &test,const f32x4 &v1)		{ return _mm_and_ps(test.m,v1.m); }
-INLINE f32x4 Condition(const f32x4bn &test,const f32x4 &v1)		{ return _mm_andnot_ps(test.NegM(),v1.m); }
+inline f32x4 Condition(const f32x4b &test,const f32x4 &v1)		{ return _mm_and_ps(test.m,v1.m); }
+inline f32x4 Condition(const f32x4bn &test,const f32x4 &v1)		{ return _mm_andnot_ps(test.NegM(),v1.m); }
 
 template <>
 struct ScalarInfo<f32x4> {
 	enum { multiplicity=4, floatingPoint=1 };
 	typedef f32x4b TBool;
 
-	INLINE static f32x4b ElementMask(int n) {
+	static f32x4b ElementMask(int n) {
 		static f32x4b elems[4]={
 			_mm_set_ps(UValue(0).f,UValue(0).f,UValue(0).f,UValue(0xffffffff).f),
 			_mm_set_ps(UValue(0).f,UValue(0).f,UValue(0xffffffff).f,UValue(0).f),
@@ -138,12 +138,12 @@ struct ScalarInfo<f32x4> {
 	}
 };
 
-INLINE void Broadcast(const float &in,f32x4 &out) { out=_mm_load1(in); }
-INLINE void Convert(const float in[4],f32x4 &out) { out=_mm_load4(in); }
-INLINE void Convert(const f32x4 &in,float out[4]) { _mm_store4(in.m,out); }
+inline void Broadcast(const float &in,f32x4 &out) { out=_mm_load1(in); }
+inline void Convert(const float in[4],f32x4 &out) { out=_mm_load4(in); }
+inline void Convert(const f32x4 &in,float out[4]) { _mm_store4(in.m,out); }
 
-INLINE void Convert(float x,float y,float z,float w,f32x4 &out) { out=_mm_set_ps(w,z,y,x); }
-INLINE void Convert(const f32x4 &in,float &outX,float &outY,float &outZ,float &outW) {
+inline void Convert(float x,float y,float z,float w,f32x4 &out) { out=_mm_set_ps(w,z,y,x); }
+inline void Convert(const f32x4 &in,float &outX,float &outY,float &outZ,float &outW) {
 	_mm_store_ss(&outX,in.m);
 	_mm_store_ss(&outY,_mm_shuffle(1,in.m));
 	_mm_store_ss(&outZ,_mm_shuffle(2,in.m));

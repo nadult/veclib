@@ -66,21 +66,13 @@ namespace veclib
 namespace baselib
 {
 
-	template<> struct SerializeAsPOD< veclib::Vec2<f32> > { enum { value=sizeof(veclib::Vec2<f32>)==sizeof(f32)*2 }; };
-	template<> struct SerializeAsPOD< veclib::Vec3<f32> > { enum { value=sizeof(veclib::Vec3<f32>)==sizeof(f32)*3 }; };
-	template<> struct SerializeAsPOD< veclib::Vec4<f32> > { enum { value=sizeof(veclib::Vec4<f32>)==sizeof(f32)*4 }; };
-
-	template<> struct SerializeAsPOD< veclib::Vec2<f64> > { enum { value=sizeof(veclib::Vec2<f64>)==sizeof(f64)*2 }; };
-	template<> struct SerializeAsPOD< veclib::Vec3<f64> > { enum { value=sizeof(veclib::Vec3<f64>)==sizeof(f64)*3 }; };
-	template<> struct SerializeAsPOD< veclib::Vec4<f64> > { enum { value=sizeof(veclib::Vec4<f64>)==sizeof(f64)*4 }; };
-
-	template<> inline void Serialize< veclib::Vec2<f32> >(veclib::Vec2<f32> &v,Serializer &sr) { sr&v.x&v.y; }
-	template<> inline void Serialize< veclib::Vec3<f32> >(veclib::Vec3<f32> &v,Serializer &sr) { sr&v.x&v.y&v.z; }
-	template<> inline void Serialize< veclib::Vec4<f32> >(veclib::Vec4<f32> &v,Serializer &sr) { sr&v.x&v.y&v.z&v.w; }
-
-	template<> inline void Serialize< veclib::Vec2<f64> >(veclib::Vec2<f64> &v,Serializer &sr) { sr&v.x&v.y; }
-	template<> inline void Serialize< veclib::Vec3<f64> >(veclib::Vec3<f64> &v,Serializer &sr) { sr&v.x&v.y&v.z; }
-	template<> inline void Serialize< veclib::Vec4<f64> >(veclib::Vec4<f64> &v,Serializer &sr) { sr&v.x&v.y&v.z&v.w; }
+	template<> struct Serializer::IsPod< veclib::Vec2<f32> > { enum { value=1 }; };
+	template<> struct Serializer::IsPod< veclib::Vec3<f32> > { enum { value=1 }; };
+	template<> struct Serializer::IsPod< veclib::Vec4<f32> > { enum { value=1 }; };
+	
+	template<> struct Serializer::IsPod< veclib::Vec2<f64> > { enum { value=1 }; };
+	template<> struct Serializer::IsPod< veclib::Vec3<f64> > { enum { value=1 }; };
+	template<> struct Serializer::IsPod< veclib::Vec4<f64> > { enum { value=1 }; };
 
 }
 #endif
@@ -92,7 +84,7 @@ namespace veclib
 #if defined(VECLIB_GCC_STYLE)
 	#if VECLIB_ARCH==0x32
 
-INLINE u64 Ticks() {
+inline u64 Ticks() {
 	u64 x;
 	__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
 	return x;
@@ -100,7 +92,7 @@ INLINE u64 Ticks() {
 
 	#elif VECLIB_ARCH==0x64
 
-INLINE u64 Ticks() {
+inline u64 Ticks() {
     unsigned hi, lo;
     __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
    	return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
@@ -109,7 +101,7 @@ INLINE u64 Ticks() {
 	#endif
 #elif defined(VECLIB_MSVC_STYLE)
 
-INLINE u64 Ticks() {
+inline u64 Ticks() {
 	u32 ddlow,ddhigh;
 	__asm{
 		rdtsc
@@ -122,7 +114,7 @@ INLINE u64 Ticks() {
 #endif
 
 /*
-INLINE void *AlignedMalloc(size_t size) {
+inline void *AlignedMalloc(size_t size) {
 	char *ptr=new char[size+sizeof(void*)+16];
 
 	void *aligned=(void*)((u64(ptr)+15)&~15);
@@ -130,7 +122,7 @@ INLINE void *AlignedMalloc(size_t size) {
 	return aligned;
 }
 
-INLINE void *AlignedFree(void *aligned) {
+inline void *AlignedFree(void *aligned) {
 	void *ptr=((void**)aligned)[-1];
 	delete[]((char*)ptr);
 }*/

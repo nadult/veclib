@@ -1,7 +1,7 @@
 PREFIX=/usr/local
 CROSS=
 
-CXX=$(CROSS)g++ -Wall
+CXX=$(CROSS)g++ -std=gnu++0x -Wall
 FLAGS=-O3
 
 all: vecliball_pp31.h vecliball_pp30.h vecliball_pp20.h vecliball_pp10.h vecliball_pp00.h
