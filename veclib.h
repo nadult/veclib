@@ -34,9 +34,6 @@ namespace veclib
 		
 		typedef float				f32;
 		typedef double				f64;
-#ifdef _WIN32
-		typedef unsigned int 		uint;
-#endif
 	}
 	using namespace basetypes;
 #else
@@ -63,23 +60,18 @@ namespace veclib
 #endif
 
 #ifdef BASELIB_H
-namespace baselib
-{
 
-	template<> struct Serializer::IsPod< veclib::Vec2<f32> > { enum { value=1 }; };
-	template<> struct Serializer::IsPod< veclib::Vec3<f32> > { enum { value=1 }; };
-	template<> struct Serializer::IsPod< veclib::Vec4<f32> > { enum { value=1 }; };
-	
-	template<> struct Serializer::IsPod< veclib::Vec2<f64> > { enum { value=1 }; };
-	template<> struct Serializer::IsPod< veclib::Vec3<f64> > { enum { value=1 }; };
-	template<> struct Serializer::IsPod< veclib::Vec4<f64> > { enum { value=1 }; };
+SERIALIZE_AS_POD(veclib::Vec2<float>)
+SERIALIZE_AS_POD(veclib::Vec3<float>)
+SERIALIZE_AS_POD(veclib::Vec4<float>)
+SERIALIZE_AS_POD(veclib::Vec2<double>)
+SERIALIZE_AS_POD(veclib::Vec3<double>)
+SERIALIZE_AS_POD(veclib::Vec4<double>)
 
-}
 #endif
 
 namespace veclib
 {
-
 
 #if defined(VECLIB_GCC_STYLE)
 	#if VECLIB_ARCH==0x32

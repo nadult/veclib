@@ -16,8 +16,8 @@ class pvec4f32;
 // -----------------------------------------------------------------------------------------------------------
 #define CLASS_NAME pvec2f32
 #define ADDITIONAL_CLASS_CODE \
-	INLINE explicit pvec2f32(const pvec3f32 &v); \
-	INLINE explicit pvec2f32(const pvec4f32 &v); \
+	INLINE explicit pvec2f32(pvec3f32 v); \
+	INLINE explicit pvec2f32(pvec4f32 v); \
 	INLINE pvec2f32(float x,float y) { m=_mm_load2(x,y); } \
 	INLINE pvec2f32(const Vec2<float> &v) { m=_mm_load2(v.x,v.y); } \
 	INLINE operator Vec2<float>() const { return Vec2<float>(x,y); } \
@@ -32,8 +32,8 @@ class pvec4f32;
 // -----------------------------------------------------------------------------------------------------------
 #define CLASS_NAME pvec3f32
 #define ADDITIONAL_CLASS_CODE \
-	INLINE explicit pvec3f32(const pvec2f32 &v); \
-	INLINE explicit pvec3f32(const pvec4f32 &v); \
+	INLINE explicit pvec3f32(pvec2f32 v); \
+	INLINE explicit pvec3f32(pvec4f32 v); \
 	INLINE pvec3f32(float x,float y,float z) { m=_mm_load3(x,y,z); } \
 	INLINE pvec3f32(const Vec3<float> &v) { m=_mm_load3(v.x,v.y,v.z); } \
 	INLINE operator Vec3<float>() const { return Vec3<float>(x,y,z); } \
@@ -47,8 +47,8 @@ class pvec4f32;
 // -----------------------------------------------------------------------------------------------------------
 #define CLASS_NAME pvec4f32
 #define ADDITIONAL_CLASS_CODE \
-	INLINE explicit pvec4f32(const pvec2f32 &v) { m=_mm_shuffle_ps(v.m,_mm_setzero_ps(),0+(1<<2)); } \
-	INLINE explicit pvec4f32(const pvec3f32 &v) { \
+	INLINE explicit pvec4f32(pvec2f32 v) { m=_mm_shuffle_ps(v.m,_mm_setzero_ps(),0+(1<<2)); } \
+	INLINE explicit pvec4f32(pvec3f32 v) { \
 		__m128 zzww=_mm_shuffle_ps(v.m,_mm_setzero_ps(),0); \
 		m=_mm_shuffle_ps(v.m,zzww,0+(1<<2)+(0<<4)+(2<<6)); \
 	} \
@@ -64,14 +64,14 @@ class pvec4f32;
 #undef CLASS_NAME
 // -----------------------------------------------------------------------------------------------------------
 
-pvec3f32::pvec3f32(const pvec2f32 &v) :m(_mm_shuffle_ps(v.m,_mm_setzero_ps(),0+(1<<2))) { }
-pvec3f32::pvec3f32(const pvec4f32 &v) :m(v.m) { }
+pvec3f32::pvec3f32(pvec2f32 v) :m(_mm_shuffle_ps(v.m,_mm_setzero_ps(),0+(1<<2))) { }
+pvec3f32::pvec3f32(pvec4f32 v) :m(v.m) { }
 
-pvec2f32::pvec2f32(const pvec3f32 &v) :m(v.m) { }
-pvec2f32::pvec2f32(const pvec4f32 &v) :m(v.m) { }
+pvec2f32::pvec2f32(pvec3f32 v) :m(v.m) { }
+pvec2f32::pvec2f32(pvec4f32 v) :m(v.m) { }
 
 
-INLINE float operator|(const pvec2f32 &a,const pvec2f32 &b) {
+INLINE float operator|(pvec2f32 a,pvec2f32 b) {
 	union { float out[4]; __m128 t; };
 
 	t=_mm_mul_ps(a.m,b.m);
@@ -79,7 +79,7 @@ INLINE float operator|(const pvec2f32 &a,const pvec2f32 &b) {
 
 	return out[0];
 }
-INLINE float operator|(const pvec3f32 &a,const pvec3f32 &b) {
+INLINE float operator|(pvec3f32 a,pvec3f32 b) {
 	__m128 t;
 	float out;
 
@@ -89,7 +89,7 @@ INLINE float operator|(const pvec3f32 &a,const pvec3f32 &b) {
 
 	return out;
 }
-INLINE float operator|(const pvec4f32 &a,const pvec4f32 &b) {
+INLINE float operator|(pvec4f32 a,pvec4f32 b) {
 	union { float out[4]; __m128 t; };
 	t=_mm_mul_ps(a.m,b.m);
 	t=_mm_add_ps(t,_mm_shuffle_ps(t,t,0x4E));
@@ -97,14 +97,14 @@ INLINE float operator|(const pvec4f32 &a,const pvec4f32 &b) {
 	return out[0];
 }
 
-INLINE float Length(const pvec2f32 &v)		{ return Sqrt(v|v); }
-INLINE float LengthSq(const pvec2f32 &v)	{ return v|v; }
-INLINE float Length(const pvec3f32 &v)		{ return Sqrt(v|v); }
-INLINE float LengthSq(const pvec3f32 &v)	{ return v|v; }
-INLINE float Length(const pvec4f32 &v)		{ return Sqrt(v|v); }
-INLINE float LengthSq(const pvec4f32 &v)	{ return v|v; }
+INLINE float Length(pvec2f32 v)		{ return Sqrt(v|v); }
+INLINE float LengthSq(pvec2f32 v)	{ return v|v; }
+INLINE float Length(pvec3f32 v)		{ return Sqrt(v|v); }
+INLINE float LengthSq(pvec3f32 v)	{ return v|v; }
+INLINE float Length(pvec4f32 v)		{ return Sqrt(v|v); }
+INLINE float LengthSq(pvec4f32 v)	{ return v|v; }
 
-INLINE pvec3f32 operator^(const pvec3f32 &a,const pvec3f32 &b)
+INLINE const pvec3f32 operator^(pvec3f32 a,pvec3f32 b)
 {
 	pvec3f32 out;
 

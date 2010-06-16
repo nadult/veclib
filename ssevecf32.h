@@ -9,27 +9,27 @@ typedef Vec2<f32x4> vec2f32x4;
 typedef Vec3<f32x4> vec3f32x4;
 typedef Vec4<f32x4> vec4f32x4;
 
-INLINE vec2f32x4 Condition(const f32x4bn &test,const vec2f32x4 &v1,const vec2f32x4 &v2) {
+INLINE const vec2f32x4 Condition(f32x4bn test,vec2f32x4 v1,vec2f32x4 v2) {
 	vec2f32x4 out;
 	out.x = Condition(test,v1.x,v2.x);
 	out.y = Condition(test,v1.y,v2.y);
 	return out;
 }
-INLINE vec2f32x4 Condition(const f32x4bn &test,const vec2f32x4 &v1) {
+INLINE const vec2f32x4 Condition(f32x4bn test,vec2f32x4 v1) {
 	vec2f32x4 out;
 	out.x = Condition(test,v1.x);
 	out.y = Condition(test,v1.y);
 	return out;
 }
 
-INLINE vec3f32x4 Condition(const f32x4bn &test,const vec3f32x4 &v1,const vec3f32x4 &v2) {
+INLINE const vec3f32x4 Condition(f32x4bn test,vec3f32x4 v1,vec3f32x4 v2) {
 	vec3f32x4 out;
 	out.x = Condition(test,v1.x,v2.x);
 	out.y = Condition(test,v1.y,v2.y);
 	out.z = Condition(test,v1.z,v2.z);
 	return out;
 }
-INLINE vec3f32x4 Condition(const f32x4bn &test,const vec3f32x4 &v1) {
+INLINE const vec3f32x4 Condition(f32x4bn test,vec3f32x4 v1) {
 	vec3f32x4 out;
 	out.x = Condition(test,v1.x);
 	out.y = Condition(test,v1.y);
@@ -37,7 +37,7 @@ INLINE vec3f32x4 Condition(const f32x4bn &test,const vec3f32x4 &v1) {
 	return out;
 }
 
-INLINE vec4f32x4 Condition(const f32x4bn &test,const vec4f32x4 &v1,const vec4f32x4 &v2) {
+INLINE const vec4f32x4 Condition(f32x4bn test,vec4f32x4 v1,vec4f32x4 v2) {
 	vec4f32x4 out;
 	out.x = Condition(test,v1.x,v2.x);
 	out.y = Condition(test,v1.y,v2.y);
@@ -45,7 +45,7 @@ INLINE vec4f32x4 Condition(const f32x4bn &test,const vec4f32x4 &v1,const vec4f32
 	out.w = Condition(test,v1.w,v2.w);
 	return out;
 }
-INLINE vec4f32x4 Condition(const f32x4bn &test,const vec4f32x4 &v1) {
+INLINE const vec4f32x4 Condition(f32x4bn test,vec4f32x4 v1) {
 	vec4f32x4 out;
 	out.x = Condition(test,v1.x);
 	out.y = Condition(test,v1.y);

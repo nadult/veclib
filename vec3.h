@@ -11,22 +11,22 @@ public:
 	typedef base TScalar;
 	typedef typename ScalarInfo<base>::TBool TBool;
 
-	INLINE Vec3() { }
-	INLINE Vec3(const base &t) :x(t),y(t),z(t) { }
-	INLINE Vec3(const base arr[3]) :x(arr[0]),y(arr[1]),z(arr[2]) { }
-	INLINE Vec3(const base &tx,const base &ty,const base &tz) :x(tx),y(ty),z(tz) { }
-	INLINE Vec3(const Vec3 &rhs) :x(rhs.x),y(rhs.y),z(rhs.z) { }
-	const Vec3& operator=(const Vec3 &rhs) { x=rhs.x; y=rhs.y; z=rhs.z; return *this; }
+	Vec3() { }
+	Vec3(const base &t) :x(t),y(t),z(t) { }
+	Vec3(const base arr[3]) :x(arr[0]),y(arr[1]),z(arr[2]) { }
+	Vec3(const base &tx,const base &ty,const base &tz) :x(tx),y(ty),z(tz) { }
+	Vec3(const Vec3 &rhs) :x(rhs.x),y(rhs.y),z(rhs.z) { }
+	Vec3 operator=(const Vec3 &rhs) { x=rhs.x; y=rhs.y; z=rhs.z; return *this; }
 
-	explicit INLINE Vec3(const Vec2<base>&v) :x(v.x),y(v.y),z(Const<base,0>()) { }
-	explicit INLINE Vec3(const Vec4<base>&);
+	explicit Vec3(const Vec2<base>&v) :x(v.x),y(v.y),z(Const<base,0>()) { }
+	explicit Vec3(const Vec4<base>&);
 
 	template <class VEC>
-	explicit INLINE Vec3(const VEC &v) :x(v.x),y(v.y),z(v.z) { }
+	explicit Vec3(const VEC &v) :x(v.x),y(v.y),z(v.z) { }
 
 #define GEN_OP(op) \
 	template <class GenericVec3> \
-	INLINE const Vec3 &operator op(const GenericVec3 &v) { \
+	const Vec3 operator op(GenericVec3 v) { \
 		x op v.x; y op v.y; z op v.z; \
 		return *this; \
 	}
@@ -38,27 +38,27 @@ public:
 
 #undef GEN_OP
 	
-	INLINE TBool operator==(const Vec3 &rhs) const { return x==rhs.x&&y==rhs.y&&z==rhs.z; }
-	INLINE TBool operator!=(const Vec3 &rhs) const { return x!=rhs.x||y!=rhs.y||z!=rhs.z; }
+	TBool operator==(Vec3 rhs) const { return x==rhs.x&&y==rhs.y&&z==rhs.z; }
+	TBool operator!=(Vec3 rhs) const { return x!=rhs.x||y!=rhs.y||z!=rhs.z; }
 
-	INLINE const Vec3 &operator*=(const base &s) {
+	const Vec3 operator*=(base s) {
 		x*=s; y*=s; z*=s;
 		return *this;
 	}
-	INLINE const Vec3 &operator/=(const base &s) {
+	const Vec3 operator/=(base s) {
 		base inv=Inv(s);
 		x*=inv; y*=inv; z*=inv;
 		return *this;
 	}
-	INLINE Vec3 operator-() const {
+	Vec3 operator-() const {
 		Vec3 out;
 		out.x=-x;
 		out.y=-y;
 		out.z=-z;
 		return out;
 	}
-	INLINE base& operator[](int i) { return i==0?x:i==1?y:z; }
-	INLINE const base& operator[](int i) const { return i==0?x:i==1?y:z; }
+	base& operator[](int i) { return i==0?x:i==1?y:z; }
+	const base& operator[](int i) const { return i==0?x:i==1?y:z; }
 
 	base x,y,z;
 };
@@ -70,14 +70,14 @@ Vec3<base>::Vec3(const Vec4<base> &v) :x(v.x),y(v.y),z(v.z) { }
 
 #define GEN_OP(op,sop) \
 	template <class base,class GenericVec> \
-	INLINE Vec3<base> operator op(const Vec3<base> &a,const GenericVec &b) { \
+	INLINE Vec3<base> operator op(Vec3<base> a, GenericVec b) { \
 		Vec3<base> out(a); \
 		out sop b; \
 		return out; \
 	}
 #define GEN_SCL_OP(op,sop) \
 	template <class base> \
-	INLINE Vec3<base> operator op(const Vec3<base> &a,const base &s) { \
+	INLINE Vec3<base> operator op(Vec3<base> a, base s) { \
 		Vec3<base> out(a); \
 		out sop s; \
 		return out; \
@@ -95,6 +95,8 @@ GEN_SCL_OP(/,/=)
 #undef GEN_SCL_OP
 
 template <class base,class GenericVec>
+INLINE base operator|(const Vec3<base> &a,const GenericVec &b) __attribute__((always_inline));
+template <class base,class GenericVec>
 INLINE base operator|(const Vec3<base> &a,const GenericVec &b) {
 	base out=a.x*b.x+a.y*b.y+a.z*b.z;
 	return out;
@@ -104,6 +106,8 @@ INLINE base Sum(const Vec3<base> &v) {
 	base out=v.x+v.y+v.z;
 	return out;
 }
+template <class base,class GenericVec>
+INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) __attribute__((always_inline));
 template <class base,class GenericVec>
 INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
 	Vec3<base> out;

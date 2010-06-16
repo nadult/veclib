@@ -102,7 +102,7 @@ INLINE Matrix<vbase> Transpose(const Matrix<vbase> &m) {
 }
 
 template <class mbase,class vbase>
-INLINE Vec4<vbase> operator*(const Matrix<mbase> &m,const Vec4<vbase> &v) {
+INLINE Vec4<vbase> operator*(const Matrix<mbase> &m,Vec4<vbase> v) {
 	Vec4<vbase> out;
 	out.x = v|m.x;
 	out.y = v|m.y;
@@ -112,7 +112,9 @@ INLINE Vec4<vbase> operator*(const Matrix<mbase> &m,const Vec4<vbase> &v) {
 }
 
 template <class mbase,class vbase>
-INLINE Vec3<vbase> operator*(const Matrix<mbase> &m,const Vec3<vbase> &v) {
+INLINE Vec3<vbase> operator*(const Matrix<mbase> &m,Vec3<vbase> v) __attribute__((always_inline));
+template <class mbase,class vbase>
+INLINE Vec3<vbase> operator*(const Matrix<mbase> &m,Vec3<vbase> v) {
 	Vec3<vbase> out;
 
 	out.x = v.x*m.x.x+v.y*m.y.x+v.z*m.z.x+m.w.x;
@@ -123,7 +125,7 @@ INLINE Vec3<vbase> operator*(const Matrix<mbase> &m,const Vec3<vbase> &v) {
 }
 
 template <class mbase,class vbase>
-INLINE Vec3<vbase> operator&(const Matrix<mbase> &m,const Vec3<vbase> &v) {
+INLINE Vec3<vbase> operator&(const Matrix<mbase> &m,Vec3<vbase> v) {
 	Vec3<vbase> out;
 
 	out.x = v.x*m.x.x+v.y*m.y.x+v.z*m.z.x;
@@ -134,7 +136,7 @@ INLINE Vec3<vbase> operator&(const Matrix<mbase> &m,const Vec3<vbase> &v) {
 }
 
 template <class mbase,class vbase>
-INLINE Vec2<vbase> operator*(const Matrix<mbase> &m,const Vec2<vbase> &v) {
+INLINE Vec2<vbase> operator*(const Matrix<mbase> &m,Vec2<vbase> v) {
 	Vec2<vbase> out;
 
 	out.x = v.x*m.x.x+v.y*m.x.y+m.w.x;

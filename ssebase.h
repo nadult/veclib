@@ -3,8 +3,8 @@
 
 #include "vecbase.h"
 
-template <uint mask>
-__m128 _mm_shuffle_(const __m128 &v) {
+template <unsigned mask>
+__m128 _mm_shuffle_(__m128 v) {
 	return _mm_shuffle_ps(v,v,mask);
 }
 
@@ -93,13 +93,13 @@ INLINE float _mm_store1(__m128 v) {
 	return out;
 }
 
-INLINE __m128 _mm_nrrcp_ps(const __m128 &v) {
+INLINE __m128 _mm_nrrcp_ps(__m128 v) {
 	__m128 out;
 	__m128 t=_mm_rcp_ps(v);
 	out=_mm_sub_ps(_mm_add_ps(t,t),_mm_mul_ps(_mm_mul_ps(v,t),t));
 	return out;
 }
-INLINE __m128 _mm_nrrsqrt_ps(const __m128 &v) {
+INLINE __m128 _mm_nrrsqrt_ps(__m128 v) {
 	__m128 out;
 	__m128 t=_mm_rsqrt_ps(v);
 	out=	_mm_mul_ps(	_mm_mul_ps(_mm_set1_ps(0.5f),t),
@@ -112,7 +112,7 @@ INLINE __m128 _mm_bool2mask(bool v) {
 }
 
 
-INLINE void _mm_transpose(const __m128 &x,const __m128 &y,const __m128 &z,const __m128 &w,
+INLINE void _mm_transpose(__m128 x,__m128 y,__m128 z,__m128 w,
 			   __m128 &ox,__m128 &oy,__m128 &oz,__m128 &ow)
 {
 	__m128 tmp3, tmp2, tmp1, tmp0;
