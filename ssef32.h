@@ -33,9 +33,6 @@ public:
 	};
 };
 
-template <int m,int n>
-struct CConst<f32x4,m,n> { static f32x4 Value() { const float v=((float)m)/((float)n); return f32x4(v); } };
-
 class f32x4b
 {
 public:
@@ -50,9 +47,6 @@ public:
 
 	__m128 m;
 };
-
-template <bool v>
-struct CBConst<f32x4b,v> { static f32x4b Value() { return f32x4b(BitCast<float,u32>(v?0xffffffff:0)); } };
 
 class f32x4bn
 {

@@ -16,8 +16,8 @@ public:
 	INLINE Vec4(const Vec4 &rhs) :x(rhs.x),y(rhs.y),z(rhs.z),w(rhs.w) { }
 	INLINE const Vec4& operator=(const Vec4 &rhs) { x=rhs.x; y=rhs.y; z=rhs.z; w=rhs.w; return *this; }
 
-	explicit INLINE Vec4(const Vec2<base> &v) :x(v.x),y(v.y),z(Const<base,0>()),w(Const<base,0>()) { }
-	explicit INLINE Vec4(const Vec3<base> &v) :x(v.x),y(v.y),z(v.z),w(Const<base,0>()) { }
+	explicit INLINE Vec4(const Vec2<base> &v) :x(v.x),y(v.y),z(base(0.0f)),w(base(0.0f)) { }
+	explicit INLINE Vec4(const Vec3<base> &v) :x(v.x),y(v.y),z(v.z),w(base(0.0f)) { }
 	
 	template <class VEC>
 	INLINE explicit Vec4(const VEC &v) :x(v.x),y(v.y),z(v.z),w(v.w) { }

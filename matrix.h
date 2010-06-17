@@ -38,7 +38,7 @@ public:
 	INLINE Matrix(const vbase &a,const vbase &b,const vbase &c,const vbase &d) :x(a),y(b),z(c),w(d) {
 	}
 	INLINE Matrix(Identity<void>) {
-		TScalar zero=Const<TScalar,0>(),one=Const<TScalar,1>();
+		TScalar zero(0.0f), one(1.0f);
 		x=vbase(one,zero,zero,zero);
 		y=vbase(zero,one,zero,zero);
 		z=vbase(zero,zero,one,zero);

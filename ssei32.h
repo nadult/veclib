@@ -29,38 +29,21 @@ public:
 	const i32x4 operator|=(i32x4 v) { m=_mm_or_si128 (m,v.m); return *this; }
 	const i32x4 operator^=(i32x4 v) { m=_mm_xor_si128(m,v.m); return *this; }
 	const i32x4 operator<<=(i32x4 v) {
-		i[0]<<=v.i[0]; i[1]<<=v.i[1]; i[2]<<=v.i[2]; i[3]<<=v.i[3];
-	//	m=_mm_sll_epi32(m,v.m);
+	//	i[0]<<=v.i[0]; i[1]<<=v.i[1]; i[2]<<=v.i[2]; i[3]<<=v.i[3];
+		m = _mm_sll_epi32(m, v.m);
 		return *this;
 	}
 	const i32x4 operator>>=(i32x4 v) {
-		i[0]>>=v.i[0]; i[1]>>=v.i[1]; i[2]>>=v.i[2]; i[3]>>=v.i[3];
-	//	m=_mm_sra_epi32(m,v.m);
+	//	i[0]>>=v.i[0]; i[1]>>=v.i[1]; i[2]>>=v.i[2]; i[3]>>=v.i[3];
+		m = _mm_sra_epi32(m, v.m);
 		return *this;
 	}
-	const i32x4 operator<<=(int i) { m=_mm_sll_epi32(m,i32x4(i).m); return *this; }
-	const i32x4 operator>>=(int i) { m=_mm_srl_epi32(m,i32x4(i).m); return *this; }
+	const i32x4 operator<<=(int i) { m = _mm_slli_epi32(m, i); return *this; }
+	const i32x4 operator>>=(int i) { m = _mm_srai_epi32(m, i); return *this; }
 
-	const i32x4 operator*=(i32x4 v) {
-		i[0]*=v.i[0]; i[1]*=v.i[1]; i[2]*=v.i[2]; i[3]*=v.i[3];
-	
-	// Not working too good for too big values
-	//	__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
-	//	__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
-	//	a0=_mm_mul_pd(a0,b0); a1=_mm_mul_pd(a1,b1);
-	//	m=_mm_castps_si128(		_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
-	//											_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64));
-		return *this;
-	}
-	const i32x4 operator/=(i32x4 v) {
-		__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
-		__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
-		a0=_mm_div_pd(a0,b0); a1=_mm_div_pd(a1,b1);
-		m=_mm_castps_si128(		_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
-												_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64));
+	const i32x4 operator*=(i32x4 v) __attribute__((always_inline));
+	const i32x4 operator/=(i32x4 v) __attribute__((always_inline));
 
-		return *this;
-	}
 	const i32x4 operator%=(i32x4 v) {
 		i[0]%=v.i[0]; i[1]%=v.i[1]; i[2]%=v.i[2]; i[3]%=v.i[3];
 	// TODO: repair this
@@ -96,6 +79,28 @@ public:
 		u32 u[4];
 	};
 };
+
+inline const i32x4 i32x4::operator*=(i32x4 v) {
+	__m128i xmm1 = m, xmm0 = v.m;
+	__m128i xmm2 = xmm1;
+	xmm1 = _mm_srli_si128(xmm1, 4);
+	xmm2 = _mm_mul_epu32(xmm0, xmm2);
+	xmm0 = _mm_srli_si128(xmm0, 4);
+	xmm1 = _mm_mul_epu32(xmm0, xmm1);
+	xmm0 = _mm_shuffle_epi32(xmm2, 8);
+	xmm1 = _mm_shuffle_epi32(xmm1, 8);
+	m = _mm_unpacklo_epi32(xmm0, xmm1);
+	return *this;
+}
+inline const i32x4 i32x4::operator/=(i32x4 v) {
+	__m128d a0=_mm_cvtepi32_pd(m),b0=_mm_cvtepi32_pd(v.m);
+	__m128d a1=_mm_cvtepi32_pd(_mm_shuffle_epi32(m,2*1+3*4)),b1=_mm_cvtepi32_pd(_mm_shuffle_epi32(v.m,2*1+3*4));
+	a0=_mm_div_pd(a0,b0); a1=_mm_div_pd(a1,b1);
+	m=_mm_castps_si128(		_mm_shuffle_ps(	_mm_castsi128_ps(_mm_cvttpd_epi32(a0)),
+											_mm_castsi128_ps(_mm_cvttpd_epi32(a1)),0+1*4+0*16+1*64));
+
+	return *this;
+}
 
 inline i32x4 operator+(i32x4 a,i32x4 b)		{ i32x4 out(a); out+=b; return out; }
 inline i32x4 operator-(i32x4 a,i32x4 b)		{ i32x4 out(a); out-=b; return out; }
@@ -155,9 +160,6 @@ public:
 };
 
 inline i32x4::i32x4(i32x4b v) :m(v.m) { }
-
-template <bool v>
-struct CBConst<i32x4b,v> { static i32x4b Value() { return i32x4b(_mm_set1_epi32(v?~0:0)); } };
 
 class i32x4bn
 {

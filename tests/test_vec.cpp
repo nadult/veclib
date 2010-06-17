@@ -10,7 +10,7 @@ INLINE base IntersectRaySphere(const vec3a &rOrigin,const vec3b &rDir,const vec3
 	Vec3<base> dst=rOrigin-sPos;
 	base b=dst|rDir,c=(dst|dst)-(sRad*sRad),d=b*b-c;
 
-	return Condition( d > Const<base,0>::Value() , -b-Sqrt(d) , Const<base,-1>::Value() );
+	return Condition( d > base(0.0f) , -b-Sqrt(d) , base(-1.0f) );
 }
 
 /*

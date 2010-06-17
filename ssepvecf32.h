@@ -104,8 +104,7 @@ INLINE float LengthSq(pvec3f32 v)	{ return v|v; }
 INLINE float Length(pvec4f32 v)		{ return Sqrt(v|v); }
 INLINE float LengthSq(pvec4f32 v)	{ return v|v; }
 
-INLINE const pvec3f32 operator^(pvec3f32 a,pvec3f32 b)
-{
+INLINE const pvec3f32 operator^(pvec3f32 a, pvec3f32 b) {
 	pvec3f32 out;
 
 	/*	ay*bz	-	by*az

@@ -18,7 +18,7 @@ public:
 	Vec3(const Vec3 &rhs) :x(rhs.x),y(rhs.y),z(rhs.z) { }
 	Vec3 operator=(const Vec3 &rhs) { x=rhs.x; y=rhs.y; z=rhs.z; return *this; }
 
-	explicit Vec3(const Vec2<base>&v) :x(v.x),y(v.y),z(Const<base,0>()) { }
+	explicit Vec3(const Vec2<base>&v) :x(v.x),y(v.y),z(base(0.0f)) { }
 	explicit Vec3(const Vec4<base>&);
 
 	template <class VEC>
@@ -70,14 +70,14 @@ Vec3<base>::Vec3(const Vec4<base> &v) :x(v.x),y(v.y),z(v.z) { }
 
 #define GEN_OP(op,sop) \
 	template <class base,class GenericVec> \
-	INLINE Vec3<base> operator op(Vec3<base> a, GenericVec b) { \
+	inline Vec3<base> operator op(Vec3<base> a, GenericVec b) { \
 		Vec3<base> out(a); \
 		out sop b; \
 		return out; \
 	}
 #define GEN_SCL_OP(op,sop) \
 	template <class base> \
-	INLINE Vec3<base> operator op(Vec3<base> a, base s) { \
+	inline Vec3<base> operator op(Vec3<base> a, base s) { \
 		Vec3<base> out(a); \
 		out sop s; \
 		return out; \
@@ -95,31 +95,28 @@ GEN_SCL_OP(/,/=)
 #undef GEN_SCL_OP
 
 template <class base,class GenericVec>
-INLINE base operator|(const Vec3<base> &a,const GenericVec &b) __attribute__((always_inline));
-template <class base,class GenericVec>
-INLINE base operator|(const Vec3<base> &a,const GenericVec &b) {
-	base out=a.x*b.x+a.y*b.y+a.z*b.z;
+inline const base operator|(Vec3<base> a, GenericVec b) {
+	base out = a.x * b.x + a.y * b.y + a.z * b.z;
 	return out;
 }
 template <class base>
-INLINE base Sum(const Vec3<base> &v) {
-	base out=v.x+v.y+v.z;
+inline const base Sum(const Vec3<base> &v) {
+	base out = v.x + v.y + v.z;
 	return out;
 }
+
 template <class base,class GenericVec>
-INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) __attribute__((always_inline));
-template <class base,class GenericVec>
-INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
+inline const Vec3<base> operator^(Vec3<base> b, GenericVec c) {
 	Vec3<base> out;
-	out.x = b.y*c.z-b.z*c.y;
-	out.y = b.z*c.x-b.x*c.z;
-	out.z = b.x*c.y-b.y*c.x;
+	out.x = b.y * c.z - b.z * c.y;
+	out.y = b.z * c.x - b.x * c.z;
+	out.z = b.x * c.y - b.y * c.x;
 	return out;
 }
 
 #define GEN_UNARY(name) \
 	template <class base> \
-	INLINE Vec3<base> V##name(const Vec3<base> &v) { \
+	inline const Vec3<base> V##name(Vec3<base> v) { \
 		Vec3<base> out; \
 		out.x = name(v.x); \
 		out.y = name(v.y); \
@@ -128,7 +125,7 @@ INLINE Vec3<base> operator^(const Vec3<base> &b,const GenericVec &c) {
 	}
 #define GEN_BINARY(name) \
 	template <class base> \
-	INLINE Vec3<base> V##name(const Vec3<base> &a,const Vec3<base> &b) { \
+	inline const Vec3<base> V##name(Vec3<base> a, Vec3<base> b) { \
 		Vec3<base> out; \
 		out.x = name(a.x,b.x); \
 		out.y = name(a.y,b.y); \
@@ -149,21 +146,30 @@ GEN_BINARY(Min)
 #undef GEN_UNARY
 #undef GEN_BINARY
 
-template <class base> INLINE base Length(const Vec3<base> &v) { return Sqrt(v|v); }
-template <class base> INLINE base LengthSq(const Vec3<base> &v) { return v|v; }
+template <class base> inline const base Length(Vec3<base> v) { return Sqrt(v|v); }
+template <class base> inline const base LengthSq(Vec3<base> v) { return v|v; }
 
-template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &a,const Vec3<base> &b)
+template <class base> inline const Vec3<base> Condition(typename Vec3<base>::TBool expr, Vec3<base> a, Vec3<base> b)
 	{ return Vec3<base>( Condition(expr,a.x,b.x),Condition(expr,a.y,b.y),Condition(expr,a.z,b.z) ); }
-template <class base> INLINE Vec3<base> Condition(const typename Vec3<base>::TBool &expr,const Vec3<base> &v)
+template <class base> inline const Vec3<base> Condition(typename Vec3<base>::TBool expr, Vec3<base> v)
 	{ return Vec3<base>( Condition(expr,v.x),Condition(expr,v.y),Condition(expr,v.z) ); }
 
-template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a,const Vec3<float> &b) { return expr?a:b; }
-template <> INLINE Vec3<float> Condition(const bool &expr,const Vec3<float> &a) { return expr?a:Vec3<float>(0.0f,0.0f,0.0f); }
+template <> inline const Vec3<float> Condition(bool expr, Vec3<float> a, Vec3<float> b) { return expr?a:b; }
+template <> inline const Vec3<float> Condition(bool expr, Vec3<float> a) { return expr?a:Vec3<float>(0.0f,0.0f,0.0f); }
 
-template <class base1,class base2> INLINE void Convert(const Vec3<base1> &vec,base2 &outX,base2 &outY,base2 &outZ)
-	{ Convert(vec.x,outX); Convert(vec.y,outY); Convert(vec.z,outZ); }
-template <class base1,class base2> INLINE void Convert(const base1 &x,const base1 &y,const base1 &z,Vec3<base2> &out)
-	{ Convert(x,out.x); Convert(y,out.y); Convert(z,out.z); }
+template <class base1,class base2>
+inline void Convert(Vec3<base1> vec,base2 &outX,base2 &outY,base2 &outZ) {
+	Convert(vec.x,outX);
+	Convert(vec.y,outY);
+	Convert(vec.z,outZ);
+}
+
+template <class base1,class base2>
+inline void Convert(base1 x, base1 y, base1 z, Vec3<base2> &out) {
+	Convert(x,out.x);
+	Convert(y,out.y);
+	Convert(z,out.z);
+}
 
 
 
