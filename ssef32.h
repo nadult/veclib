@@ -65,58 +65,58 @@ public:
 	const __m128 &NegM() const { return m; }
 private:
 	f32x4bn(__m128 v) :m(v) { }
-	friend f32x4bn operator!(f32x4b);
-	friend f32x4bn operator^(f32x4b,f32x4bn);
+	friend const f32x4bn operator!(f32x4b);
+	friend const f32x4bn operator^(f32x4b,f32x4bn);
 
 	// To access it you have to
 	// convert to f32x4b first
 	__m128 m;
 };
 
-inline f32x4bn operator!(f32x4b v)					{ return f32x4bn(v.m); }
-inline f32x4bn operator^(f32x4b a,f32x4bn b)		{ return f32x4bn(_mm_xor_ps(a.m,b.NegM())); }
-inline f32x4b operator&&(f32x4b a,f32x4bn b)		{ return _mm_andnot_ps(b.NegM(),a.m); }
-inline f32x4b operator||(f32x4b a,f32x4bn b)
-	{ return _mm_or_ps(a.m,_mm_andnot_ps(b.NegM(),_mm_set1_ps(BitCast<float,u32>(~0)))); }
+inline const f32x4bn operator!(f32x4b v)				{ return f32x4bn(v.m); }
+inline const f32x4bn operator^(f32x4b a,f32x4bn b)		{ return f32x4bn(_mm_xor_ps(a.m,b.NegM())); }
+inline const f32x4b operator&&(f32x4b a,f32x4bn b)		{ return _mm_andnot_ps(b.NegM(),a.m); }
+inline const f32x4b operator||(f32x4b a,f32x4bn b)
+	{ return _mm_or_ps(a.m, _mm_andnot_ps(b.NegM(), _mm_set1_ps(BitCast<float,u32>(~0)))); }
 
-inline bool ForAny(f32x4b v) { return _mm_movemask_ps(v.m)?1:0; }
-inline bool ForAll(f32x4b v) { return _mm_movemask_ps(v.m)==15; }
-inline int ForWhich(f32x4b v) { return _mm_movemask_ps(v.m); }
+inline bool ForAny(f32x4b v)	{ return _mm_movemask_ps(v.m)?1:0; }
+inline bool ForAll(f32x4b v)	{ return _mm_movemask_ps(v.m)==15; }
+inline int ForWhich(f32x4b v)	{ return _mm_movemask_ps(v.m); }
 
-inline f32x4b operator ==(f32x4 a,f32x4 b) { return _mm_cmpeq_ps(a.m,b.m); }
-inline f32x4b operator !=(f32x4 a,f32x4 b) { return _mm_cmpneq_ps(a.m,b.m); }
-inline f32x4b operator <=(f32x4 a,f32x4 b) { return _mm_cmple_ps(a.m,b.m); }
-inline f32x4b operator >=(f32x4 a,f32x4 b) { return _mm_cmpge_ps(a.m,b.m); }
-inline f32x4b operator < (f32x4 a,f32x4 b) { return _mm_cmplt_ps(a.m,b.m); }
-inline f32x4b operator > (f32x4 a,f32x4 b) { return _mm_cmpgt_ps(a.m,b.m); }
+inline const f32x4b operator ==(f32x4 a,f32x4 b) { return _mm_cmpeq_ps(a.m,b.m); }
+inline const f32x4b operator !=(f32x4 a,f32x4 b) { return _mm_cmpneq_ps(a.m,b.m); }
+inline const f32x4b operator <=(f32x4 a,f32x4 b) { return _mm_cmple_ps(a.m,b.m); }
+inline const f32x4b operator >=(f32x4 a,f32x4 b) { return _mm_cmpge_ps(a.m,b.m); }
+inline const f32x4b operator < (f32x4 a,f32x4 b) { return _mm_cmplt_ps(a.m,b.m); }
+inline const f32x4b operator > (f32x4 a,f32x4 b) { return _mm_cmpgt_ps(a.m,b.m); }
 
-inline f32x4 operator+(f32x4 a,f32x4 b) { return _mm_add_ps(a.m, b.m); }
-inline f32x4 operator-(f32x4 a,f32x4 b) { return _mm_sub_ps(a.m, b.m); }
-inline f32x4 operator*(f32x4 a,f32x4 b) { return _mm_mul_ps(a.m, b.m); }
-inline f32x4 operator/(f32x4 a,f32x4 b) { return _mm_div_ps(a.m, b.m); }
+inline const f32x4 operator+(f32x4 a,f32x4 b) { return _mm_add_ps(a.m, b.m); }
+inline const f32x4 operator-(f32x4 a,f32x4 b) { return _mm_sub_ps(a.m, b.m); }
+inline const f32x4 operator*(f32x4 a,f32x4 b) { return _mm_mul_ps(a.m, b.m); }
+inline const f32x4 operator/(f32x4 a,f32x4 b) { return _mm_div_ps(a.m, b.m); }
 
-inline f32x4 Sqrt		(f32x4 v) { return _mm_sqrt_ps(v.m); }
-inline f32x4 Inv		(f32x4 v) { return _mm_nrrcp_ps(v.m); }
-inline f32x4 RSqrt		(f32x4 v) { return _mm_nrrsqrt_ps(v.m); }
-inline f32x4 FastInv	(f32x4 v) { return _mm_rcp_ps(v.m); }
-inline f32x4 FastRSqrt	(f32x4 v) { return _mm_rsqrt_ps(v.m); }
+inline const f32x4 Sqrt(f32x4 v)		{ return _mm_sqrt_ps(v.m); }
+inline const f32x4 Inv(f32x4 v)			{ return _mm_nrrcp_ps(v.m); }
+inline const f32x4 RSqrt(f32x4 v)		{ return _mm_nrrsqrt_ps(v.m); }
+inline const f32x4 FastInv(f32x4 v)		{ return _mm_rcp_ps(v.m); }
+inline const f32x4 FastRSqrt(f32x4 v)	{ return _mm_rsqrt_ps(v.m); }
 
 
-inline f32x4 Abs(f32x4 v)			{ return _mm_and_ps(_mm_set1_ps(BitCast<float,u32>(0x7fffffff)),v.m); }
-inline f32x4 Min(f32x4 a,f32x4 b)	{ return _mm_min_ps(a.m,b.m); }
-inline f32x4 Max(f32x4 a,f32x4 b)	{ return _mm_max_ps(a.m,b.m); }
-inline int SignMask(f32x4 v)		{ return _mm_movemask_ps(v.m); }
+inline const f32x4 Abs(f32x4 v)			{ return _mm_and_ps(_mm_set1_ps(BitCast<float,u32>(0x7fffffff)),v.m); }
+inline const f32x4 Min(f32x4 a,f32x4 b)	{ return _mm_min_ps(a.m,b.m); }
+inline const f32x4 Max(f32x4 a,f32x4 b)	{ return _mm_max_ps(a.m,b.m); }
+inline int SignMask(f32x4 v)			{ return _mm_movemask_ps(v.m); }
 
-inline f32x4 Condition(f32x4b test,f32x4 v1,f32x4 v2) __attribute__((always_inline));
-inline f32x4 Condition(f32x4b test,f32x4 v1,f32x4 v2) {
+inline const f32x4 Condition(f32x4b test,f32x4 v1,f32x4 v2) __attribute__((always_inline));
+inline const f32x4 Condition(f32x4b test,f32x4 v1,f32x4 v2) {
 	return _mm_or_ps(_mm_and_ps(test.m,v1.m),_mm_andnot_ps(test.m,v2.m));
 }
-inline f32x4 Condition(f32x4bn test,f32x4 v1,f32x4 v2) __attribute__((always_inline));
-inline f32x4 Condition(f32x4bn test,f32x4 v1,f32x4 v2) {
+inline const f32x4 Condition(f32x4bn test,f32x4 v1,f32x4 v2) __attribute__((always_inline));
+inline const f32x4 Condition(f32x4bn test,f32x4 v1,f32x4 v2) {
 	return _mm_or_ps(_mm_andnot_ps(test.NegM(),v1.m),_mm_and_ps(test.NegM(),v2.m));
 }
-inline f32x4 Condition(f32x4b test,f32x4 v1)		{ return _mm_and_ps(test.m,v1.m); }
-inline f32x4 Condition(f32x4bn test,f32x4 v1)		{ return _mm_andnot_ps(test.NegM(),v1.m); }
+inline const f32x4 Condition(f32x4b test,f32x4 v1)		{ return _mm_and_ps(test.m,v1.m); }
+inline const f32x4 Condition(f32x4bn test,f32x4 v1)		{ return _mm_andnot_ps(test.NegM(),v1.m); }
 
 template <>
 struct ScalarInfo<f32x4> {
