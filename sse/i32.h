@@ -2,7 +2,7 @@
 #define VECLIB_SSEINT_H
 
 #include "vecbase.h"
-#include "ssef32.h"
+#include "sse/f32.h"
 
 class i32x4b;
 class i32x4bn;

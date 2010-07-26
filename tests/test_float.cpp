@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <math.h>
-#include "veclib.h"
+#include "../veclib.h"
 
 using namespace veclib;
 
-
-struct DataFloat { void Print(int indent) const { while(indent-->0) printf(" "); printf("%10.6f",v); } float v; };
+struct DataFloat {
+	void Print(int indent) const { while(indent-->0) printf(" "); printf("%10.6f",v); }
+	float v;
+};
 
 class FloatGenerator
 {
@@ -161,28 +163,28 @@ template <class Generator,class TestedFunc,class CorrectFunc>
 
 
 	static f32x4 TSqrt		(const f32x4 &in) { return Sqrt (in); }
-	static f32x4 TInv			(const f32x4 &in) { return Inv  (in); }
+	static f32x4 TInv		(const f32x4 &in) { return Inv  (in); }
 	static f32x4 TRSqrt		(const f32x4 &in) { return RSqrt(in); }
-	static f32x4 TAbs			(const f32x4 &in) { return Abs  (in); }
-	static f32x4 TFastInv		(const f32x4 &in) { return FastInv  (in); }
+	static f32x4 TAbs		(const f32x4 &in) { return Abs  (in); }
+	static f32x4 TFastInv	(const f32x4 &in) { return FastInv  (in); }
 	static f32x4 TFastRSqrt	(const f32x4 &in) { return FastRSqrt(in); }
 
 	static f32x4 TMax  (const f32x4 &a,const f32x4 &b) { return Max  (a,b); }
 	static f32x4 TMin  (const f32x4 &a,const f32x4 &b) { return Min  (a,b); }
 
-	static f32x4 TCmpEq(const f32x4 &a,const f32x4 &b) { return Condition(a==b,Const<f32x4,1>(),Const<f32x4,-1>()); }
-	static f32x4 TCmpNe(const f32x4 &a,const f32x4 &b) { return Condition(a!=b,Const<f32x4,1>(),Const<f32x4,-1>()); }
-	static f32x4 TCmpLe(const f32x4 &a,const f32x4 &b) { return Condition(a<=b,Const<f32x4,1>(),Const<f32x4,-1>()); }
-	static f32x4 TCmpGe(const f32x4 &a,const f32x4 &b) { return Condition(a>=b,Const<f32x4,1>(),Const<f32x4,-1>()); }
-	static f32x4 TCmpLt(const f32x4 &a,const f32x4 &b) { return Condition(a< b,Const<f32x4,1>(),Const<f32x4,-1>()); }
-	static f32x4 TCmpGt(const f32x4 &a,const f32x4 &b) { return Condition(a> b,Const<f32x4,1>(),Const<f32x4,-1>()); }
+	static f32x4 TCmpEq(const f32x4 &a,const f32x4 &b) { return Condition(a == b, 1.0f, -1.0f); }
+	static f32x4 TCmpNe(const f32x4 &a,const f32x4 &b) { return Condition(a != b, 1.0f, -1.0f); }
+	static f32x4 TCmpLe(const f32x4 &a,const f32x4 &b) { return Condition(a <= b, 1.0f, -1.0f); }
+	static f32x4 TCmpGe(const f32x4 &a,const f32x4 &b) { return Condition(a >= b, 1.0f, -1.0f); }
+	static f32x4 TCmpLt(const f32x4 &a,const f32x4 &b) { return Condition(a <  b, 1.0f, -1.0f); }
+	static f32x4 TCmpGt(const f32x4 &a,const f32x4 &b) { return Condition(a >  b, 1.0f, -1.0f); }
 
-	static f32x4 TCond1(const f32x4 &a,const f32x4 &b) { return Condition((a<b)||(a>b),a,b); }
-	static f32x4 TCond2(const f32x4 &a,const f32x4 &b) { return Condition(a>=b&&b>=a,a,b); }
-	static f32x4 TCond3(const f32x4 &a,const f32x4 &b) { return Condition(!(a>b)||!(a<b),a,b); }
-	static f32x4 TCond4(const f32x4 &a,const f32x4 &b) { return Condition(!(!(a<b)&&!(a>b)),a,b); }
-	static f32x4 TCond5(const f32x4 &a,const f32x4 &b) { return Condition(!(a==b)||(a==b),a,b); }
-	static f32x4 TCond6(const f32x4 &a,const f32x4 &b) { f32x4b t=!(a<b); return Condition(t,a,b); }
+	static f32x4 TCond1(const f32x4 &a,const f32x4 &b) { return Condition((a < b) || (a > b), a, b); }
+	static f32x4 TCond2(const f32x4 &a,const f32x4 &b) { return Condition(a >= b && b >= a, a, b); }
+	static f32x4 TCond3(const f32x4 &a,const f32x4 &b) { return Condition(!(a > b) || !(a < b), a, b); }
+	static f32x4 TCond4(const f32x4 &a,const f32x4 &b) { return Condition(!(!(a < b) && !(a > b)), a, b); }
+	static f32x4 TCond5(const f32x4 &a,const f32x4 &b) { return Condition(!(a == b) || (a == b), a, b); }
+	static f32x4 TCond6(const f32x4 &a,const f32x4 &b) { f32x4b t=!(a<b); return Condition(t, a, b); }
 
 	static f32x4 TCond7 (const f32x4 &a,const f32x4 &b) { return Condition((a<=b)^(a>=b),a,b); }
 	static f32x4 TCond8 (const f32x4 &a,const f32x4 &b) { return Condition(!(a<b)^(a<=b),a,b); }

@@ -132,21 +132,35 @@ GEN_BINARY(Min)
 #undef GEN_UNARY
 #undef GEN_BINARY
 
-template <class base> INLINE base Length(const Vec4<base> &v) { return Sqrt(v|v); }
-template <class base> INLINE base LengthSq(const Vec4<base> &v) { return v|v; }
+template <class base> INLINE base Length(const Vec4<base> &v) { return Sqrt(v | v); }
+template <class base> INLINE base LengthSq(const Vec4<base> &v) { return v | v; }
 
 template <class base> INLINE Vec4<base> Condition(const typename Vec4<base>::TBool &expr,const Vec4<base> &a,const Vec4<base> &b)
 	{ return Vec4<base>( Condition(expr,a.x,b.x),Condition(expr,a.y,b.y),Condition(expr,a.z,b.z),Condition(expr,a.w,b.w) ); }
 template <class base> INLINE Vec4<base> Condition(const typename Vec4<base>::TBool &expr,const Vec4<base> &v)
 	{ return Vec4<base>( Condition(expr,v.x),Condition(expr,v.y),Condition(expr,v.z),Condition(expr,v.w) ); }
 
-template <> INLINE Vec4<float> Condition(const bool &expr,const Vec4<float> &a,const Vec4<float> &b) { return expr?a:b; }
-template <> INLINE Vec4<float> Condition(const bool &expr,const Vec4<float> &a) { return expr?a:Vec4<float>(0.0f,0.0f,0.0f,0.0f); }
+INLINE Vec4<float> Condition(bool expr, const Vec4<float> &a, const Vec4<float> &b) {
+	return expr? a : b;
+}
+INLINE Vec4<float> Condition(bool expr, const Vec4<float> &a) {
+	return expr? a : Vec4<float>(0.0f, 0.0f, 0.0f, 0.0f); }
 
-template <class base1,class base2> INLINE void Convert(const Vec4<base1> &vec,base2 &outX,base2 &outY,base2 &outZ,base2 &outW)
-	{ Convert(vec.x,outX); Convert(vec.y,outY); Convert(vec.z,outZ); Convert(vec.w,outW); }
-template <class base1,class base2> INLINE void Convert(const base1 &x,const base1 &y,const base1 &z,const base1 &w,Vec4<base2> &out)
-	{ Convert(x,out.x); Convert(y,out.y); Convert(z,out.z); Convert(w,out.w); Convert(z,out.z); }
+template <class base1, class base2>
+INLINE void Convert(const Vec4<base1> &vec, base2 &outX, base2 &outY, base2 &outZ, base2 &outW) {
+	Convert(vec.x, outX);
+	Convert(vec.y, outY);
+	Convert(vec.z, outZ);
+	Convert(vec.w, outW);
+}
+
+template <class base1, class base2>
+INLINE void Convert(const base1 x, const base1 y, const base1 z, const base1 w, Vec4<base2> &out) {
+   	Convert(x, out.x);
+	Convert(y, out.y);
+	Convert(z, out.z);
+	Convert(w, out.w);
+}
 
 #endif
 

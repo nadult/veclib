@@ -9,10 +9,22 @@ namespace veclib
 	#include "vec3.h"
 	#include "vec4.h"
 
-	#include "ssef32.h"
-	#include "ssei32.h"
-	#include "ssepvecf32.h"
-	#include "ssevecf32.h"
+#ifdef VECLIB_SSE_VER
+	#include "sse/f32.h"
+	#include "sse/vecf32.h"
+	#include "sse/i32.h"
+	#ifndef _mm_shuffle
+		#define _mm_shuffle(mask,v)	_mm_shuffle_<mask>(v)
+	#endif
+//#elif defined(VECLIB_PPC)
+//	#include "altivecf32.h"
+//	#include "altiveci32.h"
+//	#include "altivecvecf32.h"
+#else
+	#include "scalar/f32.h"
+	#include "scalar/i32.h"
+	#include "scalar/vecf32.h"
+#endif
 
 	#include "matrix.h"
 

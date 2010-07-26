@@ -26,8 +26,8 @@ union UValue64 {
 
 typedef UValue32 UValue;
 
-template <class Dst,class Src>
-Dst BitCast(const Src &src) {
+template <class Dst, class Src>
+const Dst BitCast(const Src src) {
 	union { Dst d; Src s; } u;
 	u.s = src;
 	return u.d;
@@ -56,8 +56,8 @@ inline float Inv(float v)							{ return 1.0f/v; }
 inline float RSqrt(float v)							{ return 1.0f/Sqrt(v); }
 inline float FastInv(float v)						{ return Inv(v); }
 inline float FastRSqrt(float v)						{ return RSqrt(v); }
-inline float Condition(bool expr,float a,float b)	{ return expr?a:b; }
-inline float Condition(bool expr,float v)			{ return expr?v:0.0f; }
+inline float Condition(bool expr, float a, float b)	{ return expr?a:b; }
+inline float Condition(bool expr, float v)			{ return expr?v:0.0f; }
 inline int SignMask(float v)						{ return v<0.0f?1:0; }
 inline float Abs(float v)							{ return v < 0.0f ? -v : v; }
 inline int Round(float f)							{ return int(f+0.5f); }

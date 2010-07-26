@@ -3,6 +3,7 @@
 
 #include "vecbase.h"
 
+
 template <unsigned mask>
 __m128 _mm_shuffle_(__m128 v) {
 	return _mm_shuffle_ps(v,v,mask);
@@ -113,6 +114,5 @@ inline void _mm_transpose(__m128 x, __m128 y, __m128 z, __m128 w,
 inline void _mm_transpose(__m128 &x,__m128 &y,__m128 &z,__m128 &w) {
 	_mm_transpose(x, y, z, w, x, y, z, w);
 }
-
 
 #endif

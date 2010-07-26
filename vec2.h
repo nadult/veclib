@@ -12,6 +12,7 @@ public:
 	typedef base TScalar;
 	typedef typename ScalarInfo<base>::TBool TBool;
 
+	//TODO poprawic
 	INLINE Vec2() { }
 	INLINE Vec2(const base &t) :x(t),y(t) { }
 	INLINE Vec2(const base arr[2]) :x(arr[0]),y(arr[1]) { }

@@ -1,6 +1,5 @@
-#CC=/usr/local/gcc-4.3-20080215/bin/g++
-CC=g++
-FLAGS=-O3 -ffast-math -I ../ 
+CXX=g++
+CXXFLAGS=-O3 -ffast-math -I ../ 
 
 all: test_int test_float
 	
@@ -9,39 +8,35 @@ test_float: test_float10 test_float20 test_float30 test_float31
 test_int: test_int20 test_int30 test_int31
 
 #tests: tests.cpp test_ivec.cpp
-#	$(CC) $(FLAGS) tests.cpp -o tests -lboost_unit_test_framework-gcc42-mt-1_34_1
+#	$(CXX) $(CXXFLAGS) tests.cpp -o tests -lboost_unit_test_framework-gcc42-mt-1_34_1
 
 
-test_float31: test_float.cpp ../*.h
-	$(CC) $(FLAGS) -mssse3 test_float.cpp -o test_float31
+test_float_sse2: test_float.cpp ../*.h
+	$(CXX) $(CXXFLAGS) -msse2 $< -o $@
 
-test_float30: test_float.cpp ../*.h
-	$(CC) $(FLAGS) -mssse3 test_float.cpp -o test_float30
+test_float_sse: test_float.cpp ../*.h
+	$(CXX) $(CXXFLAGS) -m32 -msse $< -o $@
 
-test_float20: test_float.cpp ../*.h
-	$(CC) $(FLAGS) -mssse3 test_float.cpp -o test_float20
+test_float_scalar: test_float.cpp ../*.h
+	$(CXX) $(CXXFLAGS) -m32 $< -o $@
 
-test_float10: test_float.cpp ../*.h
-	$(CC) $(FLAGS) -mssse3 test_float.cpp -o test_float10
+test_float_altivec: test_float.cpp ../*.h
+	$(CXX) $(CXXFLAGS) -mabi=altivec -maltivec $< -o $@
 
+test_int_sse2: test_int.cpp ../*.h
+	$(CXX) $(CXXFLAGS) -msse2 $< -o $@
 
-test_int31: test_int.cpp ../*.h
-	$(CC) $(FLAGS) -mssse3 test_int.cpp -o test_int31
-
-test_int30: test_int.cpp ../*.h
-	$(CC) $(FLAGS) -msse3 test_int.cpp -o test_int30
-
-test_int20: test_int.cpp ../*.h
-	$(CC) $(FLAGS) -msse2 test_int.cpp -o test_int20
+test_int_scalar: test_int.cpp ../*.h
+	$(CXX) $(CXXFLAGS) -m32 $< -o $@
 
 temp: temp.cpp ../*.h
-	$(CC) $(FLAGS) temp.cpp -o temp
+	$(CXX) $(CXXFLAGS) temp.cpp -o temp
 
 
 clean:
 	-rm *.gch *.o temp tests \
-		test_float10 test_float20 test_float30 test_float31 \
-		test_int20 test_int30 test_int31 
+		test_float_sse test_float_sse2 test_float_scalar test_float_altivec \
+		test_int_sse2 test_int_scalar test_int_altivec
 
 .PHONY: clean test_int test_float all
 

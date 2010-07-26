@@ -7,14 +7,18 @@
 
 #include "veclib_conf.h"
 
-#if VECLIB_SSE_VER>=0x31
+#if VECLIB_SSE_VER >= 0x31
     #include <tmmintrin.h>
-#elif VECLIB_SSE_VER>=0x30
+#elif VECLIB_SSE_VER >= 0x30
     #include <pmmintrin.h>
-#elif VECLIB_SSE_VER>=0x20
+#elif VECLIB_SSE_VER >= 0x20
     #include <emmintrin.h>
-#elif VECLIB_SSE_VER>=0x10
+#elif VECLIB_SSE_VER >= 0x10
     #include <xmmintrin.h>
+#elif VECLIB_PPC
+//	#define bool bool_ // FFS!
+//	#include <altivec.h>
+//	#undef bool
 #endif
 
 namespace veclib
@@ -43,17 +47,13 @@ namespace veclib
 }
 
 
-#if 1
-	#if VECLIB_SSE_VER>=0x31
-		#include "vecliball_pp31.h"
-	#elif VECLIB_SSE_VER>=0x30
-		#include "vecliball_pp30.h"
-	#elif VECLIB_SSE_VER>=0x20
-		#include "vecliball_pp20.h"
-	#elif VECLIB_SSE_VER>=0x10
-		#include "vecliball_pp10.h"
+#if 0
+	#if VECLIB_SSE_VER >= 0x20
+		#include "vecliball_sse20.h"
+	#elif VECLIB_SSE_VER >= 0x10
+		#include "vecliball_sse10.h"
 	#else
-		#include "vecliball_pp00.h"
+		#include "vecliball_scalar.h"
 	#endif
 #else
 	#include "vecliball.h"
@@ -73,37 +73,11 @@ SERIALIZE_AS_POD(veclib::Vec4<double>)
 namespace veclib
 {
 
-#if defined(VECLIB_GCC_STYLE)
-	#if VECLIB_ARCH==0x32
-
-inline u64 Ticks() {
-	u64 x;
-	__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
-	return x;
-}
-
-	#elif VECLIB_ARCH==0x64
-
 inline u64 Ticks() {
     unsigned hi, lo;
     __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
    	return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
 }
-
-	#endif
-#elif defined(VECLIB_MSVC_STYLE)
-
-inline u64 Ticks() {
-	u32 ddlow,ddhigh;
-	__asm{
-		rdtsc
-		mov ddlow, eax
-		mov ddhigh, edx
-	}
-	return (((u64)ddhigh)<<32)|(u64)ddlow;
-}
-
-#endif
 
 /*
 inline void *AlignedMalloc(size_t size) {
@@ -121,9 +95,6 @@ inline void *AlignedFree(void *aligned) {
 
 }
 
-#ifndef _mm_shuffle
-	#define _mm_shuffle(mask,v)	_mm_shuffle_<mask>(v)
-#endif
 
 /*
 

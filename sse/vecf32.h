@@ -1,8 +1,8 @@
 #if !defined(VECLIB_SSEVEC_H) && VECLIB_SSE_VER>=0x10
 #define VECLIB_SSEVEC_H
 
-#include "ssebase.h"
-#include "ssef32.h"
+#include "sse/base.h"
+#include "sse/f32.h"
 #include "vec4.h"
 
 typedef Vec2<f32x4> vec2f32x4;

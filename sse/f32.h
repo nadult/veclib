@@ -1,7 +1,7 @@
 #if !defined(VECLIB_SSEREAL_H) && VECLIB_SSE_VER>=0x10
 #define VECLIB_SSEREAL_H
 
-#include "ssebase.h"
+#include "sse/base.h"
 
 
 class f32x4b;
