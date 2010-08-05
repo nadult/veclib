@@ -1,4 +1,5 @@
 CXX=g++
+SXX=spu-g++
 CXXFLAGS=-O3 -ffast-math -I ../ 
 
 all: test_int test_float
@@ -23,11 +24,17 @@ test_float_scalar: test_float.cpp ../*.h
 test_float_altivec: test_float.cpp ../*.h
 	$(CXX) $(CXXFLAGS) -mabi=altivec -maltivec $< -o $@
 
+test_float_spu: test_float.cpp ../*.h
+	$(SXX) $(CXXFLAGS) $< -o $@
+
 test_int_sse2: test_int.cpp ../*.h
 	$(CXX) $(CXXFLAGS) -msse2 $< -o $@
 
 test_int_scalar: test_int.cpp ../*.h
 	$(CXX) $(CXXFLAGS) -m32 $< -o $@
+
+test_int_altivec: test_int.cpp ../*.h
+	$(CXX) $(CXXFLAGS) -mabi=altivec -maltivec $< -o $@
 
 temp: temp.cpp ../*.h
 	$(CXX) $(CXXFLAGS) temp.cpp -o temp

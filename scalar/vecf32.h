@@ -1,7 +1,7 @@
-#ifndef VECLIB_ALTIVEC_VECF32_H
-#define VECLIB_ALTIVEC_VECF32_H
+#ifndef VECLIB_SCALAR_VECF32_H
+#define VECLIB_SCALAR_VECF32_H
 
-#include "altivec/f32.h"
+#include "scalar/f32.h"
 #include "vec4.h"
 
 typedef Vec2<f32x4> vec2f32x4;

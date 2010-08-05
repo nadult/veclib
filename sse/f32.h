@@ -1,5 +1,5 @@
-#if !defined(VECLIB_SSEREAL_H) && VECLIB_SSE_VER>=0x10
-#define VECLIB_SSEREAL_H
+#ifndef VECLIB_SSE_F32_H
+#define VECLIB_SSE_F32_H
 
 #include "sse/base.h"
 

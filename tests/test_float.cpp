@@ -245,6 +245,14 @@ int main()
 
 	printf(out?"All OK\n":"Errors Encountered\n");
 
+	f32x4 a(1.0f, 2.0f, 3.0f, 4.0f), b(1.5f, 1.7, 3.1, 3.9);
+	f32x4b t = a < b;
+	f32x4 c = Condition(t, a, b);
+	f32x4 d = Condition(a > b, a, b);
+
+	for(int k = 0; k < 4;k++)
+		printf("%f %f\n", c[k], d[k]);
+
 	return 0;
 }
 

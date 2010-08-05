@@ -2,9 +2,10 @@ PREFIX=/usr/local
 CROSS=
 
 CXX=$(CROSS)g++ -std=gnu++0x -Wall
-FLAGS=-O3 -I ./
+SXX=spu-g++ -Wall
+FLAGS=-O3 -I ./ -D VECLIB_PREPROCESS
 
-all: vecliball_scalar.h
+all: vecliball_scalar.h vecliball_altivec.h vecliball_spu.h
 
 vecliball_sse2.h: Makefile *.h
 	$(CXX) -msse2 $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
@@ -15,7 +16,15 @@ vecliball_sse.h: Makefile *.h
 		grep -e ^[^#] > $@
 
 vecliball_scalar.h: Makefile *.h
-	$(CXX) -m32 $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
+	$(CXX) -mno-altivec $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
+		grep -e ^[^#] > $@
+
+vecliball_altivec.h: Makefile *.h
+	$(CXX) -maltivec $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
+		grep -e ^[^#] > $@
+
+vecliball_spu.h: Makefile *.h
+	$(SXX) $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
 		grep -e ^[^#] > $@
 
 clean:

@@ -1,5 +1,5 @@
-#if !defined(VECLIB_SSE_H) && VECLIB_SSE_VER>=0x10
-#define VECLIB_SSE_H
+#ifndef VECLIB_SSE_BASE_H
+#define VECLIB_SSE_BASE_H
 
 #include "vecbase.h"
 

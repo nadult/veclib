@@ -6,26 +6,30 @@
 #endif
 
 #ifndef __GNUC__
-	#error "Compiler not supported :/"
-#elif defined(__GNUC__) || defined(__ICC)
-#else
-	#error "Compiler not supported :/"
+//	#error "Only GCC is supported so far :/"
 #endif
 	
 #define INLINE __inline__
-#define VECLIB_DECL_ALIGNED_FLOAT(name,size)    float name[size] __attribute__ ((aligned (16)));
 
 // You can define it yourself if you like :)
-#ifndef VECLIB_SSE_VER
+#ifndef VECLIB_SSE
 
 	#ifdef __SSSE3__
-		#define VECLIB_SSE_VER 0x31
+		#define VECLIB_SSE 0x31
 	#elif __SSE3__
-		#define VECLIB_SSE_VER 0x30
+		#define VECLIB_SSE 0x30
 	#elif __SSE2__
-		#define VECLIB_SSE_VER 0x20
+		#define VECLIB_SSE 0x20
 	#elif __SSE__
-		#define VECLIB_SSE_VER 0x10
+		#define VECLIB_SSE 0x10
+	#endif
+
+#endif
+
+#ifndef VECLIB_ALTIVEC
+
+	#ifdef __ALTIVEC__
+		#define VECLIB_ALTIVEC 0x10
 	#endif
 
 #endif
@@ -34,8 +38,12 @@
 	#define VECLIB_X86		0x64
 #elif defined(__i386)
 	#define VECLIB_X86		0x32
-#elif defined(__PPC)
-	#define VECLIB_PPC		1
+#elif defined(__PPC64__)
+	#define VECLIB_PPC		0x64
+#elif defined(__PPC) || defined(__PPC__)
+	#define VECLIB_PPC		0x32
+#elif defined(__SPU__)
+	#define VECLIB_SPU		0x32
 #else
 	#error "Architecture not supported"
 #endif

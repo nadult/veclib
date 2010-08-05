@@ -1,12 +1,23 @@
-#ifndef VECLIB_ALTIVEC_VECF32_H
-#define VECLIB_ALTIVEC_VECF32_H
+#ifndef VECLIB_SPU_VECF32_H
+#define VECLIB_SPU_VECF32_H
 
-#include "altivec/f32.h"
+#include "spu/f32.h"
 #include "vec4.h"
 
 typedef Vec2<f32x4> vec2f32x4;
 typedef Vec3<f32x4> vec3f32x4;
 typedef Vec4<f32x4> vec4f32x4;
+
+inline f32x4 operator|(const Vec3<f32x4> &a, const Vec3<f32x4> &b) {
+	return spu_madd(a.x.vf, b.x.vf, spu_madd(a.y.vf, b.y.vf, spu_mul(a.z.vf, b.z.vf)));
+}
+
+inline const Vec3<f32x4> operator^(const Vec3<f32x4> &a, const Vec3<f32x4> &b) {
+	return Vec3<f32x4>(
+		spu_msub(a.y.vf, b.z.vf, spu_mul(a.z.vf, b.y.vf)),
+		spu_msub(a.z.vf, b.x.vf, spu_mul(a.x.vf, b.z.vf)),
+		spu_msub(a.x.vf, b.y.vf, spu_mul(a.y.vf, b.x.vf)));
+}
 
 INLINE void Broadcast(const Vec2<float> &in,vec2f32x4 &out) {
 	out=vec2f32x4(f32x4(in.x),f32x4(in.y));

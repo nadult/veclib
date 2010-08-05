@@ -1,3 +1,9 @@
+// Author (mostly): Krzysztof 'nadult' Jakubowski
+//
+// Some of the code comes from Sony simdmathlibrary
+// (licensed under BSD).
+
+
 #ifndef VECLIB_VECLIB_H
 #define VECLIB_VECLIB_H
 
@@ -7,18 +13,26 @@
 
 #include "veclib_conf.h"
 
-#if VECLIB_SSE_VER >= 0x31
-    #include <tmmintrin.h>
-#elif VECLIB_SSE_VER >= 0x30
-    #include <pmmintrin.h>
-#elif VECLIB_SSE_VER >= 0x20
-    #include <emmintrin.h>
-#elif VECLIB_SSE_VER >= 0x10
-    #include <xmmintrin.h>
-#elif VECLIB_PPC
-//	#define bool bool_ // FFS!
-//	#include <altivec.h>
-//	#undef bool
+#ifdef VECLIB_SSE
+	#if VECLIB_SSE >= 0x31
+	    #include <tmmintrin.h>
+	#elif VECLIB_SSE >= 0x30
+	    #include <pmmintrin.h>
+	#elif VECLIB_SSE >= 0x20
+	    #include <emmintrin.h>
+	#elif VECLIB_SSE >= 0x10
+	    #include <xmmintrin.h>
+	#endif
+#elif defined(VECLIB_ALTIVEC)
+	#define bool bool_ // FFS!
+		#include <altivec.h>
+	#undef bool
+#elif defined(VECLIB_SPU)
+	#define bool bool_
+		#include <spu_intrinsics.h>
+	#undef bool
+#else
+		#error "undefined"
 #endif
 
 namespace veclib
@@ -47,11 +61,19 @@ namespace veclib
 }
 
 
-#if 0
-	#if VECLIB_SSE_VER >= 0x20
-		#include "vecliball_sse20.h"
-	#elif VECLIB_SSE_VER >= 0x10
-		#include "vecliball_sse10.h"
+#if 1
+	#ifdef VECLIB_SSE
+		#if VECLIB_SSE >= 0x20
+			#include "vecliball_sse2.h"
+		#elif VECLIB_SSE >= 0x10
+			#include "vecliball_sse.h"
+		#else
+			#error "wrong value of VECLIB_SSE"
+		#endif
+	#elif defined(VECLIB_SPU)
+		#include "vecliball_spu.h"
+	#elif defined(VECLIB_ALTIVEC)
+		#include "vecliball_altivec.h"
 	#else
 		#include "vecliball_scalar.h"
 	#endif
@@ -73,25 +95,11 @@ SERIALIZE_AS_POD(veclib::Vec4<double>)
 namespace veclib
 {
 
-inline u64 Ticks() {
-    unsigned hi, lo;
-    __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
-   	return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
-}
-
-/*
-inline void *AlignedMalloc(size_t size) {
-	char *ptr=new char[size+sizeof(void*)+16];
-
-	void *aligned=(void*)((u64(ptr)+15)&~15);
-	((void**)aligned)[-1]=ptr;
-	return aligned;
-}
-
-inline void *AlignedFree(void *aligned) {
-	void *ptr=((void**)aligned)[-1];
-	delete[]((char*)ptr);
-}*/
+	inline u64 Ticks() {
+		unsigned hi, lo;
+		__asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+		return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+	}
 
 }
 
