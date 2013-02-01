@@ -12,20 +12,24 @@ class i32x4
 {
 public:
 	i32x4() { }
-	i32x4(int v) { i[0] = i[1] = i[2] = i[3] = v; }
-	i32x4(unsigned v) { u[0] = u[1] = u[2] = u[3] = v; }
-	i32x4(int a, int b, int c, int d) { i[0] = a; i[1] = b; i[2] = c; i[3] = d; }
+	i32x4(int v) { vi = spu_splats(v); }
+	i32x4(unsigned v) { vu = spu_splats(v); }
+	i32x4(int a, int b, int c, int d) { vi = (vec_int4){a, b, c, d}; }
+	i32x4(vec_uint4 tvu) { vu = tvu; }
+	i32x4(vec_int4 tvi) { vi = tvi; }
+	i32x4(const i32x4 &rhs) { vi = rhs.vi; }
+	void operator=(const i32x4 &rhs) { vi = rhs.vi; }
 	explicit i32x4(const i32x4b);
 
-	explicit i32x4(const f32x4 &f) { i[0] = (int)f[0]; i[1] = (int)f[1]; i[2] = (int)f[2]; i[3] = (int)f[3]; }
-	operator const f32x4() const { return f32x4(i[0], i[1], i[2], i[3]); }
+	explicit i32x4(const f32x4 f) { vi = spu_convts(f.vf, 0); }
+	operator const f32x4() const { return f32x4(spu_convtf(vi, 0)); }
 
-	const i32x4 operator+=(const i32x4 &v) {
-		i[0] += v[0]; i[1] += v[1]; i[2] += v[2]; i[3] += v[3];
+	const i32x4 operator+=(const i32x4 v) {
+		vi = spu_add(vi, v.vi);
 		return *this;
 	}
-	const i32x4 operator-=(const i32x4 &v) {
-		i[0] -= v[0]; i[1] -= v[1]; i[2] -= v[2]; i[3] -= v[3];
+	const i32x4 operator-=(const i32x4 v) {
+		vi = spu_sub(vi, v.vi);
 		return *this;
 	}
 	const i32x4 operator*=(const i32x4 &v) {
@@ -40,16 +44,16 @@ public:
 		i[0] %= v[0]; i[1] %= v[1]; i[2] %= v[2]; i[3] %= v[3];
 		return *this;
 	}
-	const i32x4 operator&=(const i32x4 &v) {
-		i[0] &= v[0]; i[1] &= v[1]; i[2] &= v[2]; i[3] &= v[3];
+	const i32x4 operator&=(const i32x4 v) {
+		vi = spu_and(vi, v.vi);
 		return *this;
 	}
-	const i32x4 operator|=(const i32x4 &v) {
-		i[0] |= v[0]; i[1] |= v[1]; i[2] |= v[2]; i[3] |= v[3];
+	const i32x4 operator|=(const i32x4 v) {
+		vi = spu_or(vi, v.vi);
 		return *this;
 	}
-	const i32x4 operator^=(const i32x4 &v) {
-		i[0] ^= v[0]; i[1] ^= v[1]; i[2] ^= v[2]; i[3] ^= v[3];
+	const i32x4 operator^=(const i32x4 v) {
+		vi = spu_xor(vi, v.vi);
 		return *this;
 	}
 	const i32x4 operator<<=(const i32x4 &v) {
@@ -61,8 +65,8 @@ public:
 		return *this;
 	}
 
-	const i32x4 operator-() const { return i32x4(-i[0], -i[1], -i[2], -i[3]); }
-	const i32x4 operator~() const { return i32x4(~i[0], ~i[1], ~i[2], ~i[3]); }
+	const i32x4 operator-() const;
+	const i32x4 operator~() const { return spu_nor(vu, vu); }
 	const i32x4b operator!() const;
 
 	operator i32*() { return i; }
@@ -71,13 +75,17 @@ public:
 	union {
 		i32 i[4];
 		u32 u[4];
+		vec_uint4 vu;
+		vec_int4 vi;
 	};
 };
 
-inline const i32x4 operator+(const i32x4 &a, const i32x4 &b)
-	{ return i32x4(a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3]); }
-inline const i32x4 operator-(const i32x4 &a, const i32x4 &b)
-	{ return i32x4(a[0] - b[0], a[1] - b[1], a[2] - b[2], a[3] - b[3]); }
+inline const i32x4 operator+(const i32x4 a, const i32x4 b)
+	{ return spu_add(a.vi, b.vi); }
+inline const i32x4 operator-(const i32x4 a, const i32x4 b)
+	{ return spu_sub(a.vi, b.vi); }
+	
+inline const i32x4 i32x4::operator-() const { return i32x4(0) - i32x4(vi); }
 inline const i32x4 operator*(const i32x4 &a, const i32x4 &b)
 	{ return i32x4(a[0] * b[0], a[1] * b[1], a[2] * b[2], a[3] * b[3]); }
 inline const i32x4 operator/(const i32x4 &a, const i32x4 &b)
@@ -85,11 +93,11 @@ inline const i32x4 operator/(const i32x4 &a, const i32x4 &b)
 inline const i32x4 operator%(const i32x4 &a, const i32x4 &b)
 	{ return i32x4(a[0] % b[0], a[1] % b[1], a[2] % b[2], a[3] % b[3]); }
 inline const i32x4 operator&(const i32x4 &a, const i32x4 &b)
-	{ return i32x4(a[0] & b[0], a[1] & b[1], a[2] & b[2], a[3] & b[3]); }
-inline const i32x4 operator|(const i32x4 &a, const i32x4 &b)
-	{ return i32x4(a[0] | b[0], a[1] | b[1], a[2] | b[2], a[3] | b[3]); }
-inline const i32x4 operator^(const i32x4 &a, const i32x4 &b)
-	{ return i32x4(a[0] ^ b[0], a[1] ^ b[1], a[2] ^ b[2], a[3] ^ b[3]); }
+	{ return spu_and(a.vi, b.vi); }
+inline const i32x4 operator|(const i32x4 a, const i32x4 b)
+	{ return spu_or(a.vi, b.vi); }
+inline const i32x4 operator^(const i32x4 a, const i32x4 b)
+	{ return spu_xor(a.vi, b.vi); }
 inline const i32x4 operator<<(const i32x4 &a, const i32x4 &b)
 	{ return i32x4(a[0] << b[0], a[1] << b[1], a[2] << b[2], a[3] << b[3]); }
 inline const i32x4 operator>>(const i32x4 &a, const i32x4 &b)
@@ -97,95 +105,81 @@ inline const i32x4 operator>>(const i32x4 &a, const i32x4 &b)
 
 
 template <unsigned bits>
-inline const i32x4 Shl(const i32x4 &in)
-	{ return i32x4(in[0] << bits, in[1] << bits, in[2] << bits, in[3] << bits); }
+inline const i32x4 Shl(const i32x4 in)
+	{ return spu_sl(in.vi, bits); }
 
 template <unsigned bits>
-inline const i32x4 Shr(const i32x4 &in)
-	{ return i32x4(in[0] >> bits, in[1] >> bits, in[2] >> bits, in[3] >> bits); }
+inline const i32x4 Shr(const i32x4 in)
+	{ return spu_sl(in.vi, -bits); }
 
 class i32x4b
 {
 public:
 	i32x4b() { }
-	i32x4b(bool a, bool b, bool c, bool d) { v[0] = a; v[1] = b; v[2] = c; v[3] = d; }
-	i32x4b(bool a) { v[0] = v[1] = v[2] = v[3] = a; }
-	i32x4b(const f32x4b tv) { for(int k = 0; k < 4; k++) v[k] = tv.i[k]; }
+	i32x4b(bool a, bool b, bool c, bool d)
+		{ vu = (vec_uint4){a? ~0u : 0u, b? ~0u : 0u, c? ~0u : 0u, d? ~0u : 0u}; }
+	i32x4b(bool v)
+		{ vu = spu_splats(v?0xffffffffu : 0u); }
+	i32x4b(const vec_uint4 t) { vu = t; }
+	i32x4b(const i32x4b &rhs) { vu = rhs.vu; }
+	i32x4b(const f32x4b rhs) { vu = rhs.vu; }
+	operator const f32x4b() const { return vu; }
+	void operator=(const i32x4b &rhs) { vu = rhs.vu; }
 
-	const i32x4b operator^(const i32x4b t) const {
-		return MakeV4(v4 ^ t.v4);
-	}
-	const i32x4b operator&&(const i32x4b t) const {
-		return MakeV4(v4 & t.v4);
-	}
-	const i32x4b operator||(const i32x4b t) const {
-		return MakeV4(v4 | t.v4);
-	}
-	const i32x4b operator!() const {
-		return i32x4b(!v[0], !v[1], !v[2], !v[3]);
-	}
+	const i32x4b operator^(const i32x4b t) const { return spu_xor(vu, t.vu); }
+	const i32x4b operator&(const i32x4b t) const { return spu_and(vu, t.vu); }
+	const i32x4b operator|(const i32x4b t) const { return spu_or(vu, t.vu); }
+	const i32x4b operator&&(const i32x4b t) const { return spu_and(vu, t.vu); }
+	const i32x4b operator||(const i32x4b t) const { return spu_or(vu, t.vu); }
+	const i32x4b operator!() const { return spu_nor(vu, vu); }
 
 private:
-	static const i32x4b MakeV4(int tv4) {
-		i32x4b out;
-		out.v4 = tv4;
-		return out;
-	}
 	friend bool ForAny(const i32x4b);
 	friend bool ForAll(const i32x4b);
 	friend int ForWhich(const i32x4b);
-	friend const i32x4 Condition(const i32x4b, const i32x4&, const i32x4&);
-	friend const i32x4 Condition(const i32x4b, const i32x4&);
-	friend i32x4::i32x4(const i32x4b);
+	friend const i32x4 Condition(const i32x4b, const i32x4, const i32x4);
+	friend const i32x4 Condition(const i32x4b, const i32x4);
 
 	union {
-		bool v[4];
-		int v4;
+		int i[4];
+		unsigned u[4];
+		vec_uint4 vu;
 	};
 };
 
-inline const i32x4b i32x4::operator!() const
-	{ return i32x4b(!i[0], !i[1], !i[2], !i[3]); }
+inline bool ForAny(const i32x4b v)  { return spu_extract(spu_orx(v.vu), 0)? 1 : 0; }
+inline bool ForAll(const i32x4b v)  { return !ForAny(!v); }
+inline int ForWhich(const i32x4b v)
+	{ return (v.i[0] & 1) | ((v.i[1] & 1) << 1) | ((v.i[2] & 1) << 2) | ((v.i[3] & 1) << 3); }
 
-inline i32x4::i32x4(const i32x4b v) {
-	i[0] = v.v[0]? 0xffffffff : 0;
-	i[1] = v.v[1]? 0xffffffff : 0;
-	i[2] = v.v[2]? 0xffffffff : 0;
-	i[3] = v.v[3]? 0xffffffff : 0;
-}
+inline const i32x4b operator==(const i32x4 a, const i32x4 b)
+	{ return (vec_uint4)spu_cmpeq(a.vi, b.vi); }
+inline const i32x4b operator!=(const i32x4 a, const i32x4 b)
+	{ return !(a == b); }
+inline const i32x4b operator>(const i32x4 a, const i32x4 b)
+	{ return (vec_uint4)spu_cmpgt(a.vi, b.vi); }
+inline const i32x4b operator<(const i32x4 a, const i32x4 b)
+	{ return (vec_uint4)spu_cmpgt(b.vi, a.vi); }
+inline const i32x4b operator>=(const i32x4 a, const i32x4 b)
+	{ return !(a < b); }
+inline const i32x4b operator<=(const i32x4 a, const i32x4 b)
+	{ return !(a > b); }
 
-inline bool ForAny(const i32x4b v)  { return v.v4? 1 : 0; }
-inline bool ForAll(const i32x4b v)  { return v.v4 == 0x01010101; }
-inline int ForWhich(const i32x4b v) { return v.v[0] | (v.v[1] << 1) | (v.v[2] << 2) | (v.v[3] << 3); }
-
-inline const i32x4b operator==(const i32x4 &a, const i32x4 &b)
-	{ return i32x4b(a[0] == b[0], a[1] == b[1], a[2] == b[2], a[3] == b[3]); }
-inline const i32x4b operator!=(const i32x4 &a, const i32x4 &b)
-	{ return i32x4b(a[0] != b[0], a[1] != b[1], a[2] != b[2], a[3] != b[3]); }
-inline const i32x4b operator>=(const i32x4 &a, const i32x4 &b)
-	{ return i32x4b(a[0] >= b[0], a[1] >= b[1], a[2] >= b[2], a[3] >= b[3]); }
-inline const i32x4b operator<=(const i32x4 &a, const i32x4 &b)
-	{ return i32x4b(a[0] <= b[0], a[1] <= b[1], a[2] <= b[2], a[3] <= b[3]); }
-inline const i32x4b operator>(const i32x4 &a, const i32x4 &b)
-	{ return i32x4b(a[0] > b[0], a[1] > b[1], a[2] > b[2], a[3] > b[3]); }
-inline const i32x4b operator<(const i32x4 &a, const i32x4 &b)
-	{ return i32x4b(a[0] < b[0], a[1] < b[1], a[2] < b[2], a[3] < b[3]); }
-
-inline const i32x4 Abs(const i32x4 &v)
-	{ return i32x4(v[0] < 0? -v[0] : v[0], v[1] < 0? -v[1] : v[1], v[2] < 0? -v[2] : v[2], v[3] < 0? -v[3] : v[3]); }
-inline int SignMask(const i32x4 &v)
+inline const i32x4 Abs(const i32x4 v)
+	{ return Condition(v < i32x4(0), -v, v); }
+inline int SignMask(const i32x4 v)
 	{ return (v[0] < 0? 1 : 0) | (v[1] < 0? 2 : 0) | (v[2] < 0? 4 : 0) | (v[3] < 0? 8 : 0); }
 
-inline const i32x4 Min(const i32x4 &a,const i32x4 &b)
-	{ return i32x4(Min(a[0], b[0]), Min(a[1], b[1]), Min(a[2], b[2]), Min(a[3], b[3])); }
-inline const i32x4 Max(const i32x4 &a,const i32x4 &b)
-	{ return i32x4(Max(a[0], b[0]), Max(a[1], b[1]), Max(a[2], b[2]), Max(a[3], b[3])); }
+inline const i32x4 Min(const i32x4 a, const i32x4 b)
+	{ return spu_sel(a.vi, b.vi, spu_cmpgt(a.vi, b.vi)); }
+inline const i32x4 Max(const i32x4 a, const i32x4 b)
+	{ return spu_sel(b.vi, a.vi, spu_cmpgt(a.vi, b.vi)); }
 
-inline const i32x4 Condition(const i32x4b t, const i32x4 &a, const i32x4 &b)
-	{ return i32x4(t.v[0]? a[0] : b[0], t.v[1]? a[1] : b[1], t.v[2]? a[2] : b[2], t.v[3]? a[3] : b[3]); }
+inline const i32x4 Condition(const i32x4b t, const i32x4 a, const i32x4 b)
+	{ return spu_sel(b.vu, a.vu, t.vu); }
 
-inline const i32x4 Condition(const i32x4b t, const i32x4 &a)
-	{ return i32x4(t.v[0]? a[0] : 0, t.v[1]? a[1] : 0, t.v[2]? a[2] : 0, t.v[3]? a[3] : 0); }
+inline const i32x4 Condition(const i32x4b t, const i32x4 a)
+	{ return spu_sel(i32x4(0).vu, a.vu, t.vu); }
 
 template<>
 struct ScalarInfo<i32x4> {
@@ -216,22 +210,16 @@ inline void Convert(i32x4 in, int &outX, int &outY, int &outZ, int &outW)
 
 //TODO testme
 inline const i32x4 Round(const f32x4 &v)
-	{ return i32x4((int)(v[0] + 0.5f), (int)(v[1] + 0.5f), (int)(v[2] + 0.5f), (int)(v[3] + 0.5f)); }
+	{ return i32x4(v + f32x4(0.5f)); }
 inline const i32x4 Trunc(const f32x4 &v)
-	{ return i32x4((int)v[0], (int)v[1], (int)v[2], (int)v[3]); }
+	{ return i32x4(v); }
 
 inline void Cast(const i32x4 &src, f32x4 &dst) {
-   dst = f32x4(	BitCast<float>(src[0]),
-				BitCast<float>(src[1]),
-				BitCast<float>(src[2]),
-				BitCast<float>(src[3]));
+	dst.vf = (vec_float4)src.vi;
 }
 
 inline void Cast(const f32x4 &src, i32x4 &dst) {
-   dst = i32x4(	BitCast<int>(src[0]),
-				BitCast<int>(src[1]),
-				BitCast<int>(src[2]),
-				BitCast<int>(src[3]));
+	dst.vi = (vec_int4)src.vf;
 }
 
 #endif

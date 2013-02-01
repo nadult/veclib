@@ -61,7 +61,7 @@ namespace veclib
 }
 
 
-#if 1
+#if !defined(__IBMCPP__)
 	#ifdef VECLIB_SSE
 		#if VECLIB_SSE >= 0x20
 			#include "vecliball_sse2.h"
@@ -91,18 +91,6 @@ SERIALIZE_AS_POD(veclib::Vec3<double>)
 SERIALIZE_AS_POD(veclib::Vec4<double>)
 
 #endif
-
-namespace veclib
-{
-
-	inline u64 Ticks() {
-		unsigned hi, lo;
-		__asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
-		return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
-	}
-
-}
-
 
 /*
 

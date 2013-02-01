@@ -28,9 +28,11 @@
 
 #ifndef VECLIB_ALTIVEC
 
+#ifndef __IBMCPP__
 	#ifdef __ALTIVEC__
 		#define VECLIB_ALTIVEC 0x10
 	#endif
+#endif
 
 #endif
 

@@ -5,7 +5,7 @@ CXX=$(CROSS)g++ -std=gnu++0x -Wall
 SXX=spu-g++ -Wall
 FLAGS=-O3 -I ./ -D VECLIB_PREPROCESS
 
-all: vecliball_scalar.h vecliball_altivec.h vecliball_spu.h
+all: vecliball_scalar.h vecliball_sse2.h vecliball_sse.h
 
 vecliball_sse2.h: Makefile *.h
 	$(CXX) -msse2 $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
@@ -16,16 +16,16 @@ vecliball_sse.h: Makefile *.h
 		grep -e ^[^#] > $@
 
 vecliball_scalar.h: Makefile *.h
-	$(CXX) -mno-altivec $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
+	$(CXX) $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
 		grep -e ^[^#] > $@
 
-vecliball_altivec.h: Makefile *.h
-	$(CXX) -maltivec $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
-		grep -e ^[^#] > $@
+#vecliball_altivec.h: Makefile *.h
+#	$(CXX) -maltivec $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
+#		grep -e ^[^#] > $@
 
-vecliball_spu.h: Makefile *.h
-	$(SXX) $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
-		grep -e ^[^#] > $@
+#vecliball_spu.h: Makefile *.h
+#	$(SXX) $(FLAGS) -include veclib_conf.h vecliball.h -o - -E | \
+#		grep -e ^[^#] > $@
 
 clean:
 	-rm vecliball_*.h

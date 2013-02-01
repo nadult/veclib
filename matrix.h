@@ -47,15 +47,7 @@ public:
 	template <class tbase>
 	INLINE Matrix(const Matrix<tbase> &other) :x(other.x),y(other.y),z(other.z),w(other.w) { }
 
-	INLINE const Matrix &operator*=(const Matrix &m) {
-		Matrix t=Transpose(m);
-		vbase x_=x,y_=y,z_=z;
-		x=vbase(x_|t.x,x_|t.y,x_|t.z,x_|t.w);
-		y=vbase(y_|t.x,y_|t.y,y_|t.z,y_|t.w);
-		z=vbase(z_|t.x,z_|t.y,z_|t.z,z_|t.w);
-		w=vbase(w |t.x,w |t.y,w |t.z,w |t.w);
-		return *this;
-	}
+	INLINE const Matrix &operator*=(const Matrix&);
 	INLINE const Matrix &operator+=(const Matrix &m) {
 		x+=m.x;
 		y+=m.y;
@@ -99,6 +91,17 @@ INLINE Matrix<vbase> Transpose(const Matrix<vbase> &m) {
 	out.z=vbase(m.x.z,m.y.z,m.z.z,m.w.z);
 	out.w=vbase(m.x.w,m.y.w,m.z.w,m.w.w);
 	return out;
+}
+
+template <class vbase>
+INLINE const Matrix<vbase> &Matrix<vbase>::operator*=(const Matrix<vbase> &m) {
+	Matrix<vbase> t=Transpose(m);
+	vbase x_=x,y_=y,z_=z;
+	x=vbase(x_|t.x,x_|t.y,x_|t.z,x_|t.w);
+	y=vbase(y_|t.x,y_|t.y,y_|t.z,y_|t.w);
+	z=vbase(z_|t.x,z_|t.y,z_|t.z,z_|t.w);
+	w=vbase(w |t.x,w |t.y,w |t.z,w |t.w);
+	return *this;
 }
 
 template <class mbase,class vbase>
@@ -172,15 +175,15 @@ INLINE Matrix<Vec4<float> > RotateZ(float angle) {
 	return out;
 }
 
-INLINE Matrix<Vec4<float> > Rotate(float yaw,float pitch,float roll) {
-	return RotateZ(roll)*RotateX(pitch)*RotateY(pitch);
+INLINE Matrix<Vec4<float> > Rotate(float yaw, float pitch, float roll) {
+	return RotateZ(roll) * RotateX(pitch) * RotateY(yaw); //TODO: testme
 }
 
 INLINE Matrix<Vec4<float> > Translate(const Vec3<float> &vec) {
-	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
-	out.w.x=vec.x;
-	out.w.y=vec.y;
-	out.w.z=vec.z;
+	Matrix<Vec4<float> > out = Identity<Vec4<float> >();
+	out.w.x = vec.x;
+	out.w.y = vec.y;
+	out.w.z = vec.z;
 	return out;
 }
 

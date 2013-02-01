@@ -7,8 +7,8 @@ class f32x4
 {
 public:
 	f32x4() { }
-    f32x4(float a,float b,float c,float d) { vf =(vector float){a, b, c, d}; }
-	f32x4(float v) { vf = (vector float){v, v, v, v}; }
+    f32x4(float a,float b,float c,float d) { vf =(vec_float4){a, b, c, d}; }
+	f32x4(float v) { vf = spu_splats(v); }
 	f32x4(const f32x4 &v) { vf = v.vf; }
 	f32x4(vector float tvf) { vf = tvf; }
 	void operator=(const f32x4 &v) { vf = v.vf; }
@@ -26,7 +26,7 @@ public:
 		return *this;
 	}
 	const f32x4 operator/=(const f32x4 v) {
-		vector float oneish = (vector float)spu_splats(0x3f800001);
+		vector float oneish = (vec_float4)spu_splats(0x3f800001);
 		vector float y0 = spu_re(v.vf);
 		vector float y0numer = spu_mul(vf, y0);
 		vf = spu_madd(spu_nmsub(v.vf, y0, oneish ), y0numer, y0numer);
@@ -34,7 +34,7 @@ public:
 	}
 
 	const f32x4 operator-() const
-		{ return (vector float)spu_xor((vector unsigned)vf, spu_splats(0x80000000)); }
+		{ return (vec_float4)spu_xor((vec_uint4)vf, spu_splats(0x80000000)); }
 
 	operator f32*() { return f; }
 	operator const f32*() const { return f; }
@@ -51,10 +51,9 @@ class f32x4b
 public:
 	f32x4b() { }
 	f32x4b(bool a, bool b, bool c, bool d)
-		{ i[0] = a? ~0 : 0; i[1] = b? ~0 : 0; i[2] = c? ~0 : 0; i[3] = d? ~0 : 0; }
-	f32x4b(bool v) {
-		vu = spu_promote((unsigned int)-v, 0);
-	}
+		{ vu = (vec_uint4){a? ~0u : 0u, b? ~0u : 0u, c? ~0u : 0u, d? ~0u : 0u}; }
+	f32x4b(bool v)
+		{ vu = spu_splats(v?0xffffffffu : 0u); }
 	f32x4b(const vector unsigned int t) { vu = t; }
 	f32x4b(const f32x4b &rhs) { vu = rhs.vu; }
 	void operator=(const f32x4b &rhs) { vu = rhs.vu; }
@@ -86,19 +85,25 @@ inline bool ForAll(const f32x4b v)  { return !ForAny(!v); }
 inline int ForWhich(const f32x4b v)
 	{ return (v.i[0] & 1) | ((v.i[1] & 1) << 1) | ((v.i[2] & 1) << 2) | ((v.i[3] & 1) << 3); }
 
+
 	//TODO: tu sa bledy (widac w test_float)
 inline const f32x4b operator==(const f32x4 a, const f32x4 b)
-	{ return (vector unsigned int)spu_cmpeq(a.vf, b.vf); }
+	{ return (vec_uint4)spu_cmpeq(a.vf, b.vf); }
 inline const f32x4b operator!=(const f32x4 a, const f32x4 b)
 	{ return !(a == b); }
 inline const f32x4b operator>(const f32x4 a, const f32x4 b)
-	{ return (vector unsigned int)spu_cmpgt(a.vf, b.vf); }
+	{ return (vec_uint4)spu_cmpgt(a.vf, b.vf); }
 inline const f32x4b operator<(const f32x4 a, const f32x4 b)
-	{ return (vector unsigned int)spu_cmpgt(b.vf, a.vf); }
+	{ return (vec_uint4)spu_cmpgt(b.vf, a.vf); }
 inline const f32x4b operator>=(const f32x4 a, const f32x4 b)
 	{ return !(a < b); }
 inline const f32x4b operator<=(const f32x4 a, const f32x4 b)
 	{ return !(a > b); }
+
+inline f32x4 MulAdd(const f32x4 a, const f32x4 b, const f32x4 c)
+	{ return spu_madd(a.vf, b.vf, c.vf); }
+inline f32x4 MulSub(const f32x4 a, const f32x4 b, const f32x4 c)
+	{ return spu_msub(a.vf, b.vf, c.vf); }
 
 inline const f32x4 operator+(const f32x4 a, const f32x4 b)
 	{ return spu_add(a.vf, b.vf); }
@@ -107,14 +112,14 @@ inline const f32x4 operator-(const f32x4 a, const f32x4 b)
 inline const f32x4 operator*(const f32x4 a, const f32x4 b)
 	{ return spu_mul(a.vf, b.vf); }
 inline const f32x4 operator/(const f32x4 a, const f32x4 b) {
-	vector float oneish = (vector float)spu_splats(0x3f800001);
+	vector float oneish = (vec_float4)spu_splats(0x3f800001);
 	vector float y0 = spu_re(b.vf);
 	vector float y0numer = spu_mul(a.vf, y0);
 	return spu_madd(spu_nmsub( b.vf, y0, oneish ), y0numer, y0numer);
 }
 
 inline const f32x4 Sqrt(const f32x4 v) {
-	vector float oneish = (vector float)spu_splats(0x3f800001);
+	vector float oneish = (vec_float4)spu_splats(0x3f800001);
 	vector float y0 = spu_rsqrte(v.vf);
 	vector float y0x = spu_mul(y0, v.vf);
 	vector float y0xhalf = spu_mul(y0x, spu_splats(0.5f));
@@ -122,13 +127,13 @@ inline const f32x4 Sqrt(const f32x4 v) {
 }
 	
 inline const f32x4 Inv(const f32x4 v) {
-	vector float oneish = (vector float)spu_splats(0x3f800001);
+	vector float oneish = (vec_float4)spu_splats(0x3f800001);
 	vector float y0 = spu_re(v.vf);
 	return spu_madd( spu_nmsub(v.vf, y0, oneish), y0, y0);
 }
 
 inline const f32x4 RSqrt(const f32x4 &v) {
-	vector float oneish = (vector float)spu_splats(0x3f800001);
+	vector float oneish = (vec_float4)spu_splats(0x3f800001);
 	vector float y0 = spu_rsqrte(v.vf);
 	vector float y0x = spu_mul(y0, v.vf);
 	vector float y0half = spu_mul(y0, spu_splats(0.5f));
@@ -142,7 +147,7 @@ inline const f32x4 FastRSqrt(const f32x4 v)
 
 
 inline const f32x4 Abs(const f32x4 v)
-	{ return (vector float)spu_andc((vector unsigned)v.vf, spu_splats(0x80000000)); }
+	{ return (vec_float4)spu_andc((vec_uint4)v.vf, spu_splats(0x80000000)); }
 inline int SignMask(const f32x4 &v)
 	{ return (v[0] < 0.0f? 1 : 0) | (v[1] < 0.0f? 2 : 0) | (v[2] < 0.0f? 4 : 0) | (v[3] < 0.0f? 8 : 0); }
 
