@@ -1,0 +1,3 @@
+- Remove PPC support ?
+- update readme
+- Move documentation to readme ?
