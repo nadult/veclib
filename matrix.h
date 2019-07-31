@@ -15,16 +15,8 @@
 
 template <class vbase> class Matrix;
 
-// Convertible to any matrix type as identity matrix
-template <class T=void>
-struct Identity: public Matrix<T> {
-	Identity() :Matrix<T>(Identity<void>()) { }
-
-	operator Matrix<T>&() { return *(Matrix<T>*)this; }
-	operator const Matrix<T>&() const { return *(Matrix<T>*)this; }
-};
-
-template <> struct Identity<void> { };
+struct Identity { };
+static constexpr Identity identity;
 
 template <class vbase>
 class Matrix
@@ -37,7 +29,7 @@ public:
 	}
 	INLINE Matrix(const vbase &a,const vbase &b,const vbase &c,const vbase &d) :x(a),y(b),z(c),w(d) {
 	}
-	INLINE Matrix(Identity<void>) {
+	INLINE Matrix(Identity) {
 		TScalar zero(0.0f), one(1.0f);
 		x=vbase(one,zero,zero,zero);
 		y=vbase(zero,one,zero,zero);
@@ -150,7 +142,7 @@ INLINE Vec2<vbase> operator*(const Matrix<mbase> &m,Vec2<vbase> v) {
 
 INLINE Matrix<Vec4<float> > RotateX(float angle) {
 	float c=cos(angle),s=sin(angle);
-	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
+	Matrix<Vec4<float> > out=identity;
 	
 	out.y.y=c; out.y.z=s;
 	out.z.y=-s; out.z.z=c;
@@ -159,7 +151,7 @@ INLINE Matrix<Vec4<float> > RotateX(float angle) {
 
 INLINE Matrix<Vec4<float> > RotateY(float angle) {
 	float c=cos(angle),s=sin(angle);
-	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
+	Matrix<Vec4<float> > out=identity;
 
 	out.x.x=c; out.x.z=s;
 	out.z.x=-s; out.z.z=c;
@@ -168,7 +160,7 @@ INLINE Matrix<Vec4<float> > RotateY(float angle) {
 
 INLINE Matrix<Vec4<float> > RotateZ(float angle) {
 	float c=cos(angle),s=sin(angle);
-	Matrix<Vec4<float> > out=Identity<Vec4<float> >();
+	Matrix<Vec4<float> > out=identity;
 
 	out.x.x=c; out.x.y=-s;
 	out.y.x=s; out.y.y=c;
@@ -180,7 +172,7 @@ INLINE Matrix<Vec4<float> > Rotate(float yaw, float pitch, float roll) {
 }
 
 INLINE Matrix<Vec4<float> > Translate(const Vec3<float> &vec) {
-	Matrix<Vec4<float> > out = Identity<Vec4<float> >();
+	Matrix<Vec4<float> > out = identity;
 	out.w.x = vec.x;
 	out.w.y = vec.y;
 	out.w.z = vec.z;
